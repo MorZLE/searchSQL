@@ -1,8 +1,9 @@
 import psycopg2
-from sys import argv
+#from sys import argv
 #script, first, second, third = argv
+third=input()
 def main():
-  with open("data.txt",encoding='UTF-8') as file:
+  with open(third, encoding='UTF-8') as file:
     try:
       con = psycopg2.connect(
         database=file.readline().strip(),
