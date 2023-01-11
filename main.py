@@ -1,14 +1,20 @@
 import psycopg2
+from sys import argv
+#script, first, second, third = argv
 def main():
-  con = psycopg2.connect(
-    database="demo",
-    user="postgres",
-    password="111111",
-    host="127.0.0.1",
-    port="5432"
-  )
-
-  print("База подключена")
+  with open("data.txt",encoding='UTF-8') as file:
+    try:
+      con = psycopg2.connect(
+        database=file.readline().strip(),
+        user=file.readline().strip(),
+        password=file.readline().strip(),
+        host=file.readline().strip(),
+        port=file.readline().strip()
+      )
+    except Exception:
+      print("Некорректные данные")
+    else:
+      print("База подключена")
   cur = con.cursor()
   cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ")
 
