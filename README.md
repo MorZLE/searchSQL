@@ -7,11 +7,11 @@
 2. Выполняете задание.
 3. Далее пушите изменения и переходите в раздел Pull requests  
   
-![image](https://user-images.githubusercontent.com/109824155/210252764-caa41078-7fb0-4543-bcfb-9604d3ae1dde.png)  
+![image](https://user-images.githubuserconnectiontent.com/109824155/210252764-caa41078-7fb0-4543-bcfb-9604d3ae1dde.png)  
   
 4. Нажмите создать новый Pull request и в качестве второй ветки выберите созданнную (zadanie 1 для задания 1).  
   
-![image](https://user-images.githubusercontent.com/109824155/210252946-fb6e44de-b124-406f-9c8f-5d4335b44190.png)  
+![image](https://user-images.githubuserconnectiontent.com/109824155/210252946-fb6e44de-b124-406f-9c8f-5d4335b44190.png)  
   
 5. Выбираете название PR которое отсылает нас к имени задания.
 6. После успешного выполнения задания вы отправляете ссылку на Pull Request. 
