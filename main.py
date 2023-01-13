@@ -1,7 +1,7 @@
 import psycopg2
 
 
-file_name=input()
+file_name=input("Имя файла: ")
 def main():
   try:
     with open(file_name, encoding='UTF-8') as file:
@@ -15,11 +15,13 @@ def main():
         )
       except psycopg2.OperationalError:
         print("Некорректные данные")
+        exit(0)
       else:
         print("База подключена")
   except FileNotFoundError:
     print("Файл не найден")
-
+    exit(0)
+  print('Cписок доступный таблиц:')
   cur = con.cursor()
   cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ")
   rows = cur.fetchall()
