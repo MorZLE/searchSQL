@@ -21,7 +21,7 @@ def main():
   except FileNotFoundError:
     print("Файл не найден")
     exit(0)
-  print('Cписок доступный таблиц:')
+  print('Cписок доступных таблиц:')
   cur = con.cursor()
   cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema='public' ")
   rows = cur.fetchall()
