@@ -1,5 +1,6 @@
 import psycopg2
-
+from tabulate import tabulate
+from prettytable import PrettyTable
 
 def main():
   print('Если хотите посмотреть название таблиц, то введите ключ -a после названия файла')
@@ -25,6 +26,8 @@ def main():
         )
       except psycopg2.OperationalError:
         print("Некорректные данные")
+        connection.close()
+        print("База отключена")
         exit(0)
       else:
         print("База подключена")
@@ -40,16 +43,25 @@ def main():
     sql_request(connection)
 
 def sql_request(connection):###функция сбора запроса
-  request_sql = ''
-  while True:
-    request_sql += input()
-    if request_sql[-1] == ';':
-      print(request_sql)
-      execute_query(connection, request_sql)
-      request_sql = ''
-    elif request_sql[-2:] == '\q':
-      print('Программа закрыта')
-      exit(0)
+  try:
+    request_txt=''
+    request_sql = ''
+    while True:
+      request_txt = input()
+      if request_txt[:6]=="SQL >>":
+        request_sql += request_txt[7:]
+        if request_sql[-1] == ';':
+          execute_query(connection, request_sql)
+          request_sql = ''
+      elif request_txt[-2:] == '\q':
+        print('Программа закрыта')
+        connection.close()
+        print("База отключена")
+        exit(0)
+  except KeyboardInterrupt:
+    print('Программа закрыта')
+    connection.close()
+    print("База отключена")
 
 def execute_query(connection, query): ###функция отправки запроса
   cursor = connection.cursor()
@@ -57,8 +69,10 @@ def execute_query(connection, query): ###функция отправки зап�
     cursor.execute(query)
     connection.commit()
     result=cursor.fetchall()
+    t = PrettyTable([description[0] for description in cursor.description])
     for row in result:
-      print(*row)
+      t.add_row([*row])
+    print(t)
   except psycopg2.ProgrammingError:
     print('Нету данных для вывода!')
 
@@ -67,5 +81,6 @@ if __name__ == '__main__':
   main()
 
 # INSERT into actor VALUES (662333,'max','fdsdd','acd')
-  #INSERT into film VALUES (3,'max','fdsdd',2022)
+  #INSERT into film VALUES (666,'max','fdsdd',2022),
+# (66,'max','fdsdd',2022);
   #select * from film;
