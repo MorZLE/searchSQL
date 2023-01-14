@@ -3,6 +3,7 @@ import psycopg2
 
 def main():
   print('Если хотите посмотреть название таблиц, то введите ключ -a после названия файла')
+  print('Введите \q для выхода')
   input_data = input("Введите название файла: ").split()
 
   if len(input_data) > 1:
@@ -34,22 +35,23 @@ def main():
   if key=='-a':
     print('Cписок доступных таблиц:')
     execute_query(connection, "SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
-    request_sql = ''
-    while True:
-      request_sql += input()
-      if request_sql[-1] == ';':
-        execute_query(connection, request_sql)
-        request_sql = ''
+    sql_request(connection)
   else:
-    request_sql =''
-    while True:
-      request_sql += input()
-      if request_sql[-1] ==';':
-        print(request_sql)
-        execute_query(connection, request_sql)
-        request_sql =''
+    sql_request(connection)
 
-def execute_query(connection, query):
+def sql_request(connection):###функция сбора запроса
+  request_sql = ''
+  while True:
+    request_sql += input()
+    if request_sql[-1] == ';':
+      print(request_sql)
+      execute_query(connection, request_sql)
+      request_sql = ''
+    elif request_sql[-2:] == '\q':
+      print('Программа закрыта')
+      exit(0)
+
+def execute_query(connection, query): ###функция отправки запроса
   cursor = connection.cursor()
   try:
     cursor.execute(query)
@@ -59,8 +61,11 @@ def execute_query(connection, query):
       print(*row)
   except psycopg2.ProgrammingError:
     print('Нету данных для вывода!')
-  #    exit(0)
+
+
 if __name__ == '__main__':
   main()
 
-  #INSERT into actor VALUES (6666,'max','fdsdd','acd');
+# INSERT into actor VALUES (662333,'max','fdsdd','acd')
+  #INSERT into film VALUES (3,'max','fdsdd',2022)
+  #select * from film;
