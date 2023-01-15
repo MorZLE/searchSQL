@@ -1,5 +1,6 @@
 import psycopg2
 import mysql.connector
+import pyodbc
 from prettytable import PrettyTable
 
 
@@ -8,7 +9,7 @@ def main():
   print('Введите \q для выхода')
 
   try:
-   input_data = input("Введите название файла, ключ и тип базы: ").split()
+   input_data = input("Введите название файла, ключ и вендор: ").split()
   except KeyboardInterrupt:
     print('\nПрограмма закрыта')
     exit(0)
@@ -25,8 +26,10 @@ def main():
     connection_postgres(file_name)
   elif type_bd=='MySQL':
     connection_MySQL(file_name)
+  elif type_bd=='MSserver':
+    connection_msserver(file_name)
   else:
-    print('Данный тип подключения еще поддерживается\nПрограмма закрыта')
+    print('Вендор в данный момент не поддерживается. Список доступных вендоров: postgres, MySQL, MSserver')
     exit(0)
 
   if key == '-a':
@@ -76,6 +79,25 @@ def connection_MySQL(file_name):
   except FileNotFoundError:
     print("Файл не найден")
     exit(0)
+
+def connection_msserver(file_name):
+  try:
+    with open(file_name, encoding='UTF-8') as file:
+      try:
+          global connection
+          connectionString = (f"Driver = SQL Server Native Client 11.0; Server ={file.readline().strip()}; Database = {file.readline().strip()}; Trusted_Connection={file.readline().strip()}")
+          connection = pyodbc.connect(connectionString, autocommit=True)
+
+      except Exception: #найти ошибку
+         print("Некорректные данные\nПрограмма закрыта")
+         exit(0)
+      else:
+         print("База подключена")
+  except FileNotFoundError:
+    print("Файл не найден")
+    exit(0)
+  pass
+
 def sql_request(connection):
   '''функция сбора запроса'''
   try:
