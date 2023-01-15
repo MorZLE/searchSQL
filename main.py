@@ -1,5 +1,4 @@
 import psycopg2
-from tabulate import tabulate
 from prettytable import PrettyTable
 
 def main():
@@ -79,8 +78,3 @@ def execute_query(connection, query): ###функция отправки зап�
 
 if __name__ == '__main__':
   main()
-
-# INSERT into actor VALUES (662333,'max','fdsdd','acd')
-  #INSERT into film VALUES (666,'max','fdsdd',2022),
-# (66,'max','fdsdd',2022);
-  #select * from film;
