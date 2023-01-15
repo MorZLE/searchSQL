@@ -4,7 +4,12 @@ from prettytable import PrettyTable
 def main():
   print('Если хотите посмотреть название таблиц, то введите ключ -a после названия файла')
   print('Введите \q для выхода')
-  input_data = input("Введите название файла: ").split()
+
+  try:
+   input_data = input("Введите название файла: ").split()
+  except KeyboardInterrupt:
+    print('\nПрограмма закрыта')
+    exit(0)
 
   if len(input_data) > 1:
     file_name = input_data[0]
