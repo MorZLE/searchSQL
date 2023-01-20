@@ -26,7 +26,7 @@ def main():
     connection_postgres(file_name)
   elif type_bd=='MySQL':
     connection_MySQL(file_name)
-  elif type_bd=='MSserver':
+  elif type_bd=='3':
     connection_msserver(file_name)
   else:
     print('Вендор в данный момент не поддерживается. Список доступных вендоров: postgres, MySQL, MSserver')
@@ -84,19 +84,21 @@ def connection_msserver(file_name):
   try:
     with open(file_name, encoding='UTF-8') as file:
       try:
-          global connection
-          connectionString = (f"Driver = SQL Server Native Client 11.0; Server ={file.readline().strip()}; Database = {file.readline().strip()}; Trusted_Connection={file.readline().strip()}")
-          connection = pyodbc.connect(connectionString, autocommit=True)
+        global connection
+        connection = pyodbc.connect(f"Driver={file.readline().strip()};"
+                                    f"Server={file.readline().strip()};"
+                                    f"Database={file.readline().strip()};"
+                                    f"Trusted_Connection={file.readline().strip()};")
 
-      except Exception: #найти ошибку
-         print("Некорректные данные\nПрограмма закрыта")
-         exit(0)
+      except pyodbc.InterfaceError:
+        print("Некорректные данные\nПрограмма закрыта")
+        exit(0)
       else:
-         print("База подключена")
+        print("База подключена")
   except FileNotFoundError:
     print("Файл не найден")
     exit(0)
-  pass
+
 
 def sql_request(connection):
   '''функция сбора запроса'''
