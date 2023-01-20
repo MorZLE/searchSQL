@@ -9,7 +9,8 @@ def main():
   print('Введите \q для выхода')
 
   try:
-   input_data = input("Введите название файла, ключ и вендор: ").split()
+   print("Введите название файла, ключ и номер вендора 1-postgres, 2-MySQL, 3-MSserver:")
+   input_data = input().split()
   except KeyboardInterrupt:
     print('\nПрограмма закрыта')
     exit(0)
@@ -22,14 +23,14 @@ def main():
     print('Нехватает данных, программа закрыта')
     exit(0)
 
-  if type_bd=='postgres':
+  if type_bd=='1':
     connection_postgres(file_name)
-  elif type_bd=='MySQL':
+  elif type_bd=='2':
     connection_MySQL(file_name)
   elif type_bd=='3':
     connection_msserver(file_name)
   else:
-    print('Вендор в данный момент не поддерживается. Список доступных вендоров: postgres, MySQL, MSserver')
+    print('Вендор в данный момент не поддерживается. Список доступных вендоров: 1-postgres, 2-MySQL, 3-MSserver')
     exit(0)
 
   if key == '-a':
@@ -69,7 +70,7 @@ def connection_MySQL(file_name):
           host=file.readline().strip(),
           user=file.readline().strip(),
           passwd=file.readline().strip(),
-
+          db=file.readline().strip()
         )
       except Exception: #найти ошибку
          print("Некорректные данные\nПрограмма закрыта")
