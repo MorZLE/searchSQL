@@ -57,7 +57,7 @@ class DB:
       while True:
         request_sql += input('SQL >> ')
         if request_sql[-1] == ';':
-          execute_query(self.connection, request_sql)
+          self.execute_query(request_sql)  # я хуй знает че тут
           request_sql = ''
         elif request_sql[-2:] == '\q':
           print('\nПрограмма закрыта')
