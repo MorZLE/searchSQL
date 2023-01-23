@@ -27,10 +27,10 @@ def main():
 
   if key == '-a':
     print('Cписок доступных таблиц:')
-    DB.execute_query(connection, "SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
-    DB.sql_request(connection)
+    user.execute_query(connection, "SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
+    user.sql_request(connection)
 
-  DB.sql_request(connection)
+  user.sql_request(connection)
 
 class DB:
   def __init__(self,file_name,type_bd):
