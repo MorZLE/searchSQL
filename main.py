@@ -72,7 +72,7 @@ def connection_MySQL(file_name):
           passwd=file.readline().strip(),
           db=file.readline().strip()
         )
-      except Exception: #найти ошибку
+      except mysql.connector.errors.DatabaseError:
          print("Некорректные данные\nПрограмма закрыта")
          exit(0)
       else:
