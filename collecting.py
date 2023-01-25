@@ -1,4 +1,6 @@
 from send import execute_query
+from readfile import readfile
+
 def sql_request(user):
   '''функция сбора запроса'''
   try:
@@ -6,7 +8,10 @@ def sql_request(user):
     while True:
       request_sql += input('SQL >> ') + '\n'
       if len(request_sql.rstrip()) > 0:
-        if request_sql.rstrip()[-1] == ';':
+        if request_sql.rstrip()[:9].lower() == 'exec file' and request_sql.rstrip()[-1] == ';':
+          execute_query(user, readfile(request_sql.split()[-1][:-1]))
+          request_sql = ''
+        elif request_sql.rstrip()[-1] == ';':
           execute_query(user, request_sql)
           request_sql = ''
         elif request_sql.rstrip()[-2:] == '\q':
