@@ -5,7 +5,8 @@ import logging
 from collecting import sql_request
 from prettytable import PrettyTable
 from table import show_table
-from authorization import data_collection
+from authorization import data_collection,identification
+
 
 class DB:
   def __init__(self, data_bd):
@@ -96,7 +97,7 @@ def main():
     print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
     res=input().strip()
     if res.lower()=='д' or res ==" ":
-      pass
+      identification()
     elif res.lower()=='н':
       data_bd=data_collection()
       user = DB(data_bd)

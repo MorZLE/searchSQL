@@ -1,4 +1,6 @@
 import re
+import inline
+
 
 def data_collection():
     print("Введите номер вендора: \n1-postgres \n2-MySQL \n3-MSserver")
@@ -23,4 +25,17 @@ def data_collection():
                 'Вендор в данный момент не поддерживается')
             data_collection()
     return db_info
+
+def identification():
+    inpt = inline.input
+    log=input('Введите логин: ')
+    pswd=inpt('Введите пароль: ',secret=True)
+
+identification()
+
+def registration():
+    log = input('Введите логин: ')
+    input = inline.input
+    pswd = input('Введите пароль: ',secret=True)
+
 
