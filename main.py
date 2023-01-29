@@ -5,7 +5,7 @@ import logging
 from collecting import sql_request
 from prettytable import PrettyTable
 from table import show_table
-from authorization import data_collection,identification
+from authorization import data_collection,identification,registration
 
 
 class DB:
@@ -63,48 +63,22 @@ class DB:
         print(err)
 
 def main():
-  def start():
-    print('Если хотите посмотреть название таблиц, то введите ключ -a после названия файла')
-    print('Введите \q для выхода')
-
-    try:
-     print("Введите название файла номер вендора 1-postgres, 2-MySQL, 3-MSserver и ключ")
-     input_data = input().split()
-    except KeyboardInterrupt:
-      print('\nПрограмма закрыта')
-      exit(0)
-
-    try:
-      key=''
-      if len(input_data)>2:
-        key = input_data[2]
-      file_name = input_data[0]
-      type_bd = input_data[1]
-      user=DB(file_name,type_bd)
-      user.connect()
-    except IndexError:
-      print('Нехватает данных, программа закрыта')
-      exit(0)
-
-    if key == '-a':
-      print('Cписок доступных таблиц:')
-      user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
-    sql_request(user)
-
-  #start()
-
   def start_new():
     print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
     res=input().strip()
-    if res.lower()=='д' or res ==" ":
-      identification()
-    elif res.lower()=='н':
-      data_bd=data_collection()
+    try:
+      if res.lower()=='д' or res =="":
+        data_bd=identification()
+      elif res.lower()=='н':
+        data_bd=registration()
+      else:
+        start_new()
       user = DB(data_bd)
       user.connect()
       sql_request(user)
-    else:
-      start_new()
+    except TypeError:
+        print('Пользователь не найден')
+        start_new()
 
   start_new()
 

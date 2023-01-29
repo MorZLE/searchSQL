@@ -1,5 +1,6 @@
 import re
-import inline
+import stdiomask
+
 
 
 def data_collection():
@@ -15,9 +16,8 @@ def data_collection():
             print('Шаблон строки подключения для MySQL:Server=<server>;Database=<database>;UID=<user id>;PWD=<password>')
             db_info = re.sub('[;| =|]', " ", input()).split()
             db_info.append('2')
-            print(db_info)
         case '3':
-            print('Шаблон строки подключения для MSserver: username:password@host:port/dbname')
+            print('Шаблон строки подключения для MSserver: Server=Server,Port;Database=DatabaseName;User Id=userid;Password=Passwordмм')
             db_info = re.sub('[:|@|/]', " ", input()).split()
             db_info.append('3')
         case _:
@@ -27,15 +27,23 @@ def data_collection():
     return db_info
 
 def identification():
-    inpt = inline.input
-    log=input('Введите логин: ')
-    pswd=inpt('Введите пароль: ',secret=True)
+    log=input('Введите логин: ').strip()
+    pswd = input('Введите пароль: ').strip()
+    with open('user_data.txt', 'r', encoding='utf-8') as f:
+        for i in f:
+            i = i.split()
+            if i[0] == log and i[1] == pswd:
+                return i[2:]
+                break
 
-identification()
+
 
 def registration():
-    log = input('Введите логин: ')
-    input = inline.input
-    pswd = input('Введите пароль: ',secret=True)
-
+    db_info=data_collection()
+    log = input('Введите логин: ').strip()
+    pswd = input('Введите пароль: ').strip()
+    with open('user_data.txt', 'a', encoding='utf-8') as f:
+        print(f"{log} {pswd} {' '.join(db_info)}",file=f)
+        print('Пользователь создан')
+        return db_info
 
