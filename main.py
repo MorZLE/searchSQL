@@ -65,23 +65,26 @@ class DB:
 def main():
   def start_new():
     print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
-    res=input().strip()
+    res = input().strip()
     try:
-      if res.lower()=='д' or res =="":
-        data_bd=identification()
-      elif res.lower()=='н':
-        data_bd=registration()
+      if res.lower() == 'д' or res == "":
+        data_bd = identification()
+      elif res.lower() == 'н':
+        data_bd = registration()
       else:
         start_new()
       user = DB(data_bd)
       user.connect()
       sql_request(user)
     except TypeError:
-        print('Пользователь не найден')
-        start_new()
+      print('Пользователь не найден')
+      start_new()
 
-  start_new()
 
+  try:
+    start_new()
+  except KeyboardInterrupt:
+    logging.error("Программа закрыта")
 #postgres:111111@127.0.0.1:5432/demo
 
 if __name__ == '__main__':

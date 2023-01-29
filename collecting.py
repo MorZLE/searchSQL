@@ -22,9 +22,9 @@ def sql_request(user):
           request_sql = ''
           print("Запрос стерся")
   except KeyboardInterrupt:
-    logging.warning('\nПрограмма закрыта')
+    logging.warning('\nПрограмма закрыта\nБаза отключена')
     user.connection.close()
-    logging.warning("База отключена")
+
 
 
 
