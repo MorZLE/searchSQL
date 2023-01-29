@@ -5,45 +5,38 @@ import logging
 from collecting import sql_request
 from prettytable import PrettyTable
 from table import show_table
-
+from authorization import data_collection
 
 class DB:
-  def __init__(self, file_name, type_bd):
-    self.file_name = file_name
-    self.type_bd = type_bd
+  def __init__(self, data_bd):
+    self.data_bd = data_bd
+    self.type_bd = data_bd[-1]
     self.cursor=None
     self.connection = None
 
   def connect(self):
-    try:
-      with open(self.file_name, encoding='UTF-8') as file:
         try:
-          match self.type_bd:
+          match self.data_bd[-1]:
             case '1':
               self.connection = psycopg2.connect(
-                database=file.readline().strip(),
-                user=file.readline().strip(),
-                password=file.readline().strip(),
-                host=file.readline().strip(),
-                port=file.readline().strip())
+                database=self.data_bd[4],
+                user=self.data_bd[0],
+                password=self.data_bd[1],
+                host=self.data_bd[2],
+                port=self.data_bd[3])
 
             case '2':
               self.connection = mysql.connector.connect(
-                host=file.readline().strip(),
-                user=file.readline().strip(),
-                passwd=file.readline().strip(),
-                db=file.readline().strip())
+                host=self.data_bd[1],
+                user=self.data_bd[5],
+                passwd=self.data_bd[-2],
+                db=self.data_bd[3])
 
             case  '3':
-              self.connection = pyodbc.connect(f"Driver={file.readline().strip()};"
-                                               f"Server={file.readline().strip()};"
-                                               f"Database={file.readline().strip()};"
-                                               f"Trusted_Connection={file.readline().strip()};")
-
-            case _:
-              print(
-                'Вендор в данный момент не поддерживается. Список доступных вендоров: 1-postgres, 2-MySQL, 3-MSserver')
-              exit(0)
+              self.connection = pyodbc.connect(f"Driver={self.data_bd[1]};"
+                                               f"Server={self.data_bd[1]};"
+                                               f"Database={self.data_bd[1]};"
+                                               f"Trusted_Connection={self.data_bd[1]};")
 
           self.cursor = self.connection.cursor()
           print("База подключена")
@@ -51,10 +44,6 @@ class DB:
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError):
             logging.error("Некорректные данные\nПрограмма закрыта")
             exit(0)
-
-    except FileNotFoundError:
-      logging.error(f"Файл {file_name} не найден")
-      exit(0)
 
   def exec(self, query):
     '''функция отправки запроса'''
@@ -72,34 +61,53 @@ class DB:
       else:
         print(err)
 
-
 def main():
-  print('Если хотите посмотреть название таблиц, то введите ключ -a после названия файла')
-  print('Введите \q для выхода')
+  def start():
+    print('Если хотите посмотреть название таблиц, то введите ключ -a после названия файла')
+    print('Введите \q для выхода')
 
-  try:
-   print("Введите название файла номер вендора 1-postgres, 2-MySQL, 3-MSserver и ключ")
-   input_data = input().split()
-  except KeyboardInterrupt:
-    print('\nПрограмма закрыта')
-    exit(0)
+    try:
+     print("Введите название файла номер вендора 1-postgres, 2-MySQL, 3-MSserver и ключ")
+     input_data = input().split()
+    except KeyboardInterrupt:
+      print('\nПрограмма закрыта')
+      exit(0)
 
-  try:
-    key=''
-    if len(input_data)>2:
-      key = input_data[2]
-    file_name = input_data[0]
-    type_bd = input_data[1]
-    user=DB(file_name,type_bd)
-    user.connect()
-  except IndexError:
-    print('Нехватает данных, программа закрыта')
-    exit(0)
+    try:
+      key=''
+      if len(input_data)>2:
+        key = input_data[2]
+      file_name = input_data[0]
+      type_bd = input_data[1]
+      user=DB(file_name,type_bd)
+      user.connect()
+    except IndexError:
+      print('Нехватает данных, программа закрыта')
+      exit(0)
 
-  if key == '-a':
-    print('Cписок доступных таблиц:')
-    user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
-  sql_request(user)
+    if key == '-a':
+      print('Cписок доступных таблиц:')
+      user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
+    sql_request(user)
+
+  #start()
+
+  def start_new():
+    print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
+    res=input().strip()
+    if res.lower()=='д' or res ==" ":
+      pass
+    elif res.lower()=='н':
+      data_bd=data_collection()
+      user = DB(data_bd)
+      user.connect()
+      sql_request(user)
+    else:
+      start_new()
+
+  start_new()
+
+#postgres:111111@127.0.0.1:5432/demo
 
 if __name__ == '__main__':
   main()
