@@ -1,8 +1,8 @@
 import re
-import stdiomask
+import sqlite3 as sl
 
 
-
+con = sl.connect('data_user.db')
 def data_collection():
     print("Введите номер вендора: \n1-postgres \n2-MySQL \n3-MSserver")
     res=input().strip()
@@ -29,12 +29,12 @@ def data_collection():
 def identification():
     log=input('Введите логин: ').strip()
     pswd = input('Введите пароль: ').strip()
-    with open('user_data.txt', 'r', encoding='utf-8') as f:
-        for i in f:
-            i = i.split()
-            if i[0] == log and i[1] == pswd:
-                return i[2:]
-                break
+    with con:
+        data = con.execute('SELECT db_info FROM USER WHERE login = ? and password = ?', (str(log), str(pswd)))
+        for row in data:
+            return "".join(row).split()
+            break
+
 
 
 
@@ -42,8 +42,15 @@ def registration():
     db_info=data_collection()
     log = input('Введите логин: ').strip()
     pswd = input('Введите пароль: ').strip()
-    with open('user_data.txt', 'a', encoding='utf-8') as f:
-        print(f"{log} {pswd} {' '.join(db_info)}",file=f)
-        print('Пользователь создан')
+    with con:
+        data = con.execute('SELECT * FROM USER WHERE login = ?', (str(log),))
+        for row in data:
+            if row != None:
+                print('Этот логин уже занят')
+                registration()
+            else:
+                con.execute('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
+                            (str(log), str(pswd), ' '.join(db_info)))
+                print('Пользователь создан')
         return db_info
 
