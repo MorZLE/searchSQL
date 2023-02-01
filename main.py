@@ -28,10 +28,10 @@ class DB:
 
             case '2':
               self.connection = mysql.connector.connect(
-                host=self.data_bd[1],
                 user=self.data_bd[5],
-                passwd=self.data_bd[-2],
-                db=self.data_bd[3])
+                password=self.data_bd[-2],
+                host=self.data_bd[1],
+                database=self.data_bd[3])
 
             case  '3':
               self.connection = pyodbc.connect(f"Driver={self.data_bd[1]};"
@@ -86,6 +86,7 @@ def main():
   except KeyboardInterrupt:
     logging.error("Программа закрыта")
 #postgres:111111@127.0.0.1:5432/demo
+#Server=<127.0.0.1>;Database=<mydb>;UID=<root>;PWD=<111111>
 
 if __name__ == '__main__':
   main()
