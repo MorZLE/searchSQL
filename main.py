@@ -42,7 +42,7 @@ class DB:
           self.cursor = self.connection.cursor()
           print("База подключена")
 
-        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError):
+        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError,IndexError):
             logging.error("Некорректные данные\nПрограмма закрыта")
             exit(0)
 
@@ -86,7 +86,7 @@ def main():
   except KeyboardInterrupt:
     logging.error("Программа закрыта")
 #postgres:111111@127.0.0.1:5432/demo
-#Server=<127.0.0.1>;Database=<mydb>;UID=<root>;PWD=<111111>
+#Server=127.0.0.1;Database=test;UID=root;PWD=111111
 
 if __name__ == '__main__':
   main()
