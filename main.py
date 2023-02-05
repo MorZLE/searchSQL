@@ -3,7 +3,7 @@ import mysql.connector
 import pyodbc
 import logging
 from collecting import sql_request
-from prettytable import PrettyTable
+from prettytable import PrettyTable,from_db_cursor
 from table import show_table
 from authorization import data_collection,identification,registration
 

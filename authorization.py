@@ -66,7 +66,12 @@ def hs_rs(req):
 
 def out_rs(nm_tb):
     with con:
-        return cur.execute(f"select request from {nm_tb}")
+        return cur.execute(f"select * from {nm_tb}")
 
-
-
+def last_rs():
+    with con:
+        data = cur.execute("SELECT request FROM history_rs ORDER BY ID DESC LIMIT 1")
+        for row in data:
+            return "".join(row).split()
+            break
+print(*last_rs())

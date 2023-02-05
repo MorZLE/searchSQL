@@ -1,6 +1,5 @@
 import logging
-from prettytable import PrettyTable
-from authorization import hs_rs,out_rs
+from authorization import hs_rs,out_rs,last_rs
 from table import show_tb_name
 
 
@@ -14,6 +13,9 @@ def sql_request(user):
         if request_sql.rstrip()[:9].lower() == 'exec file' and request_sql.rstrip()[-1] == ';':
           user.exec(readfile(request_sql.split()[-1][:-1]))
           request_sql = ''
+        elif request_sql.rstrip()[-3:] == '\dt':
+          user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
+          request_sql = ''
         elif request_sql.rstrip()[-2:] == '\q':
           logging.warning('\nПрограмма закрыта\nБаза отключена')
           user.connection.close()
@@ -22,10 +24,15 @@ def sql_request(user):
           request_sql = ''
           print("Запрос стерся")
         elif request_sql.rstrip()[:7] =="HISTORY":
-          show_tb_name(out_rs('history_rs'))
           print("Вывод всех запросов пользователя")
+          show_tb_name(out_rs('history_rs'))
+          request_sql = ''
+        elif request_sql.rstrip()[-11:] =="REPEAT LAST":
+          print("Повторение последнего запроса")
+          user.exec(*last_rs)
+          request_sql = ''
         elif request_sql.rstrip()[-1] == ';':
-          hs_rs(request_sql)
+          hs_rs(request_sql.strip())
           user.exec(request_sql)
           request_sql = ''
 
