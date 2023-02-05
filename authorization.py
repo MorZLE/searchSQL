@@ -4,6 +4,9 @@ import sqlite3 as sl
 
 con = sl.connect('data_user.db')
 cur = con.cursor()
+log=None
+user_id=None
+
 def data_collection():
     print("Введите номер вендора: \n1-postgres \n2-MySQL \n3-MSserver")
     res=input().strip()
@@ -35,8 +38,10 @@ def data_collection():
 
 
 def identification():
+    global log
     log=input('Введите логин: ').strip()
     pswd = input('Введите пароль: ').strip()
+    user_id_bd(log)
     with con:
         data = cur.execute('SELECT db_info FROM USER WHERE login = ? and password = ?', (str(log), str(pswd)))
         for row in data:
@@ -44,6 +49,7 @@ def identification():
             break
 
 def registration():
+    global log
     db_info=data_collection()
     log = input('Введите логин: ').strip()
     pswd = input('Введите пароль: ').strip()
@@ -56,22 +62,30 @@ def registration():
         else:
             cur.execute('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
                               (str(log), str(pswd), ' '.join(db_info)))
-
+            user_id_bd(log)
     return db_info
 
-def hs_rs(req):
-    with con:
-        cur.execute('INSERT INTO history_rs (request) values(?)',([req]))
+def user_id_bd(log):
+    '''функция получения id пользователя'''
+    global user_id
+    data = cur.execute('SELECT id FROM USER WHERE login = ?', (str(log),))
+    for row in data:
+        user_id = row[0]
 
+def hs_rs(req):
+    '''функция заполнения истории запроса пользователя'''
+    with con:
+        cur.execute('INSERT INTO history_rs (request,user_id) values(?,?)',([req,str(user_id)]))
 
 def out_rs(nm_tb):
+    '''функция получения истории запроса определенного пользователя'''
     with con:
-        return cur.execute(f"select * from {nm_tb}")
+        return cur.execute(f"select request,time from {nm_tb} WHERE user_id = {int(user_id)}")
 
 def last_rs():
+    '''функция отправки последнего запроса определенного пользователя'''
     with con:
-        data = cur.execute("SELECT request FROM history_rs ORDER BY ID DESC LIMIT 1")
+        data = cur.execute(f"SELECT request FROM history_rs  WHERE user_id = {int(user_id)} ORDER BY ID DESC LIMIT 1")
         for row in data:
             return "".join(row).split()
-            break
-print(*last_rs())
+
