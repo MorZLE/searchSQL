@@ -38,15 +38,19 @@ def data_collection():
 
 
 def identification():
-    global log
-    log=input('Введите логин: ').strip()
-    pswd = input('Введите пароль: ').strip()
-    user_id_bd(log)
-    with con:
-        data = cur.execute('SELECT db_info FROM USER WHERE login = ? and password = ?', (str(log), str(pswd)))
-        for row in data:
-            return "".join(row).split()
-            break
+    try:
+        global log
+        log=input('Введите логин: ').strip()
+        pswd = input('Введите пароль: ').strip()
+        user_id_bd(log)
+        with con:
+            data = cur.execute('SELECT db_info FROM USER WHERE login = ? and password = ?', (str(log), str(pswd)))
+            for row in data:
+                return "".join(row).split()
+                break
+    except TypeError as err:
+            print('Неверный данные')
+
 
 def registration():
     global log

@@ -10,7 +10,7 @@ def show_table(result,t):
             print('Данных для вывода нету!')
             start_new()
         else:
-            print(err)
+            print(err,'table')
 
 
 def show_tb_name(result):

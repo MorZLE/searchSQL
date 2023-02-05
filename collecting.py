@@ -23,11 +23,11 @@ def sql_request(user):
         elif request_sql.rstrip()[-2:] == '\c' or request_sql.rstrip()[-6:] == '\clear':
           request_sql = ''
           print("Запрос стерся")
-        elif request_sql.rstrip()[:7] =="HISTORY":
+        elif request_sql.rstrip().upper()[:8] =="\HISTORY":
           print("Вывод всех запросов пользователя")
           show_tb_name(out_rs('history_rs'))
           request_sql = ''
-        elif request_sql.rstrip()[:11] =="REPEAT LAST":
+        elif request_sql.rstrip().upper()[:7] =="\REPEAT":
           print("Повторение последнего запроса")
           txt=last_rs()
           user.exec(txt)

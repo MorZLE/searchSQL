@@ -54,14 +54,17 @@ class DB:
   def exec(self, query):
     '''функция отправки запроса'''
     try:
-      self.cursor.execute(query)
+      self.cursor.execute(query.rstrip())
       self.connection.commit() #не работает с mysql
       result = self.cursor.fetchall()
+
       t = PrettyTable([description[0] for description in self.cursor.description])
       show_table(result,t)
     except (psycopg2.errors.InFailedSqlTransaction,mysql.connector.errors.ProgrammingError):
       self.connection.rollback()
-    except (psycopg2.ProgrammingError,mysql.connector.errors.DataError,mysql.connector.errors.DatabaseError) as err:
+    except TypeError:
+      pass
+    except (psycopg2.ProgrammingError,mysql.connector.errors.DataError,mysql.connector.errors.DatabaseError,mysql.connector.errors.ProgrammingError) as err:
       if 'no results to fetch' in str(err):
         print('Нету данных для вывода!')
       else:
@@ -72,6 +75,7 @@ def main():
     print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
     res = input().strip()
     try:
+
       if res.lower() == 'д' or res == "":
         data_bd = identification()
       elif res.lower() == 'н':
@@ -79,16 +83,14 @@ def main():
       else:
         start_new()
       user = DB(data_bd)
-      user.connect()
-      sql_request(user)
-    except TypeError as err:
-        print(err)
-        sql_request(user)
-
+    except TypeError:
+      print('Неверные данные')
+      start_new()
+    user.connect()
+    sql_request(user)
 
   try:
     start_new()
-
   except KeyboardInterrupt:
     logging.error("Программа закрыта")
 #postgres:111111@127.0.0.1:5432/demo
