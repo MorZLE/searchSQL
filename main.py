@@ -1,3 +1,4 @@
+
 import psycopg2
 import mysql.connector
 import pyodbc
@@ -6,6 +7,7 @@ from collecting import sql_request
 from prettytable import PrettyTable,from_db_cursor
 from table import show_table
 from authorization import data_collection,identification,registration
+
 
 
 class DB:
@@ -25,21 +27,24 @@ class DB:
                 password=self.data_bd[1],
                 host=self.data_bd[2],
                 port=self.data_bd[3])
-
+              self.cursor = self.connection.cursor()
             case '2':
-              self.connection = mysql.connector.connect(
-                user=self.data_bd[5],
-                password=self.data_bd[-2],
-                host=self.data_bd[1],
-                database=self.data_bd[3])
-
+              try:
+                self.connection = mysql.connector.connect(
+                  user=self.data_bd[5],
+                  password=self.data_bd[-2],
+                  host=self.data_bd[1],
+                  database=self.data_bd[3])
+                self.cursor = self.connection.cursor(buffered=True)
+              except Error as e:
+                print(e)
             case  '3':
               self.connection = pyodbc.connect(f"Driver={self.data_bd[1]};"
                                                f"Server={self.data_bd[1]};"
                                                f"Database={self.data_bd[1]};"
                                                f"Trusted_Connection={self.data_bd[1]};")
 
-          self.cursor = self.connection.cursor()
+              self.cursor = self.connection.cursor()
           print("База подключена")
 
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError,IndexError):
@@ -50,13 +55,13 @@ class DB:
     '''функция отправки запроса'''
     try:
       self.cursor.execute(query)
-      self.connection.commit()
+      self.connection.commit() #не работает с mysql
       result = self.cursor.fetchall()
       t = PrettyTable([description[0] for description in self.cursor.description])
       show_table(result,t)
-    except psycopg2.errors.InFailedSqlTransaction:
+    except (psycopg2.errors.InFailedSqlTransaction,mysql.connector.errors.ProgrammingError):
       self.connection.rollback()
-    except psycopg2.ProgrammingError as err:
+    except (psycopg2.ProgrammingError,mysql.connector.errors.DataError,mysql.connector.errors.DatabaseError) as err:
       if 'no results to fetch' in str(err):
         print('Нету данных для вывода!')
       else:
@@ -76,13 +81,14 @@ def main():
       user = DB(data_bd)
       user.connect()
       sql_request(user)
-    except TypeError:
-      print('Пользователь не найден')
-      start_new()
+    except TypeError as err:
+        print(err)
+        sql_request(user)
 
 
   try:
     start_new()
+
   except KeyboardInterrupt:
     logging.error("Программа закрыта")
 #postgres:111111@127.0.0.1:5432/demo

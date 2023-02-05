@@ -1,7 +1,7 @@
 import logging
 from authorization import hs_rs,out_rs,last_rs
 from table import show_tb_name
-
+from readfile import readfile
 
 def sql_request(user):
   '''функция сбора запроса'''
@@ -13,10 +13,10 @@ def sql_request(user):
         if request_sql.rstrip()[:9].lower() == 'exec file' and request_sql.rstrip()[-1] == ';':
           user.exec(readfile(request_sql.split()[-1][:-1]))
           request_sql = ''
-        elif request_sql.rstrip()[-3:] == '\dt':
+        elif request_sql.rstrip()[:3] == '\dt':
           user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
           request_sql = ''
-        elif request_sql.rstrip()[-2:] == '\q':
+        elif request_sql.rstrip()[:2] == '\q':
           logging.warning('\nПрограмма закрыта\nБаза отключена')
           user.connection.close()
           exit(0)
@@ -27,9 +27,10 @@ def sql_request(user):
           print("Вывод всех запросов пользователя")
           show_tb_name(out_rs('history_rs'))
           request_sql = ''
-        elif request_sql.rstrip()[-11:] =="REPEAT LAST":
+        elif request_sql.rstrip()[:11] =="REPEAT LAST":
           print("Повторение последнего запроса")
-          user.exec(*last_rs)
+          txt=last_rs()
+          user.exec(txt)
           request_sql = ''
         elif request_sql.rstrip()[-1] == ';':
           hs_rs(request_sql.strip())

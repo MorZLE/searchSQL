@@ -87,5 +87,5 @@ def last_rs():
     with con:
         data = cur.execute(f"SELECT request FROM history_rs  WHERE user_id = {int(user_id)} ORDER BY ID DESC LIMIT 1")
         for row in data:
-            return "".join(row).split()
+            return "".join(row)
 
