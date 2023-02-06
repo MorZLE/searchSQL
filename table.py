@@ -1,6 +1,17 @@
-from prettytable import PrettyTable
-def show_table(result,cursor):
-  t = PrettyTable([description[0] for description in cursor.description])
-  for row in result:
-    t.add_row([*row])
-  print(t)
+import sqlite3 as sl
+from prettytable import from_db_cursor
+def show_table(result,t):
+    try:
+        for row in result:
+            t.add_row([*row])
+        print(t)
+    except TypeError as err:
+        if 'NoneType' in str(err):
+            print('Данных для вывода нету!')
+            start_new()
+        else:
+            print(err,'table')
+
+
+def show_tb_name(result):
+    print(from_db_cursor(result))

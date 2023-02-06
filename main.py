@@ -1,88 +1,101 @@
+
 import psycopg2
 import mysql.connector
 import pyodbc
+import logging
 from collecting import sql_request
-from send import execute_query
+from prettytable import PrettyTable,from_db_cursor
+from table import show_table
+from authorization import data_collection,identification,registration
+
 
 
 
 class DB:
-  def __init__(self, file_name, type_bd):
-    self.file_name = file_name
-    self.type_bd = type_bd
+  def __init__(self, data_bd):
+    self.data_bd = data_bd
+    self.type_bd = data_bd[-1]
     self.cursor=None
     self.connection = None
 
-  def DB_connection(self):
-    try:
-      with open(self.file_name, encoding='UTF-8') as file:
+  def connect(self):
         try:
-          match self.type_bd:
+          match self.data_bd[-1]:
             case '1':
               self.connection = psycopg2.connect(
-                database=file.readline().strip(),
-                user=file.readline().strip(),
-                password=file.readline().strip(),
-                host=file.readline().strip(),
-                port=file.readline().strip())
-
-
-              print("База подключена")
+                database=self.data_bd[4],
+                user=self.data_bd[0],
+                password=self.data_bd[1],
+                host=self.data_bd[2],
+                port=self.data_bd[3])
+              self.cursor = self.connection.cursor()
             case '2':
-              self.connection = mysql.connector.connect(
-                host=file.readline().strip(),
-                user=file.readline().strip(),
-                passwd=file.readline().strip(),
-                db=file.readline().strip())
-
-              print("База подключена")
+              try:
+                self.connection = mysql.connector.connect(
+                  user=self.data_bd[5],
+                  password=self.data_bd[-2],
+                  host=self.data_bd[1],
+                  database=self.data_bd[3])
+                self.cursor = self.connection.cursor(buffered=True)
+              except Error as e:
+                print(e)
             case  '3':
-              self.connection = pyodbc.connect(f"Driver={file.readline().strip()};"
-                                               f"Server={file.readline().strip()};"
-                                               f"Database={file.readline().strip()};"
-                                               f"Trusted_Connection={file.readline().strip()};")
+              self.connection = pyodbc.connect(f"Driver={self.data_bd[1]};"
+                                               f"Server={self.data_bd[1]};"
+                                               f"Database={self.data_bd[1]};"
+                                               f"Trusted_Connection={self.data_bd[1]};")
 
+              self.cursor = self.connection.cursor()
+          print("База подключена")
 
-              print("База подключена")
-            case _:
-              print(
-                'Вендор в данный момент не поддерживается. Список доступных вендоров: 1-postgres, 2-MySQL, 3-MSserver')
-              exit(0)
-          self.cursor = self.connection.cursor()
-
-        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError):
-            print("Некорректные данные\nПрограмма закрыта")
+        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError,IndexError):
+            logging.error("Некорректные данные\nПрограмма закрыта")
             exit(0)
 
-    except FileNotFoundError:
-      print("Файл не найден")
-      exit(0)
+  def exec(self, query):
+    '''функция отправки запроса'''
+    try:
+      self.cursor.execute(query.rstrip())
+      self.connection.commit() #не работает с mysql
+      result = self.cursor.fetchall()
+
+      t = PrettyTable([description[0] for description in self.cursor.description])
+      show_table(result,t)
+    except (psycopg2.errors.InFailedSqlTransaction,mysql.connector.errors.ProgrammingError):
+      self.connection.rollback()
+    except TypeError:
+      pass
+    except (psycopg2.ProgrammingError,mysql.connector.errors.DataError,mysql.connector.errors.DatabaseError,mysql.connector.errors.ProgrammingError) as err:
+      if 'no results to fetch' in str(err):
+        print('Нету данных для вывода!')
+      else:
+        print(err)
 
 def main():
-  print('Если хотите посмотреть название таблиц, то введите ключ -a после названия файла, по умолчанию введите -p')
-  print('Введите \q для выхода')
+  def start_new():
+    print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
+    res = input().strip()
+    try:
+
+      if res.lower() == 'д' or res == "":
+        data_bd = identification()
+      elif res.lower() == 'н':
+        data_bd = registration()
+      else:
+        start_new()
+      user = DB(data_bd)
+    except TypeError:
+      print('Неверные данные')
+      start_new()
+    user.connect()
+    sql_request(user)
 
   try:
-   print("Введите название файла, ключ и номер вендора 1-postgres, 2-MySQL, 3-MSserver:")
-   input_data = input().split()
+    start_new()
   except KeyboardInterrupt:
-    print('\nПрограмма закрыта')
-    exit(0)
-
-  try:
-    file_name = input_data[0]
-    key = input_data[1]
-    type_bd=input_data[2]
-    user=DB(file_name,type_bd)
-    user.DB_connection()
-  except IndexError:
-    print('Нехватает данных, программа закрыта')
-    exit(0)
-
-  if key == '-a':
-    print('Cписок доступных таблиц:')
-    execute_query(user,"SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
-  sql_request(user)
+    logging.error("Программа закрыта")
+#postgres:111111@127.0.0.1:5432/demo
+#Server=127.0.0.1;Database=test;UID=root;PWD=111111
 
 if __name__ == '__main__':
   main()
