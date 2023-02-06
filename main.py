@@ -5,6 +5,7 @@ from collecting import sql_request
 from send import execute_query
 
 
+
 class DB:
   def __init__(self, file_name, type_bd):
     self.file_name = file_name
