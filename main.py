@@ -41,9 +41,8 @@ class DB:
             case  '3':
               self.connection = pyodbc.connect(f"Driver={self.data_bd[1]};"
                                                f"Server={self.data_bd[1]};"
-                                               f"Database={self.data_bd[1]};"
+                                               f"Database={self.data_bd[3]};"
                                                f"Trusted_Connection={self.data_bd[1]};")
-
               self.cursor = self.connection.cursor()
           print("База подключена")
 
