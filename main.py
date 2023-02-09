@@ -4,9 +4,9 @@ import mysql.connector
 import pyodbc
 import logging
 from collecting import sql_request
-from prettytable import PrettyTable,from_db_cursor
+from prettytable import PrettyTable
 from table import show_table
-from authorization import data_collection,identification,registration
+from authorization import Identi
 
 
 
@@ -74,11 +74,11 @@ def main():
     print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
     res = input().strip()
     try:
-
+      author=Identi()
       if res.lower() == 'д' or res == "":
-        data_bd = identification()
+        data_bd = author.identification()
       elif res.lower() == 'н':
-        data_bd = registration()
+        data_bd = author.registration()
       else:
         start_new()
       user = DB(data_bd)
@@ -86,7 +86,7 @@ def main():
       print('Неверные данные')
       start_new()
     user.connect()
-    sql_request(user)
+    sql_request(user,author)
 
   try:
     start_new()

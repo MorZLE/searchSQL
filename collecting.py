@@ -1,15 +1,16 @@
 import logging
-from authorization import hs_rs,out_rs,last_rs
+from authorization import Identi,last_rs,out_rs
 from table import show_tb_name
 from readfile import readfile
 
-def sql_request(user):
+
+def sql_request(user,author):
   '''функция сбора запроса'''
   try:
     request_sql = ''
     while True:
       request_sql += input('SQL >> ') + '\n'
-      if len(request_sql.rstrip()) > 0:
+      if len(request_sql.rstrip()) != 0:
         if request_sql.rstrip()[:9].lower() == 'exec file' and request_sql.rstrip()[-1] == ';':
           user.exec(readfile(request_sql.split()[-1][:-1]))
           request_sql = ''
@@ -25,15 +26,15 @@ def sql_request(user):
           print("Запрос стерся")
         elif request_sql.rstrip().upper()[:8] =="\HISTORY":
           print("Вывод всех запросов пользователя")
-          show_tb_name(out_rs('history_rs'))
+          show_tb_name(author.out_rs())
           request_sql = ''
         elif request_sql.rstrip().upper()[:7] =="\REPEAT":
           print("Повторение последнего запроса")
-          txt=last_rs()
+          txt=author.last_rs()
           user.exec(txt)
           request_sql = ''
         elif request_sql.rstrip()[-1] == ';':
-          hs_rs(request_sql.strip())
+          author.hs_rs(request_sql.strip())
           user.exec(request_sql)
           request_sql = ''
 
