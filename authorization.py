@@ -13,8 +13,8 @@ class Identi():
         try:
             self.login=input('Введите логин: ').strip()
             self.pswd = input('Введите пароль: ').strip()
-            user_id_bd(self.login)
-            with con:
+            self.user_id_bd(self.login)
+            with self.con:
                 data = self.cur.execute('SELECT db_info FROM USER WHERE login = ? and password = ?', (str(self.login), str(self.pswd)))
                 for row in data:
                     return "".join(row).split()
@@ -26,36 +26,36 @@ class Identi():
         self.db_info=data_collection()
         self.login = input('Введите логин: ').strip()
         self.pswd = input('Введите пароль: ').strip()
-        with con:
+        with self.con:
             data =  self.cur.execute('SELECT * FROM USER WHERE login = ?', (str(self.login),))
             for row in data:
                if not (row is None):
                   print('Этот логин уже занят')
-                  registration()
+                  self.registration()
             else:
                 self.cur.execute('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
                                   (str(self.login), str(self.pswd), ' '.join(self.db_info)))
-                user_id_bd(self.ogin)
+                self.user_id_bd(self.ogin)
         return self.db_info
     def user_id_bd(self,login):
         '''функция получения id пользователя'''
-        data =  self.cur.execute('SELECT id FROM USER WHERE loginin = ?', (str(login),))
+        data =  self.cur.execute('SELECT id FROM USER WHERE login = ?', (str(login),))
         for row in data:
             self.user_id = row[0]
 
     def hs_rs(self,req):
         '''функция заполнения истории запроса пользователя'''
-        with con:
+        with self.con:
             self.cur.execute('INSERT INTO history_rs (request,user_id) values(?,?)',([req,str(user_id)]))
 
     def out_rs(self):
         '''функция получения истории запроса определенного пользователя'''
-        with con:
+        with self.con:
             return self.cur.execute(f"select request,time from history_rs WHERE user_id = {int(user_id)}")
 
     def last_rs(self):
         '''функция отправки последнего запроса определенного пользователя'''
-        with con:
+        with self.con:
             data = self.cur.execute(f"SELECT request FROM history_rs  WHERE user_id = {int(user_id)} ORDER BY ID DESC LIMIT 1")
             for row in data:
                 return "".join(row)

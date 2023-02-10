@@ -1,11 +1,12 @@
 import logging
-from authorization import Identi,last_rs,out_rs
+from authorization import Identi
 from table import show_tb_name
 from readfile import readfile
 
 
 def sql_request(user,author):
   '''функция сбора запроса'''
+  author=Identi()
   try:
     request_sql = ''
     while True:

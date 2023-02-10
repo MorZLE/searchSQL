@@ -1,5 +1,5 @@
 import logging
-from authorization import hs_rs
+
 
 def readfile(name):
     try:
