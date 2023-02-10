@@ -6,7 +6,6 @@ from readfile import readfile
 
 def sql_request(user,author):
   '''функция сбора запроса'''
-  author=Identi()
   try:
     request_sql = ''
     while True:
@@ -18,7 +17,7 @@ def sql_request(user,author):
         elif request_sql.rstrip()[:3] == '\dt':
           user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
           request_sql = ''
-        elif request_sql.rstrip()[:2] == '\q':
+        elif request_sql.rstrip()[-2:] == '\q':
           logging.warning('\nПрограмма закрыта\nБаза отключена')
           user.connection.close()
           exit(0)

@@ -4,9 +4,6 @@ import sqlite3 as sl
 
 class Identi():
     def __init__(self):
-        self.login = None
-        self.pswd = None
-        self.db_info = None
         self.con = sl.connect('data_user.db')
         self.cur = self.con.cursor()
     def identification(self):
@@ -35,28 +32,29 @@ class Identi():
             else:
                 self.cur.execute('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
                                   (str(self.login), str(self.pswd), ' '.join(self.db_info)))
-                self.user_id_bd(self.ogin)
+                self.user_id_bd(self.login)
         return self.db_info
+
     def user_id_bd(self,login):
         '''функция получения id пользователя'''
-        data =  self.cur.execute('SELECT id FROM USER WHERE login = ?', (str(login),))
+        data =  self.cur.execute('SELECT id FROM USER WHERE login = ?', (str(self.login),))
         for row in data:
             self.user_id = row[0]
 
     def hs_rs(self,req):
         '''функция заполнения истории запроса пользователя'''
         with self.con:
-            self.cur.execute('INSERT INTO history_rs (request,user_id) values(?,?)',([req,str(user_id)]))
+            self.cur.execute('INSERT INTO history_rs (request,user_id) values(?,?)',([req,str(self.user_id)]))
 
     def out_rs(self):
         '''функция получения истории запроса определенного пользователя'''
         with self.con:
-            return self.cur.execute(f"select request,time from history_rs WHERE user_id = {int(user_id)}")
+            return self.cur.execute(f"SELECT request,time FROM history_rs WHERE user_id = {int(self.user_id)}")
 
     def last_rs(self):
         '''функция отправки последнего запроса определенного пользователя'''
         with self.con:
-            data = self.cur.execute(f"SELECT request FROM history_rs  WHERE user_id = {int(user_id)} ORDER BY ID DESC LIMIT 1")
+            data = self.cur.execute(f"SELECT request FROM history_rs  WHERE user_id = {int(self.user_id)} ORDER BY ID DESC LIMIT 1")
             for row in data:
                 return "".join(row)
 
@@ -77,8 +75,11 @@ def data_collection():
                 db_info.append('2')
 
             case 'MSserver':
-                print('Шаблон строки подключения для MSserver: Server=Server,Port;Database=DatabaseName;User Id=userid;Password=Passwordмм')
-                db_info = re.sub('[;| =|>|<|]', " ", input()).split()
+                print('Шаблон строки подключения для MSserver: Server=serverName;UID=UserName;PWD=Password;Database=My_DW;)
+                db_info = [input('Введите драйвер:\n')]
+                s = re.sub('[;| =|>|<|]', " ", input()).split()
+                for i in [1, 3, 5, 7]:
+                    db_info.append(s[i])
                 db_info.append('3')
 
             case _:
