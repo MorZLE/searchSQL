@@ -26,8 +26,6 @@ def main():
     start_new()
   except KeyboardInterrupt:
     logging.error("Программа закрыта")
-#postgres:111111@127.0.0.1:5432/demo
-#Server=127.0.0.1;Database=test;UID=root;PWD=111111
 
 if __name__ == '__main__':
   main()

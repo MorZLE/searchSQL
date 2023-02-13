@@ -6,6 +6,9 @@ class Identi():
     def __init__(self):
         self.con = sl.connect('data_user.db')
         self.cur = self.con.cursor()
+        self.con.execute('CREATE TABLE IF NOT EXISTS USER ( id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, login text, password text, db_info text);')
+        self.con.execute('CREATE TABLE IF NOT EXISTS history_rs (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, request text, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, user_id int);')
+
     def identification(self):
         try:
             self.login=input('Введите логин: ').strip()
@@ -75,7 +78,7 @@ def data_collection():
                 db_info.append('2')
 
             case 'MSserver':
-                print('Шаблон строки подключения для MSserver: Server=serverName;UID=UserName;PWD=Password;Database=My_DW;)
+                print('Шаблон строки подключения для MSserver: Server=serverName;UID=UserName;PWD=Password;Database=My_DW;')
                 db_info = [input('Введите драйвер:\n')]
                 s = re.sub('[;| =|>|<|]', " ", input()).split()
                 for i in [1, 3, 5, 7]:
