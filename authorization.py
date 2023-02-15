@@ -8,6 +8,7 @@ class Identi():
         self.cur = self.con.cursor()
         self.con.execute('CREATE TABLE IF NOT EXISTS USER ( id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, login text, password text, db_info text);')
         self.con.execute('CREATE TABLE IF NOT EXISTS history_rs (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, request text, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, user_id int);')
+        self.con.commit()
 
     def identification(self):
         try:
