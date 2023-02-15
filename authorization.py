@@ -79,9 +79,9 @@ def data_collection():
                 db_info.append('2')
 
             case 'MSserver':
-                print('Шаблон строки подключения для MSserver: Server=serverName;UID=UserName;PWD=Password;Database=My_DW;')
                 db_info = [input('Введите драйвер:\n')]
-                s = re.sub('[;| =|>|<|]', " ", input()).split()
+                print('Шаблон строки подключения для MSserver: Server=serverName;UID=UserName;PWD=Password;Database=My_DW;')
+                s = re.sub('[;| =|>|<|]', " ", input('Введите строку подключения\n')).split()
                 for i in [1, 3, 5, 7]:
                     db_info.append(s[i])
                 db_info.append('3')
