@@ -62,8 +62,8 @@ class DB:
   def exec(self, query):
     '''функция отправки запроса'''
     try:
-      self.cursor.execute(query.rstrip())
-      self.connection.commit() #не работает с mysql
+      self.cursor.execute(query.rstrip()) # тут сделать вывод истории
+      self.connection.commit()
       result = self.cursor.fetchall()
       show_table(result,self.cursor.description)
     except (psycopg2.errors.InFailedSqlTransaction,mysql.connector.errors.ProgrammingError):

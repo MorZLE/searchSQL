@@ -1,5 +1,5 @@
 import logging
-from table import show_tb_name
+from table import show_tb_name,show_table
 from readfile import readfile
 
 
@@ -26,6 +26,7 @@ def sql_request(user,author):
         elif request_sql.rstrip().upper()[:8] =="\HISTORY":
           print("Вывод всех запросов пользователя")
           show_tb_name(author.out_rs())
+          #user.exec(author.out_rs())
           request_sql = ''
         elif request_sql.rstrip().upper()[:7] =="\REPEAT":
           print("Повторение последнего запроса")
