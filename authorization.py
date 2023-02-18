@@ -50,15 +50,15 @@ class Storage(DB):
 
     def hs_rs(self,req):
         '''функция заполнения истории запроса пользователя'''
-        #self.exec('INSERT INTO history_rs (request,user_id) values(?,?)',([req,self.user_id]))
-        with self.connection:
-            self.cursor.execute('INSERT INTO history_rs (request,user_id) values(?,?)',([req,self.user_id]))
+        self.super().exec('INSERT INTO history_rs (request,user_id) values(?,?)',([req,self.user_id]))
+        #with self.connection:
+        #    self.cursor.execute('INSERT INTO history_rs (request,user_id) values(?,?)',([req,self.user_id]))
 
     def out_rs(self):
         '''функция получения истории запроса определенного пользователя'''
-        #self.exec('SELECT request,time FROM history_rs WHERE user_id =?', (self.user_id,))
-        with self.connection:
-           return self.cursor.execute('SELECT request,time FROM history_rs WHERE user_id =?', (self.user_id,))
+        self.super().exec('SELECT request,time FROM history_rs WHERE user_id =?', (self.user_id,))
+        #with self.connection:
+        #  return self.cursor.execute('SELECT request,time FROM history_rs WHERE user_id =?', (self.user_id,))
 
     def last_rs(self):
         '''функция отправки последнего запроса определенного пользователя'''

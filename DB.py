@@ -59,10 +59,10 @@ class DB:
     self.connection.commit()
 
 
-  def exec(self, query):
+  def exec(self, *args):
     '''функция отправки запроса'''
     try:
-      self.cursor.execute(query.rstrip()) # тут сделать вывод истории
+      self.cursor.execute(args) # тут сделать вывод истории
       self.connection.commit()
       result = self.cursor.fetchall()
       show_table(result,self.cursor.description)
