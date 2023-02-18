@@ -1,23 +1,23 @@
 import logging
 from collecting import sql_request
 from DB import DB
-from authorization import Identi
+from authorization import Storage 
 
 def main():
   def start_new():
     print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
     res = input().strip()
     try:
-      author=Identi()
+      author=Storage()
       if res.lower() == 'д' or res == "":
-        data_bd = author.identification()
+        data_db = author.identification()
       elif res.lower() == 'н':
-        data_bd = author.registration()
+        data_db = author.registration()
       else:
         start_new()
-      user = DB(data_bd)
-    except TypeError:
-      print('Неверные данные')
+      user = DB(data_db)
+    except TypeError as err:
+      print(err)
       start_new()
     user.connect()
     sql_request(user,author)

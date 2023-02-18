@@ -1,5 +1,4 @@
 import logging
-from authorization import Identi
 from table import show_tb_name
 from readfile import readfile
 
