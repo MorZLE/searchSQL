@@ -4,7 +4,7 @@ from readfile import readfile
 
 
 def sql_request(user,author):
-  '''функция сбора запроса'''
+  """Функция сбора запроса."""
   try:
     request_sql = ''
     while True:
@@ -20,8 +20,8 @@ def sql_request(user,author):
                res, desc = user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
             case 'MySQL':
                res, desc = user.exec("SHOW TABLES")
-            case '':
-               res, desc = user.exec("SHOW TABLES")
+            case 'MSserver':
+               res, desc = user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
             case 'SQLite':
                res, desc = user.exec("SELECT name FROM sqlite_sequence")
           show_table(res, desc)
