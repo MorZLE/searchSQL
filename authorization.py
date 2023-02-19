@@ -1,5 +1,5 @@
 import re
-import sqlite3 as sl
+from table import show_table
 from DB import DB
 
 
@@ -42,28 +42,30 @@ class Storage(DB):
                 self.get_user_id()
         return self.db_info
 
-    def  get_user_id(self):
+    def get_user_id(self):
         '''функция получения id пользователя'''
         data = self.cursor.execute('SELECT id FROM USER WHERE login = ?', (self.login,))
         for row in data:
             self.user_id = row[0]
 
-    def hs_rs(self,req):
+    def hs_rs(self, req):
         '''функция заполнения истории запроса пользователя'''
-        self.super().exec('INSERT INTO history_rs (request,user_id) values(?,?)',([req,self.user_id]))
-        #with self.connection:
+        self.exec('INSERT INTO history_rs (request,user_id) values (?,?)', req, self.user_id)
+        # with self.connection:
         #    self.cursor.execute('INSERT INTO history_rs (request,user_id) values(?,?)',([req,self.user_id]))
 
     def out_rs(self):
         '''функция получения истории запроса определенного пользователя'''
-        self.super().exec('SELECT request,time FROM history_rs WHERE user_id =?', (self.user_id,))
-        #with self.connection:
+        res, desc = self.exec('SELECT request,time FROM history_rs WHERE user_id =?', self.user_id)
+        show_table(res, desc)
+        # with self.connection:
         #  return self.cursor.execute('SELECT request,time FROM history_rs WHERE user_id =?', (self.user_id,))
 
     def last_rs(self):
         '''функция отправки последнего запроса определенного пользователя'''
         with self.connection:
-            data = self.cursor.execute("SELECT request FROM history_rs  WHERE user_id = ? ORDER BY ID DESC LIMIT 1",(self.user_id,))
+            data = self.cursor.execute("SELECT request FROM history_rs  WHERE user_id = ? ORDER BY ID DESC LIMIT 1",
+                                       (self.user_id,))
             for row in data:
                 return "".join(row)
 

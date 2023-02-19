@@ -49,6 +49,7 @@ class DB:
       logging.error("Некорректные данные\nПрограмма закрыта")
       '''Перезапуск функции старта из main'''
       exit(0)
+
   def con_db_app(self):
     self.connection = sl.connect('data_user.db')
     self.cursor = self.connection.cursor()
@@ -58,19 +59,19 @@ class DB:
       'CREATE TABLE IF NOT EXISTS history_rs (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, request text, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, user_id int);')
     self.connection.commit()
 
-
-  def exec(self, *args):
+  def exec(self, query, *args):
     '''функция отправки запроса'''
     try:
-      self.cursor.execute(args) # тут сделать вывод истории
+      self.cursor.execute(query, args)  # тут сделать вывод истории
       self.connection.commit()
       result = self.cursor.fetchall()
-      show_table(result,self.cursor.description)
-    except (psycopg2.errors.InFailedSqlTransaction,mysql.connector.errors.ProgrammingError):
+      return result, self.cursor.description
+    except (psycopg2.errors.InFailedSqlTransaction, mysql.connector.errors.ProgrammingError):
       self.connection.rollback()
-    except TypeError:
-      pass
-    except (psycopg2.ProgrammingError,mysql.connector.errors.DataError,mysql.connector.errors.DatabaseError,mysql.connector.errors.ProgrammingError) as err:
+    except TypeError as te:
+      print(te)
+    except (psycopg2.ProgrammingError, mysql.connector.errors.DataError, mysql.connector.errors.DatabaseError,
+            mysql.connector.errors.ProgrammingError) as err:
       if 'no results to fetch' in str(err):
         print('Нету данных для вывода!')
       else:

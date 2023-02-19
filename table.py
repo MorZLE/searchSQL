@@ -15,5 +15,4 @@ def show_table(result,desc):
             print(err,'table')
 
 
-def show_tb_name(result):
-    print(from_db_cursor(result))
+
