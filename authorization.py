@@ -60,8 +60,7 @@ class Storage(DB):
 
     def last_rs(self):
         '''функция отправки последнего запроса определенного пользователя'''
-        with self.connection:
-            res, desc = self.exec("SELECT request FROM history_rs  WHERE user_id = ? ORDER BY ID DESC LIMIT 1",self.user_id)
-            for row in res:
-                return "".join(row)
+        res, desc = self.exec("SELECT request FROM history_rs  WHERE user_id = ? ORDER BY ID DESC LIMIT 1", self.user_id)
+        for row in res:
+            return "".join(row)
 

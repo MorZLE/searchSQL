@@ -1,6 +1,5 @@
 import logging
-from table import \
-  show_table
+from table import show_table
 from readfile import readfile
 
 
@@ -15,19 +14,19 @@ def sql_request(user,author):
           author.hs_rs(request_sql)
           res, desc = user.exec(readfile(request_sql.split()[-1][:-1]))
           show_table(res, desc)
-        elif request_sql.rstrip()[:3] == '\dt':
+        elif request_sql.startswith('\dt'):
           res, desc = user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
           show_table(res, desc)
-        elif request_sql.rstrip()[-2:] == '\q':
+        elif request_sql.startswith('\q'):
           logging.warning('\nПрограмма закрыта\nБаза отключена')
           user.connection.close()
           exit(0)
-        elif request_sql.rstrip()[-2:] == '\c' or request_sql.rstrip()[-6:] == '\clear':
+        elif request_sql.startswith('\c') or request_sql.startswith('\clear'):
           print("Запрос стерся")
-        elif request_sql.rstrip().upper()[:3] == "\HS" or request_sql.rstrip().upper()[:8] == "\HISTORY":
+        elif request_sql.upper().startswith("\HS") or request_sql.upper().startswith("\HISTORY"):
           print("Вывод всех запросов пользователя")
           author.out_rs()
-        elif request_sql.rstrip().upper()[:7] == "\REPEAT":
+        elif request_sql.upper().startswith("\REPEAT"):
           print("Повторение последнего запроса")
           txt = author.last_rs()
           res, desc = user.exec(txt)

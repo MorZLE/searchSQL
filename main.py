@@ -4,36 +4,43 @@ from DB import DB
 from authorization import Storage 
 
 def main():
+  def reg(author):
+      data_db = author.registration()
+      user = DB(data_db)
+      while user.connect() == 'err':
+        print("Неверные данные подключения")
+        reg(author)
+      author.rec_user_data()
+      return user
+  def ind(author):
+      data_db = author.identification()
+      user = DB(data_db)
+      user.connect()
+      return user
+
   def start_new():
     print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
     res = input().strip()
     try:
       author=Storage()
       if res.lower() == 'д' or res == "":
-        data_db = author.identification()
+        user = ind(author)
       elif res.lower() == 'н' or res.lower() == 'y':
-        data_db = author.registration()
+        user = reg(author)
       else:
         start_new()
 
-      user = DB(data_db)
-
     except TypeError as err:
-      print(err)
+      print('Пользователь не найден')
       start_new()
 
-    while user.connect()=='err':
-      print("Неверные данные подключения")
-      data_db = author.registration()
-      user = DB(data_db)
-        
-    author.rec_user_data()
     sql_request(user,author)
 
   try:
     start_new()
   except KeyboardInterrupt:
     logging.error("Программа закрыта")
+
 
 if __name__ == '__main__':
   main()

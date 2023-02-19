@@ -1,18 +1,14 @@
 import psycopg2
 import mysql.connector
 import pyodbc
-import logging
 import sqlite3 as sl
-from table import show_table
-
 
 
 class DB:
   def __init__(self,data_db):
     self.data_db = data_db
     self.Vendor = data_db[-1]
-    self.cursor=None
-    self.connection = None
+
 
   def connect(self):
     try:
