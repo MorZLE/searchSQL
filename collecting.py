@@ -37,6 +37,9 @@ def sql_request(user,author):
           res, desc = user.exec(request_sql)
           show_table(res, desc)
         request_sql = ''
+  except TypeError:
+    print("Ошибка в запросе")
+    sql_request(user, author)
 
   except KeyboardInterrupt:
     logging.warning('\nПрограмма закрыта\nБаза отключена')

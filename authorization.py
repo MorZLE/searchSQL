@@ -15,11 +15,10 @@ class Storage(DB):
                 print('Пароль или логин не должен быть пустым')
                 return self.identification()
             self.get_user_id()
-            with self.connection:
-                data = self.cursor.execute('SELECT db_info FROM USER WHERE login = ? and password = ?', (self.login, self.pswd))
-                for row in data:
-                    return "".join(row).split()
-                    break
+            res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.pswd)
+            for row in res:
+                return "".join(row).split()
+                break
         except TypeError as err:
                 print(err)
 
@@ -30,43 +29,40 @@ class Storage(DB):
         if self.login == '' or self.pswd == '':
             print('Пароль или логин не должен быть пустым')
             return self.registration()
-        with self.connection:
-            data = self.cursor.execute('SELECT * FROM USER WHERE login = ?', (self.login,))
-            for row in data:
-               if not (row is None):
-                  print('Этот логин уже занят')
-                  self.registration()
-            else:
-                self.cursor.execute('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
-                                  (self.login, self.pswd, ' '.join(self.db_info)))
-                self.get_user_id()
+
+        res, desc = self.exec('SELECT * FROM USER WHERE login = ?', self.login)
+        for row in res:
+            if not (row is None):
+                print('Этот логин уже занят')
+                self.registration()
+        else:
+            res, desc = self.exec('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
+                                  self.login, self.pswd, ' '.join(self.db_info))
+            self.get_user_id()
+
+
         return self.db_info
 
     def get_user_id(self):
         '''функция получения id пользователя'''
-        data = self.cursor.execute('SELECT id FROM USER WHERE login = ?', (self.login,))
-        for row in data:
+        res, desc = self.exec('SELECT id FROM USER WHERE login = ?', self.login)
+        for row in res:
             self.user_id = row[0]
 
     def hs_rs(self, req):
         '''функция заполнения истории запроса пользователя'''
         self.exec('INSERT INTO history_rs (request,user_id) values (?,?)', req, self.user_id)
-        # with self.connection:
-        #    self.cursor.execute('INSERT INTO history_rs (request,user_id) values(?,?)',([req,self.user_id]))
 
     def out_rs(self):
         '''функция получения истории запроса определенного пользователя'''
         res, desc = self.exec('SELECT request,time FROM history_rs WHERE user_id =?', self.user_id)
         show_table(res, desc)
-        # with self.connection:
-        #  return self.cursor.execute('SELECT request,time FROM history_rs WHERE user_id =?', (self.user_id,))
 
     def last_rs(self):
         '''функция отправки последнего запроса определенного пользователя'''
         with self.connection:
-            data = self.cursor.execute("SELECT request FROM history_rs  WHERE user_id = ? ORDER BY ID DESC LIMIT 1",
-                                       (self.user_id,))
-            for row in data:
+            res, desc = self.exec("SELECT request FROM history_rs  WHERE user_id = ? ORDER BY ID DESC LIMIT 1",self.user_id)
+            for row in res:
                 return "".join(row)
 
 vendr={1:'PostgreSQL',2:'MySQL',3:'MSserver'}
