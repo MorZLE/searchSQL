@@ -1,6 +1,6 @@
-import sqlite3 as sl
-from prettytable import from_db_cursor
 from prettytable import PrettyTable
+
+
 def show_table(result,desc):
     try:
         t = PrettyTable([description[0] for description in desc])

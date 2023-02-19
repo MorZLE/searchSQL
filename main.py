@@ -11,7 +11,7 @@ def main():
       author=Storage()
       if res.lower() == 'д' or res == "":
         data_db = author.identification()
-      elif res.lower() == 'н':
+      elif res.lower() == 'н' or res.lower() == 'y':
         data_db = author.registration()
       else:
         start_new()
@@ -19,7 +19,11 @@ def main():
     except TypeError as err:
       print(err)
       start_new()
-    user.connect()
+
+    if user.connect()=='err':
+      print("Неверные данные подключения")
+      start_new()
+    author.rec_user_data()
     sql_request(user,author)
 
   try:

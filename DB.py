@@ -26,15 +26,12 @@ class DB:
             port=self.data_db[3])
           self.cursor = self.connection.cursor()
         case 'MySQL':
-          try:
             self.connection = mysql.connector.connect(
               user=self.data_db[5],
               password=self.data_db[-2],
               host=self.data_db[1],
               database=self.data_db[3])
             self.cursor = self.connection.cursor(buffered=True)
-          except Error as e:
-            print(e)
         case 'MSserver':
           self.connection = pyodbc.connect(f"Driver={self.data_db[0]};"
                                            f"Server={self.data_db[1]};"
@@ -46,9 +43,7 @@ class DB:
       print("База подключена")
 
     except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, IndexError):
-      logging.error("Некорректные данные\nПрограмма закрыта")
-      '''Перезапуск функции старта из main'''
-      exit(0)
+      return 'err'
 
   def con_db_app(self):
     self.connection = sl.connect('data_user.db')
