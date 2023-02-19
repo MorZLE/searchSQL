@@ -36,8 +36,10 @@ class DB:
                                            f"pwd={self.data_db[4]}")
 
           self.cursor = self.connection.cursor()
+        case 'SQLite':
+          self.connection = sl.connect(f'{self.data_db[0]}.db')
+          self.cursor = self.connection.cursor()
       print("База подключена")
-
     except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, IndexError):
       return 'err'
 

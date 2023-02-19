@@ -10,7 +10,6 @@ def show_table(result,desc):
     except TypeError as err:
         if 'NoneType' in str(err):
             print('Данных для вывода нету!')
-            start_new()
         else:
             print(err,'table')
 

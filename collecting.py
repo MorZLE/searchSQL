@@ -15,7 +15,15 @@ def sql_request(user,author):
           res, desc = user.exec(readfile(request_sql.split()[-1][:-1]))
           show_table(res, desc)
         elif request_sql.startswith('\dt'):
-          res, desc = user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
+          match user.Vendor:
+            case 'PostgreSQL':
+               res, desc = user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
+            case 'MySQL':
+               res, desc = user.exec("SHOW TABLES")
+            case '':
+               res, desc = user.exec("SHOW TABLES")
+            case 'SQLite':
+               res, desc = user.exec("SELECT name FROM sqlite_sequence")
           show_table(res, desc)
         elif request_sql.startswith('\q'):
           logging.warning('\nПрограмма закрыта\nБаза отключена')

@@ -2,11 +2,11 @@ import re
 
 
 def data_collection():
-    vendr = {1: 'PostgreSQL', 2: 'MySQL', 3: 'MSserver'}
+    vendr = {1: 'PostgreSQL', 2: 'MySQL', 3: 'MSserver', 4:'SQLite'}
     def vendor():
         try:
             global res
-            print("Введите номер вендора: \n1-postgres \n2-MySQL \n3-MSserver")
+            print("Введите номер вендора: \n1-postgres \n2-MySQL \n3-MSserver \n4-SQLite")
             res = int(input())
             return res
         except (TypeError,ValueError):
@@ -32,8 +32,11 @@ def data_collection():
                 s = re.sub('[;| =|>|<|]', " ", input('Введите строку подключения\n')).split()
                 for i in [1, 3, 5, 7]:
                     db_info.append(s[i])
-                db_info.append('MySQL')
-
+                db_info.append('MSserver')
+            case 'SQLite':
+                print('Введите название базы')
+                db_info = input().strip().split()
+                db_info.append('SQLite')
             case _:
                 print(
                     'Вендор в данный момент не поддерживается')
