@@ -15,14 +15,18 @@ def main():
         data_db = author.registration()
       else:
         start_new()
+
       user = DB(data_db)
+
     except TypeError as err:
       print(err)
       start_new()
 
-    if user.connect()=='err':
+    while user.connect()=='err':
       print("Неверные данные подключения")
-      start_new()
+      data_db = author.registration()
+      user = DB(data_db)
+        
     author.rec_user_data()
     sql_request(user,author)
 

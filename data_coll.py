@@ -39,5 +39,7 @@ def data_collection():
                     'Вендор в данный момент не поддерживается')
                 data_collection()
         return db_info
+    except KeyError:
+        data_collection()
     except UnboundLocalError:
         print("Некоректные данные")
