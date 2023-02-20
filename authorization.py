@@ -6,25 +6,31 @@ from DB import DB
 class Storage(DB):
     def __init__(self):
         self.con_db_app()
+        self.login = None
+        self.passwd = None
+        self.db_info = None
+        self.user_id = None
+
+    def enter_pas_log(self):
+        self.login = input('Введите логин: ').strip()
+        self.passwd = input('Введите пароль: ').strip()
 
     def identification(self):
         try:
-            self.login = input('Введите логин: ').strip()
-            self.pswd = input('Введите пароль: ').strip()
-            if self.login=='' or self.pswd=='':
+            self.enter_pas_log()
+            if self.login == '' or self.passwd == '':
                 print('Пароль или логин не должен быть пустым')
                 return self.identification()
-            res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.pswd)
+            res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.passwd)
             for row in res:
                 return "".join(row).split()
         except TypeError as err:
                 print(err)
 
     def registration(self):
-        self.db_info=data_collection()
-        self.login = input('Введите логин: ').strip()
-        self.pswd = input('Введите пароль: ').strip()
-        if self.login == '' or self.pswd == '':
+        self.db_info = data_collection()
+        self.enter_pas_log()
+        if self.login == '' or self.passwd == '':
             print('Пароль или логин не должен быть пустым')
             return self.registration()
 
@@ -38,7 +44,7 @@ class Storage(DB):
 
     def send_user_data(self):
         res, desc = self.exec('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
-                                self.login, self.pswd, ' '.join(self.db_info))
+                              self.login, self.passwd, ' '.join(self.db_info))
         self.get_user_id()
 
     def get_user_id(self):
@@ -58,7 +64,8 @@ class Storage(DB):
 
     def last_rs(self):
         """Функция отправки последнего запроса определенного пользователя."""
-        res, desc = self.exec("SELECT request FROM history_rs  WHERE user_id = ? ORDER BY ID DESC LIMIT 1", self.user_id)
+        res, desc = self.exec("SELECT request FROM history_rs  "
+                              "WHERE user_id = ? ORDER BY ID DESC LIMIT 1", self.user_id)
         for row in res:
             return "".join(row)
 
