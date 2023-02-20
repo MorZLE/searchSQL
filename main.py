@@ -10,7 +10,7 @@ def main():
       while user.connect() == 'err':
         print("Неверные данные подключения")
         reg(author)
-      author.rec_user_data()
+      author.send_user_data()
       return user
   def ind(author):
       data_db = author.identification()
@@ -33,7 +33,7 @@ def main():
     except TypeError as err:
       print('Пользователь не найден')
       start_new()
-
+    author.get_user_id()
     sql_request(user,author)
 
   try:

@@ -23,7 +23,7 @@ def sql_request(user,author):
             case 'MSserver':
                res, desc = user.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
             case 'SQLite':
-               res, desc = user.exec("SELECT name FROM sqlite_sequence")
+               res, desc = user.exec("SELECT name FROM sqlite_master WHERE type='table';")
           show_table(res, desc)
         elif request_sql.startswith('\q'):
           logging.warning('\nПрограмма закрыта\nБаза отключена')

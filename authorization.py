@@ -14,7 +14,6 @@ class Storage(DB):
             if self.login=='' or self.pswd=='':
                 print('Пароль или логин не должен быть пустым')
                 return self.identification()
-            self.get_user_id()
             res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.pswd)
             for row in res:
                 return "".join(row).split()
@@ -37,7 +36,7 @@ class Storage(DB):
         return self.db_info
 
 
-    def rec_user_data(self):
+    def send_user_data(self):
         res, desc = self.exec('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
                                 self.login, self.pswd, ' '.join(self.db_info))
         self.get_user_id()

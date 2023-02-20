@@ -58,7 +58,7 @@ class DB:
     def exec(self, query, *args):
         """Функция отправки запроса"""
         try:
-            self.cursor.execute(query, args)  # тут сделать вывод истории
+            self.cursor.execute(query, args)
             self.connection.commit()
             result = self.cursor.fetchall()
             return result, self.cursor.description
@@ -67,7 +67,7 @@ class DB:
         except TypeError as te:
             print(te)
         except (psycopg2.ProgrammingError, mysql.connector.errors.DataError, mysql.connector.errors.DatabaseError,
-                mysql.connector.errors.ProgrammingError) as err:
+                mysql.connector.errors.ProgrammingError,sl.OperationalError) as err:
             if 'no results to fetch' in str(err):
                 print('Нету данных для вывода!')
             else:
