@@ -67,7 +67,7 @@ class DB:
         except TypeError as te:
             print(te)
         except (psycopg2.ProgrammingError, mysql.connector.errors.DataError, mysql.connector.errors.DatabaseError,
-                mysql.connector.errors.ProgrammingError,sl.OperationalError) as err:
+                mysql.connector.errors.ProgrammingError,sl.OperationalError,UnboundLocalError) as err:
             if 'no results to fetch' in str(err):
                 print('Нету данных для вывода!')
             else:

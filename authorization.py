@@ -12,15 +12,16 @@ class Storage(DB):
         self.user_id = None
 
     def enter_pas_log(self):
+        """Функция сбора логина и пароля"""
         self.login = input('Введите логин: ').strip()
         self.passwd = input('Введите пароль: ').strip()
+        if self.login == '' or self.passwd == '':
+            print('Пароль или логин не должен быть пустым')
+            return self.enter_pas_log()
 
     def identification(self):
         try:
             self.enter_pas_log()
-            if self.login == '' or self.passwd == '':
-                print('Пароль или логин не должен быть пустым')
-                return self.identification()
             res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.passwd)
             for row in res:
                 return "".join(row).split()
@@ -28,12 +29,9 @@ class Storage(DB):
                 print(err)
 
     def registration(self):
-        self.db_info = data_collection()
+        if self.db_info == None:
+            self.db_info = data_collection()
         self.enter_pas_log()
-        if self.login == '' or self.passwd == '':
-            print('Пароль или логин не должен быть пустым')
-            return self.registration()
-
         res, desc = self.exec('SELECT * FROM USER WHERE login = ?', self.login)
         for row in res:
             if not (row is None):
@@ -43,6 +41,7 @@ class Storage(DB):
 
 
     def send_user_data(self):
+        """Функция заполнения данных пользователя в бд"""
         res, desc = self.exec('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
                               self.login, self.passwd, ' '.join(self.db_info))
         self.get_user_id()
