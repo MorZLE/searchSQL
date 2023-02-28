@@ -22,7 +22,7 @@ def main():
     print("Продолжить последнюю сессию?(д/н): д - по умолчанию")
     res = input().strip()
     try:
-      author=Storage()
+      author = Storage()
       if res.lower() == 'д' or res == "":
         user = ind(author)
       elif res.lower() == 'н' or res.lower() == 'y':

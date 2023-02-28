@@ -21,7 +21,8 @@ class Storage(DB):
 
     def identification(self):
         try:
-            self.enter_pas_log()
+            if self.db_info is None:
+                self.enter_pas_log()
             res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.passwd)
             for row in res:
                 return "".join(row).split()
@@ -29,15 +30,16 @@ class Storage(DB):
                 print(err)
 
     def registration(self):
-        if self.db_info == None:
+        if self.db_info is None:
             self.db_info = data_collection()
-        self.enter_pas_log()
+            self.enter_pas_log()
         res, desc = self.exec('SELECT * FROM USER WHERE login = ?', self.login)
         for row in res:
             if not (row is None):
                 print('Этот логин уже занят')
                 self.registration()
         return self.db_info
+        
 
 
     def send_user_data(self):
@@ -67,4 +69,3 @@ class Storage(DB):
                               "WHERE user_id = ? ORDER BY ID DESC LIMIT 1", self.user_id)
         for row in res:
             return "".join(row)
-
