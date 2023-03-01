@@ -1,95 +1,69 @@
-import re
-import sqlite3 as sl
+from data_coll import data_collection
+from table import show_table
+from DB import DB
 
 
-con = sl.connect('data_user.db')
-cur = con.cursor()
-log=None
-user_id=None
+class Storage(DB):
+    def __init__(self):
+        self.con_db_app()
+        self.login = None
+        self.passwd = None
+        self.db_info = None
+        self.user_id = None
 
-def data_collection():
-    print("Введите номер вендора: \n1-postgres \n2-MySQL \n3-MSserver")
-    res=input().strip()
-    try:
-        match res:
-            case '1':
-                print('Шаблон строки подключения для PostgreSQL: username:password@host:port/dbname')
-                db_info=re.sub('[:|@|/]'," ",input()).split()
-                db_info.append('1')
+    def enter_pas_log(self):
+        """Функция сбора логина и пароля"""
+        self.login = input('Введите логин: ').strip()
+        self.passwd = input('Введите пароль: ').strip()
+        if self.login == '' or self.passwd == '':
+            print('Пароль или логин не должен быть пустым')
+            return self.enter_pas_log()
 
-            case '2':
-                print('Шаблон строки подключения для MySQL:Server=<server>;Database=<database>;UID=<user id>;PWD=<password>')
-                db_info = re.sub('[;| =|]', " ", input()).split()
-                db_info.append('2')
-
-            case '3':
-                print('Шаблон строки подключения для MSserver: Server=Server,Port;Database=DatabaseName;User Id=userid;Password=Passwordмм')
-                db_info = re.sub('[;| =|>|<|]', " ", input()).split()
-                db_info.append('3')
-
-            case _:
-                print(
-                    'Вендор в данный момент не поддерживается')
-                data_collection()
-        return db_info
-    except UnboundLocalError:
-        print("Некоректные данные")
-
-
-
-def identification():
-    try:
-        global log
-        log=input('Введите логин: ').strip()
-        pswd = input('Введите пароль: ').strip()
-        user_id_bd(log)
-        with con:
-            data = cur.execute('SELECT db_info FROM USER WHERE login = ? and password = ?', (str(log), str(pswd)))
-            for row in data:
+    def identification(self):
+        try:
+            if self.db_info is None:
+                self.enter_pas_log()
+            res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.passwd)
+            for row in res:
                 return "".join(row).split()
-                break
-    except TypeError as err:
-            print('Неверный данные')
+        except TypeError as err:
+                print(err)
 
+    def registration(self):
+        if self.db_info is None:
+            self.db_info = data_collection()
+            self.enter_pas_log()
+        res, desc = self.exec('SELECT * FROM USER WHERE login = ?', self.login)
+        for row in res:
+            if not (row is None):
+                print('Этот логин уже занят')
+                self.registration()
+        return self.db_info
 
-def registration():
-    global log
-    db_info=data_collection()
-    log = input('Введите логин: ').strip()
-    pswd = input('Введите пароль: ').strip()
-    with con:
-        data = cur.execute('SELECT * FROM USER WHERE login = ?', (str(log),))
-        for row in data:
-           if not (row is None):
-              print('Этот логин уже занят')
-              registration()
-        else:
-            cur.execute('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
-                              (str(log), str(pswd), ' '.join(db_info)))
-            user_id_bd(log)
-    return db_info
+    def send_user_data(self):
+        """Функция заполнения данных пользователя в бд"""
+        res, desc = self.exec('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
+                              self.login, self.passwd, ' '.join(self.db_info))
+        self.get_user_id()
 
-def user_id_bd(log):
-    '''функция получения id пользователя'''
-    global user_id
-    data = cur.execute('SELECT id FROM USER WHERE login = ?', (str(log),))
-    for row in data:
-        user_id = row[0]
+    def get_user_id(self):
+        """Функция получения id пользователя"""
+        res, desc = self.exec('SELECT id FROM USER WHERE login = ?', self.login)
+        for row in res:
+            self.user_id = row[0]
 
-def hs_rs(req):
-    '''функция заполнения истории запроса пользователя'''
-    with con:
-        cur.execute('INSERT INTO history_rs (request,user_id) values(?,?)',([req,str(user_id)]))
+    def hs_rs(self, req):
+        """Функция заполнения истории запроса пользователя"""
+        self.exec('INSERT INTO history_rs (request,user_id) values (?,?)', req, self.user_id)
 
-def out_rs(nm_tb):
-    '''функция получения истории запроса определенного пользователя'''
-    with con:
-        return cur.execute(f"select request,time from {nm_tb} WHERE user_id = {int(user_id)}")
+    def out_rs(self):
+        """Функция получения истории запроса определенного пользователя"""
+        res, desc = self.exec('SELECT request,time FROM history_rs WHERE user_id =?', self.user_id)
+        show_table(res, desc)
 
-def last_rs():
-    '''функция отправки последнего запроса определенного пользователя'''
-    with con:
-        data = cur.execute(f"SELECT request FROM history_rs  WHERE user_id = {int(user_id)} ORDER BY ID DESC LIMIT 1")
-        for row in data:
+    def last_rs(self):
+        """Функция отправки последнего запроса определенного пользователя."""
+        res, desc = self.exec("SELECT request FROM history_rs  "
+                              "WHERE user_id = ? ORDER BY ID DESC LIMIT 1", self.user_id)
+        for row in res:
             return "".join(row)
-
