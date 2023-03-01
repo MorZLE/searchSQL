@@ -42,7 +42,7 @@ class DB:
                     self.cursor = self.connection.cursor()
             print("База подключена")
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, IndexError):
-            return 'err'
+            raise DBError
 
     def con_db_app(self):
         self.connection = sl.connect('data_user.db')

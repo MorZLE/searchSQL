@@ -39,8 +39,6 @@ class Storage(DB):
                 print('Этот логин уже занят')
                 self.registration()
         return self.db_info
-        
-
 
     def send_user_data(self):
         """Функция заполнения данных пользователя в бд"""
