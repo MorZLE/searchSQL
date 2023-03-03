@@ -54,7 +54,18 @@ class DB:
                                 '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, request text, '
                                 'time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, user_id int);')
         self.connection.commit()
-    
+
+    def web_con_db(self, app):
+        self.connection = sl.connect(app.config['DATABASE'])
+        self.connection.row_factory = sl.Row
+        return self.connection
+    def web_create_db(self, app):
+        db = self.web_con_db(app)
+        with app.open_resource('sq_db.sql', mode = 'r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
+        db.close()
+
     def exec(self, query, *args):
         """Функция отправки запроса"""
         try:

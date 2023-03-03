@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <h1> Авторизация </h1>
+    <title>Авторизация</title>
+    {% for msg in get_flashed_messages() %}
+    <div class = "flash">{{msg}}</div>
+    {% endfor %}
+    <form action="/login" method="post">
+    <p><input type="text" placeholder="логин" name="username"></p>
+   <p> <input type="password" placeholder="пароль" name="password"></p>
+        <input type="checkbox" name = "remainme" /> Запомните меня
+    <p><input type="submit" value="Войти"> <a href = "{{url_for('register')}}">Регистрация</a> </p>
+    </form>
+
+</head>
+<body>
+
+</body>
+</html>

@@ -21,7 +21,7 @@ class Storage(DB):
 
     def identification(self):
         try:
-            if self.db_info is None:
+            if self.db_info is None and self.login is None and self.passwd is None:
                 self.enter_pas_log()
             res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.passwd)
             for row in res:
@@ -30,7 +30,7 @@ class Storage(DB):
                 print(err)
 
     def registration(self):
-        if self.db_info is None:
+        if self.db_info is None and self.login is None and self.passwd is None:
             self.db_info = data_collection()
             self.enter_pas_log()
         res, desc = self.exec('SELECT * FROM USER WHERE login = ?', self.login)
