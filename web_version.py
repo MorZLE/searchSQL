@@ -14,9 +14,9 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 app.config['SECRET_KEY'] = '8b8b21bdebbf2c5cf5198e6d8f49b3c4a9eefe59'
-author = None
-user = None
 
+user = None
+author = Storage()
 def web_con_db():
     connection = sl.connect(app.config['DATABASE'])
     connection.row_factory = sl.Row
@@ -33,8 +33,8 @@ def web_create_db():
 
 @app.before_request
 def before_request():
-    global author
-    author = Storage()
+    pass
+
 
 
 @app.route('/')
@@ -61,11 +61,24 @@ def login():
 
 @app.route('/register', methods=['POST', "GET"])
 def register():
-    global user
     if request.method == "POST":
         author.login = request.form['username']
         author.passwd = request.form['password']
         confirm_password = request.form['confirm_password']
+        if author.passwd == confirm_password:
+            if author.registration():
+                return redirect(url_for('creat_db'))
+            else:
+                flash("Имя пользователя занято")
+        else:
+            flash("Пароли не совпадают")
+    return render_template('register.html')
+
+
+@app.route('/creatdb', methods=['POST', "GET"])
+def creat_db():
+    global user
+    if request.method == "POST":
         vendr = request.form['vendor']
         info = request.form['info_db']
         if info:
@@ -77,7 +90,7 @@ def register():
                     author.db_info = re.sub('[;| =|]', " ", info).split()
                     author.db_info.append('MySQL')
                 case "MSserver":
-                    #добавить драйвер
+                    # добавить драйвер
                     s = re.sub('[;| =|>|<|]', " ", info).split()
                     for i in [1, 3, 5, 7]:
                         author.db_info.append(s[i])
@@ -85,18 +98,11 @@ def register():
                 case "SQLite":
                     author.db_info = info.strip().split()
                     author.db_info.append('SQLite')
-        if author.passwd == confirm_password:
-            if author.registration():
-                print(author.db_info)
-                user = DB(author.db_info)
-                user.connect()
-                author.send_user_data()
-            else:
-                flash("Имя пользователя занято")
-        else:
-            flash("Пароли не совпадают")
-        return redirect(url_for('work_db'))
-    return render_template('register.html')
+            user = DB(author.db_info)
+            user.connect()
+            author.send_user_data()
+            return redirect(url_for('work_db'))
+    return render_template('creatdb.html')
 
 @app.route('/workdb', methods=['POST', "GET"])
 def work_db():
