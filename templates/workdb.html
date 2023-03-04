@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-     {% for msg in get_flashed_messages() %}
+    {% for msg in get_flashed_messages() %}
     <div class = "flash">{{msg}}</div>
     {% endfor %}
     <title>Title</title>
@@ -12,13 +12,19 @@
 <body>
 <p><textarea name="message" cols="40" rows="10" placeholder="Введите запрос"></textarea></p>
 <p><input type="submit" value="Отправить"></p>
-<table>
-    <td>{{des}}</td>
-    {% for row in rows %}
-        <tr>
-            <td>{{row}}</td>
-        </tr>
-    {% endfor %}
-    </table>
+<table table>
+    <tr>
+   {% for d in des %}
+           <th>{{d[0]}}</th>
+   {% endfor %}
+    </tr>
+   {% for row in rows %}
+       <tr>
+           {% for r in row %}
+               <td>{{r}}</td>
+           {% endfor %}
+       </tr>
+   {% endfor %}
+</table>
 </body>
 </html>
