@@ -69,7 +69,7 @@ def register():
         vendr = request.form['vendor']
         info = request.form['info_db']
         if info:
-            match vendr:
+            match vendr[1:-1]:
                 case "PostgreSQL":
                     author.db_info = re.sub('[:|@|/]', " ", info).split()
                     author.db_info.append('PostgreSQL')
@@ -85,11 +85,13 @@ def register():
                 case "SQLite":
                     author.db_info = info.strip().split()
                     author.db_info.append('SQLite')
-        print(author.db_info)
         if author.passwd == confirm_password:
-            author.db_info = author.registration()
-            print(author.db_info)
-            user = DB(author.db_info)
+            if author.registration():
+                print(author.db_info)
+                user = DB(author.db_info)
+                user.connect()
+            else:
+                flash("Имя пользователя занято")
         else:
             flash("Пароли не совпадают")
         author.send_user_data()
