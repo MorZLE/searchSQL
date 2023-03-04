@@ -6,19 +6,39 @@
 .form-contact input[type=submit], textarea {
          font-size: 18px;
 }
-table {
+body{
+	background-color: white;
+
+}
+.workdb textarea{
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+	padding:10px;
+}
+
+.workdb table {
 	width: 100%;
 	margin-bottom: 20px;
 	border: 1px solid #dddddd;
 	border-collapse: collapse;
+	padding:10px;
 }
-th {
+.workdb input{
+	width: 10%;
+	position: relative;
+	left: 45%;
+	border: 1px solid #dddddd;
+	border-collapse: collapse;
+
+}
+.workdb th {
 	font-weight: bold;
 	padding: 5px;
 	background: #efefef;
 	border: 1px solid #dddddd;
 }
-td {
+.workdb td {
 	border: 1px solid #dddddd;
 	padding: 5px;
 }

@@ -10,8 +10,10 @@
     <form action="/workdb" method="post">
 </head>
 <body>
+<div class="workdb">
 <p><textarea name="message" cols="40" rows="10" placeholder="Введите запрос"></textarea></p>
-<p><input type="submit" value="Отправить"></p>
+<p><input type="submit" name='req' value="Отправить"></p>
+<p><input type="button" name='exit' value="Выйти"></p>
 <table table>
     <tr>
    {% for d in des %}
@@ -25,6 +27,7 @@
            {% endfor %}
        </tr>
    {% endfor %}
+</div>
 </table>
 </body>
 </html>

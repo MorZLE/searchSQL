@@ -101,13 +101,15 @@ def work_db():
     if user is None:
         return redirect(url_for('login'))
     if request.method == "POST":
-        request_sql = request.form['message']
-        try:
-            res, desc = user.exec(request_sql)
-            return render_template('workdb.html', rows=res, des=desc)
-
-        except TypeError:
-            flash("Некорректный запрос")
+        if 'req' in request.form:
+            request_sql = request.form['message']
+            try:
+                res, desc = user.exec(request_sql)
+                return render_template('workdb.html', rows=res, des=desc)
+            except TypeError:
+                flash("Некорректный запрос")
+        elif 'exit' in request.form:
+            return redirect(url_for('login'))
     return render_template('workdb.html')
 
 if __name__ == '__main__':

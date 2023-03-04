@@ -177,3 +177,14 @@
   color: #aaa;
   border-radius: 5px;
 }
+
+.login-box select{
+  background: transparent;
+  color: #aaa;
+  background-color: #272727;
+  border-radius: 5px;
+
+}
+
+
+
