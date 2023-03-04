@@ -37,8 +37,8 @@ class Storage(DB):
         for row in res:
             if not (row is None):
                 print('Этот логин уже занят')
-                self.registration()
-        return self.db_info
+                return False
+        return True
 
     def send_user_data(self):
         """Функция заполнения данных пользователя в бд"""
