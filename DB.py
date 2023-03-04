@@ -2,7 +2,7 @@ import psycopg2
 import mysql.connector
 import pyodbc
 import sqlite3 as sl
-
+from flask import flash
 
 class DB:
     def __init__(self, data_db):
@@ -38,14 +38,14 @@ class DB:
 
                     self.cursor = self.connection.cursor()
                 case 'SQLite':
-                    self.connection = sl.connect(f'{self.data_db[0]}.db')
+                    self.connection = sl.connect(f'{self.data_db[0]}.db',check_same_thread=False)
                     self.cursor = self.connection.cursor()
             print("База подключена")
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, IndexError):
             raise DBError
 
     def con_db_app(self):
-        self.connection = sl.connect('data_user.db')
+        self.connection = sl.connect('data_user.db', check_same_thread=False)
         self.cursor = self.connection.cursor()
         self.connection.execute('CREATE TABLE IF NOT EXISTS USER ('
                                 ' id INTEGER PRIMARY KEY '
@@ -82,4 +82,4 @@ class DB:
             if 'no results to fetch' in str(err):
                 print('Нету данных для вывода!')
             else:
-                print(err)
+                print(flash(err))

@@ -2,11 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+     {% for msg in get_flashed_messages() %}
+    <div class = "flash">{{msg}}</div>
+    {% endfor %}
     <title>Title</title>
+    <link rel="stylesheet" href="static/css/styles.css">
     <form action="/workdb" method="post">
 </head>
 <body>
-<textarea name="message" cols="40" rows="10" placeholder="Введите запрос"></textarea>
-     <p><input type="submit" value="Отправить"></p>
+<p><textarea name="message" cols="40" rows="10" placeholder="Введите запрос"></textarea></p>
+<p><input type="submit" value="Отправить"></p>
+<table>
+    <td>{{des}}</td>
+    {% for row in rows %}
+        <tr>
+            <td>{{row}}</td>
+        </tr>
+    {% endfor %}
+    </table>
 </body>
 </html>
