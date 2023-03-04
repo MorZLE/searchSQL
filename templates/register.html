@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Регистрация </title>
+    <meta charset="UTF-8">
+    {% for msg in get_flashed_messages() %}
+    <div class = "flash">{{msg}}</div>
+    {% endfor %}
+    <link rel="stylesheet" href="static/css/login.css">
+</head>
+<body>
+<div class="login-box">
+  <p>Регистрация</p>
+  <form action="/register" method="post">
+    <div class="user-box">
+      <input type="text"  name="username">
+      <label>Логин</label>
+    </div>
+    <div class="user-box">
+      <input type="password" name="password">
+      <label>Пароль</label>
+    </div>
+    <div class="user-box">
+      <input type="password" name="confirm_password">
+      <label>Повторите пароль</label>
+    </div>
+    <div class="user-box">
+      <input type="text" name="info_db">
+      <label>Строка подключения</label>
+    </div>
+      <div class="user-box">
+        <input type="submit" value="Зарегистрироваться">
+
+  </form>
+  <p>Если зарегистрированы <a href="{{url_for('login')}}" class="a2">войти!</a></p>
+</div>
+</body>
+</html>
