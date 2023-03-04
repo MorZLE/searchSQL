@@ -90,11 +90,11 @@ def register():
                 print(author.db_info)
                 user = DB(author.db_info)
                 user.connect()
+                author.send_user_data()
             else:
                 flash("Имя пользователя занято")
         else:
             flash("Пароли не совпадают")
-        author.send_user_data()
         return redirect(url_for('work_db'))
     return render_template('register.html')
 
