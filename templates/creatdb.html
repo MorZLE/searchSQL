@@ -7,13 +7,31 @@
     <div class = "flash">{{msg}}</div>
     {% endfor %}
     <link rel="stylesheet" href="static/css/login.css">
+    <script>
+function getSelectValue(){
+    var selectBox = document.getElementById('vendor')
+    var userInput = selectBox.options[selectBox.selectedIndex].value
+    if (userInput == "PostgreSQL"){
+        console.log('PostgreSQL')
+        alert('PostgreSQL');
+        print('PostgreSQL');
+    }
+
+
+}
+
+const list = document.querySelector('#list');
+list.addEventListener('change', function(e) {
+  getSelectValue(e)
+});
+</script>
 </head>
 <body>
 <div class="login-box">
   <p>Добавление бд</p>
   <form action="/creatdb" method="post">
     <div class="user-box">
-           <select name="vendor">
+           <select name="vendor" id="vendor" onchange="return getSelectValue();" >
            <option value=”PostgreSQL”>PostgreSQL</option>
            <option value=”MySQL”>MySQL</option>
 <!--           <option value=”MSserver”>MSserver</option>-->
@@ -27,4 +45,7 @@
       </div>
   </form>
 </body>
+
+
+
 </html>

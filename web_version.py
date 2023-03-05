@@ -69,13 +69,16 @@ def register():
         author.login = request.form['username']
         author.passwd = request.form['password']
         confirm_password = request.form['confirm_password']
-        if author.passwd == confirm_password:
-            if author.registration():
-                return redirect(url_for('creat_db'))
-            else:
-                flash("Имя пользователя занято")
+        if author.login == '' or author.passwd == '':
+            flash("Логин или пароль не могут быть пустыми")
         else:
-            flash("Пароли не совпадают")
+            if author.passwd == confirm_password :
+                if author.registration():
+                    return redirect(url_for('creat_db'))
+                else:
+                    flash("Имя пользователя занято")
+            else:
+                flash("Пароли не совпадают")
     return render_template('register.html')
 
 
