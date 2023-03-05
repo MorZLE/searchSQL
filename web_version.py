@@ -59,6 +59,10 @@ def login():
         return redirect(url_for('work_db'))
     return render_template('login.html')
 
+@app.route('/test', methods=['POST', "GET"])
+def test():
+    return render_template('test.html')
+
 
 @app.route('/register', methods=['POST', "GET"])
 def register():
