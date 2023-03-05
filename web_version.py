@@ -51,7 +51,6 @@ def login():
         author.db_info = author.identification()
         if author.db_info:
             user = DB(author.db_info)
-            author.user_id = author.get_user_id()
             if user.connect() == 'err':
                 flash("Неверные данные подключения")
         else:
@@ -106,7 +105,6 @@ def creat_db():
             user = DB(author.db_info)
             if user.connect():
                 author.send_user_data()
-                author.get_user_id()
                 return redirect(url_for('work_db'))
             else:
                 flash("Неверные данные подключения")
@@ -131,6 +129,7 @@ def work_db():
 @app.route('/history', methods=['POST', "GET"])
 def history():
     if request.method == "POST":
+        author.user_id = author.get_user_id()
         res, desc = author.out_rs()
         return render_template('history.html', rows=res, des=desc)
     return render_template('history.html')

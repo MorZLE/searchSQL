@@ -6,9 +6,9 @@
   padding: 40px;
   margin: 20px auto;
   transform: translate(-50%, -55%);
-  background: rgba(0,0,0,.9);
+  background: #2c3e50;
   box-sizing: border-box;
-  box-shadow: 0 15px 25px rgba(0,0,0,.6);
+  box-shadow: 0 15px 25px #2c3e50;
   border-radius: 10px;
 }
 
