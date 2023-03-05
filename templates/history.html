@@ -3,13 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>История</title>
-    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/base.css">
     <form action="/history" method="post">
 </head>
 <body>
 <div class="workdb">
-<p><input type="submit" name='req' value="Обновить"></p>
+<nav>
     <a href = "{{url_for('work_db')}}">SQL</a>
+    <a href = "{{url_for('login')}}">Войти</a>
+    <a href = "{{url_for('register')}}">Регистрация</a>
+    <a href = "{{url_for('history')}}">История</a>
+    <div class="animation start-home"></div>
+
+</nav>
+<p><input type="submit" name='req' value="Обновить"></p>
 <table table>
     <tr>
    {% for d in des %}
