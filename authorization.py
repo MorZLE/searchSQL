@@ -50,7 +50,7 @@ class Storage(DB):
         """Функция получения id пользователя"""
         res, desc = self.exec('SELECT id FROM USER WHERE login = ?', self.login)
         for row in res:
-            self.user_id = row[0]
+            return row[0]
 
     def hs_rs(self, req):
         """Функция заполнения истории запроса пользователя"""
@@ -59,7 +59,7 @@ class Storage(DB):
     def out_rs(self):
         """Функция получения истории запроса определенного пользователя"""
         res, desc = self.exec('SELECT request,time FROM history_rs WHERE user_id =?', self.user_id)
-        show_table(res, desc)
+        return res, desc
 
     def last_rs(self):
         """Функция отправки последнего запроса определенного пользователя."""

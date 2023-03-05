@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>Главная страница</title>
-   <p><a href = "{{url_for('register')}}">Регистрация</a> </p>
-    <p><a href = "{{url_for('login')}}">Войти</a></p>
-    <p><a href = "{{url_for('work_db')}}">SQL</a></p>
+    <link rel="stylesheet" href="static/css/base.css">
 </head>
 <body>
-<h1> Главная страница сайта </h1>
+<nav class="navMenu">
+      
+      <a href = "{{url_for('work_db')}}">SQL</a>
+      <a href = "{{url_for('login')}}">Войти</a>
+    <a href = "{{url_for('register')}}">Регистрация</a>
+      <div class="dot"></div>
+    </nav>
+
 </body>
 </html>

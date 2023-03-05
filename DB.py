@@ -40,9 +40,9 @@ class DB:
                 case 'SQLite':
                     self.connection = sl.connect(f'{self.data_db[0]}.db',check_same_thread=False)
                     self.cursor = self.connection.cursor()
-            print("База подключена")
+            return True
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, IndexError):
-            raise DBError
+            return False
 
     def con_db_app(self):
         self.connection = sl.connect('data_user.db', check_same_thread=False)
@@ -82,4 +82,5 @@ class DB:
             if 'no results to fetch' in str(err):
                 print('Нету данных для вывода!')
             else:
-                print(flash(err))
+                #print(err)
+                pass

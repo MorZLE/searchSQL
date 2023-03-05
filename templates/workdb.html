@@ -2,10 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    {% for msg in get_flashed_messages() %}
-    <div class = "flash">{{msg}}</div>
-    {% endfor %}
-    <title>Title</title>
+    <div>
+        <p class="font-sans">
+        {% for msg in get_flashed_messages() %}
+        {{msg}}
+        {% endfor %}
+        </p>
+    </div>
+
+    <title>SQL</title>
     <link rel="stylesheet" href="static/css/styles.css">
     <form action="/workdb" method="post">
 </head>
@@ -29,5 +34,4 @@
    {% endfor %}
 </div>
 </table>
-</body>
 </html>

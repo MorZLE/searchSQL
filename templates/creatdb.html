@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Подключение бд</title>
+    {% for msg in get_flashed_messages() %}
+    <div class = "flash">{{msg}}</div>
+    {% endfor %}
     <link rel="stylesheet" href="static/css/login.css">
 </head>
 <body>
@@ -13,7 +16,7 @@
            <select name="vendor">
            <option value=”PostgreSQL”>PostgreSQL</option>
            <option value=”MySQL”>MySQL</option>
-           <option value=”MSserver”>MSserver</option>
+<!--           <option value=”MSserver”>MSserver</option>-->
            <option value=”SQLite”>SQLite</option>
     <div class="user-box">
       <input type="text" name="info_db" placeholder="postgres:pswd@ip:port/name_db">

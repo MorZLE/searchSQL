@@ -51,6 +51,7 @@ def login():
         author.db_info = author.identification()
         if author.db_info:
             user = DB(author.db_info)
+            author.user_id = author.get_user_id()
             if user.connect() == 'err':
                 flash("Неверные данные подключения")
         else:
@@ -99,9 +100,12 @@ def creat_db():
                     author.db_info = info.strip().split()
                     author.db_info.append('SQLite')
             user = DB(author.db_info)
-            user.connect()
-            author.send_user_data()
-            return redirect(url_for('work_db'))
+            if user.connect():
+                author.send_user_data()
+                author.get_user_id()
+                return redirect(url_for('work_db'))
+            else:
+                flash("Неверные данные подключения")
     return render_template('creatdb.html')
 
 @app.route('/workdb', methods=['POST', "GET"])
@@ -111,14 +115,20 @@ def work_db():
     if request.method == "POST":
         if 'req' in request.form:
             request_sql = request.form['message']
+            author.hs_rs(request_sql)
             try:
                 res, desc = user.exec(request_sql)
                 return render_template('workdb.html', rows=res, des=desc)
             except TypeError:
-                flash("Некорректный запрос")
+                flash("Некорректный запрос!")
         elif 'exit' in request.form:
             return redirect(url_for('login'))
     return render_template('workdb.html')
-
+@app.route('/history', methods=['POST', "GET"])
+def history():
+    if request.method == "POST":
+        res, desc = author.out_rs()
+        return render_template('history.html', rows=res, des=desc)
+    return render_template('history.html')
 if __name__ == '__main__':
     app.run(debug = True)
