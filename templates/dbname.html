@@ -20,8 +20,9 @@
 </nav>
 </div>
 <div class="login-box">
+    <h1>Ваши базы данных</h1>
     {% for name in rows %}
-           <p><a class="a2">{{name[0]}}</a></p>
+          <h2 align="center"> <a class="a2">{{name[0]}}</a><h2>
     {% endfor %}
 
     <p><a class="a2" href = "{{url_for('creat_db')}}">Создать бд</a></p>
