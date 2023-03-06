@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+textarea[is="highlighted-code"] { padding: 8px; }
+</style>
+
+<script type="module">
+(async ({chrome, netscape}) => {
+  if (!chrome && !netscape)
+    await import('https://unpkg.com/@ungap/custom-elements');
+  const {default: HighlightedCode} =
+    await import('https://unpkg.com/highlighted-code');
+  HighlightedCode.useTheme('github-dark');
+
+})(self);
+
+</script>
     <meta charset="UTF-8">
     <div>
         <p class="font-sans">
@@ -26,9 +42,9 @@
     <div class="animation start-home"></div>
 
 </nav>
-<p><textarea name="message" cols="70" rows="10"  placeholder="Введите запрос"></textarea></p>
-<input type="submit" name='req' value="Отправить">
+<textarea  name="message" is="highlighted-code" cols="70" rows="12" language="sql" tab-size="2" placeholder="Введите запрос"></textarea>
 
+<input type="submit" name='req' value="Отправить">
 <table table>
     <tr>
    {% for d in des %}

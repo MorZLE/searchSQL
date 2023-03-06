@@ -117,7 +117,7 @@ textarea {
 }
 
 .workdb textarea{
-
+    top:11%;
 	resize: none;
 	position:absolute;
 	width:95%;
@@ -125,14 +125,14 @@ textarea {
 	justify-content: center;
     margin-left: auto;
     margin-right: auto;
-	padding:15px;
-	background-color: #272727;
+	padding:10px;
+	background-color: #000000;
 	color: #aaaaaa;
 }
 
 .workdb table {
 	position: absolute;
-	top:46%;
+	top:50%;
 	width: 97%;
 	margin-bottom: 20px;
 	border: 1px solid #dddddd;
@@ -141,7 +141,7 @@ textarea {
 }
 .workdb input{
 	position: absolute;
-	top:39%;
+	top:42%;
 	width: 5%;
 	left: 45%;
 	border: 2px solid #aaaaaa;
