@@ -11,11 +11,32 @@
 function getSelectValue(){
     var selectBox = document.getElementById('vendor')
     var userInput = selectBox.options[selectBox.selectedIndex].value
-    if (userInput == "PostgreSQL"){
-        console.log('PostgreSQL')
-        alert('PostgreSQL');
-        print('PostgreSQL');
+    switch(userInput){
+        case '”PostgreSQL”':
+            navigator.clipboard.writeText('username:password@host:port/dbname')
+            var r = document.createRange();
+            r.selectNode('teset');
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(r);
+            window.getSelection().removeAllRanges();
+        case '”MySQL”':
+            navigator.clipboard.writeText("Server=<server>;Database=<database>;UID=<user id>;PWD=<password>")
+            var r = document.createRange();
+            r.selectNode('teset');
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(r);
+            window.getSelection().removeAllRanges();
+        case '”SQLite”':
+            navigator.clipboard.writeText('dbname')
+            var r = document.createRange();
+            r.selectNode('teset');
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(r);
+            window.getSelection().removeAllRanges();
     }
+
+
+
 
 
 }
@@ -37,7 +58,7 @@ list.addEventListener('change', function(e) {
 <!--           <option value=”MSserver”>MSserver</option>-->
            <option value=”SQLite”>SQLite</option>
     <div class="user-box">
-      <input type="text" name="info_db" placeholder="postgres:pswd@ip:port/name_db">
+      <input type="text" name="info_db" placeholder="Выберите СУБД и вставьте из буфера строку">
       <label>Строка подключения</label>
     </div>
       <div class="user-box">
