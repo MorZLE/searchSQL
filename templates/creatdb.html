@@ -7,45 +7,7 @@
     <div class = "flash">{{msg}}</div>
     {% endfor %}
     <link rel="stylesheet" href="static/css/login.css">
-    <script>
-function getSelectValue(){
-    var selectBox = document.getElementById('vendor')
-    var userInput = selectBox.options[selectBox.selectedIndex].value
-    switch(userInput){
-        case '”PostgreSQL”':
-            navigator.clipboard.writeText('username:password@host:port/dbname')
-            var r = document.createRange();
-            r.selectNode('teset');
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(r);
-            window.getSelection().removeAllRanges();
-        case '”MySQL”':
-            navigator.clipboard.writeText("Server=<server>;Database=<database>;UID=<user id>;PWD=<password>")
-            var r = document.createRange();
-            r.selectNode('teset');
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(r);
-            window.getSelection().removeAllRanges();
-        case '”SQLite”':
-            navigator.clipboard.writeText('dbname')
-            var r = document.createRange();
-            r.selectNode('teset');
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(r);
-            window.getSelection().removeAllRanges();
-    }
-
-
-
-
-
-}
-
-const list = document.querySelector('#list');
-list.addEventListener('change', function(e) {
-  getSelectValue(e)
-});
-</script>
+    <script src="static/js/vendr_create.js" ></script>
 </head>
 <body>
 <div class="login-box">
