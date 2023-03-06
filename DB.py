@@ -10,6 +10,7 @@ class DB:
         self.Vendor = data_db[-1]
         self.connection = None
         self.cursor = None
+        self.database = None
 
     def connect(self):
         try:
@@ -21,6 +22,7 @@ class DB:
                         password=self.data_db[1],
                         host=self.data_db[2],
                         port=self.data_db[3])
+                    self.database = self.data_db[4]
                     self.cursor = self.connection.cursor()
                 case 'MySQL':
                     self.connection = mysql.connector.connect(
@@ -28,6 +30,7 @@ class DB:
                         password=self.data_db[-2],
                         host=self.data_db[1],
                         database=self.data_db[3])
+                    self.database = self.data_db[3]
                     self.cursor = self.connection.cursor(buffered=True)
                 case 'MSserver':
                     self.connection = pyodbc.connect(f"Driver={self.data_db[0]};"
@@ -35,11 +38,13 @@ class DB:
                                                      f"Database={self.data_db[2]};"
                                                      f"uid={self.data_db[3]};"
                                                      f"pwd={self.data_db[4]}")
-
+                    self.database = self.data_db[2]
                     self.cursor = self.connection.cursor()
                 case 'SQLite':
                     self.connection = sl.connect(f'{self.data_db[0]}.db',check_same_thread=False)
+                    self.database = self.data_db[0]
                     self.cursor = self.connection.cursor()
+
             return True
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, IndexError):
             return False
@@ -49,10 +54,16 @@ class DB:
         self.cursor = self.connection.cursor()
         self.connection.execute('CREATE TABLE IF NOT EXISTS USER ('
                                 ' id INTEGER PRIMARY KEY '
-                                'AUTOINCREMENT NOT NULL, login text, password text, db_info text);')
+                                'AUTOINCREMENT NOT NULL, login text,'
+                                ' password text, db_info text);')
+
         self.connection.execute('CREATE TABLE IF NOT EXISTS history_rs '
-                                '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, request text, '
-                                'time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, user_id int);')
+                                '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
+                                'request text, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
+                                'NOT NULL, user_id int);')
+
+        self.connection.execute('CREATE TABLE IF NOT EXISTS userDBs( id INTEGER primary key,db_info TEXT not null,owner TEXT not null references USER (login),dbName  TEXT);')
+
         self.connection.commit()
 
     def web_con_db(self, app):

@@ -6,7 +6,7 @@
     {% for msg in get_flashed_messages() %}
     <div class = "flash">{{msg}}</div>
     {% endfor %}
-    <link rel="stylesheet" href="static/css/login.css">
+    <link rel="stylesheet" href="static/css/base.css">
 </head>
 <body>
 <div class="login-box">
@@ -24,7 +24,7 @@
         <input type="submit" value="Войти">
 
   </form>
-  <p>Нету аккаунта? <a href="{{url_for('register')}}" class="a2">Зарегистрируйся!</a></p>
+  <p>Нету аккаунта? <a href="{{url_for('register')}}" class="a2">Регистрация!</a></p>
 </div>
 </body>
 </html>

@@ -40,11 +40,20 @@ class Storage(DB):
                 return False
         return True
 
-    def send_user_data(self):
+    def send_user_data(self, dbname):
         """Функция заполнения данных пользователя в бд"""
         res, desc = self.exec('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
                               self.login, self.passwd, ' '.join(self.db_info))
         self.get_user_id()
+
+    def send_user_db(self, dbname):
+        res, desc = self.exec('INSERT INTO userDBs (db_info, owner, dbname) values(?, ?, ?)',
+                              ' '.join(self.db_info), self.login, dbname)
+        self.get_user_id()
+
+    def get_user_db(self):
+        res, desc = self.exec('SELECT dbname FROM userDBs WHERE owner =?', self.login)
+        return res
 
     def get_user_id(self):
         """Функция получения id пользователя"""

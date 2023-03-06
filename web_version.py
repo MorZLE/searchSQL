@@ -107,11 +107,14 @@ def creat_db():
                     author.db_info.append('SQLite')
             user = DB(author.db_info)
             if user.connect():
-                author.send_user_data()
+                author.send_user_data(user.database)
+                author.send_user_db(user.database)
                 return redirect(url_for('work_db'))
             else:
                 flash("Неверные данные подключения")
     return render_template('creatdb.html')
+
+
 
 @app.route('/workdb', methods=['POST', "GET"])
 def work_db():
@@ -136,5 +139,21 @@ def history():
         res, desc = author.out_rs()
         return render_template('history.html', rows=res, des=desc)
     return render_template('history.html')
+
+@app.route('/dbname', methods=['POST', "GET"])
+def dbname():
+    return render_template('dbname.html', rows=author.get_user_db())
+
+@app.route('/profile', methods=['POST', "GET"])
+def profile():
+    return render_template('profile.html', name=author.login)
+
+
+def test():
+    return render_template('test.html')
+
+
+
+
 if __name__ == '__main__':
     app.run(debug = True)

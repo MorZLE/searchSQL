@@ -1,0 +1,22 @@
+CREATE TABLE userDBs
+(
+    id      INTEGER primary key,
+    db_info TEXT not null,
+    owner   TEXT not null references USER (login),
+    dbName  TEXT,
+);
+
+CREATE TABLE IF NOT EXISTS USER
+ ( 	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+	login text, 
+	password text,
+ 	db_info text
+);
+
+CREATE TABLE IF NOT EXISTS history_rs 
+(	id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+	request text,
+	time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+	Condition text;
+	user_id int
+);

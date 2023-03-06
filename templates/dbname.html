@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>История</title>
+    <title>Список бд</title>
+
     <link rel="stylesheet" href="static/css/base.css">
-    <form action="/history" method="post">
+    <form action="/workdb" method="post">
 </head>
 <body>
 <div class="workdb">
@@ -17,20 +18,15 @@
     <div class="animation start-home"></div>
 
 </nav>
-<p><input type="submit" name='req' value="Обновить"></p>
-<table table>
-    <tr>
-   {% for d in des %}
-           <th>{{d[0]}}</th>
-   {% endfor %}
-    </tr>
-   {% for row in rows %}
-       <tr>
-           {% for r in row %}
-               <td>{{r}}</td>
-           {% endfor %}
-       </tr>
-   {% endfor %}
 </div>
-</table>
+<div class="login-box">
+    {% for name in rows %}
+           <p><a class="a2">{{name[0]}}</a></p>
+    {% endfor %}
+
+    <p><a class="a2" href = "{{url_for('creat_db')}}">Создать бд</a></p>
+
+    </form>
+</div>
+</body>
 </html>
