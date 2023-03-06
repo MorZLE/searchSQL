@@ -136,11 +136,11 @@ def work_db():
     return render_template('workdb.html')
 @app.route('/history', methods=['POST', "GET"])
 def history():
-    if request.method == "POST":
-        author.user_id = author.get_user_id()
-        res, desc = author.out_rs()
-        return render_template('history.html', rows=res, des=desc)
-    return render_template('history.html')
+
+    author.user_id = author.get_user_id()
+    res, desc = author.out_rs()
+    return render_template('history.html', rows=res, des=desc)
+
 
 @app.route('/dbname', methods=['POST', "GET"])
 def dbname():

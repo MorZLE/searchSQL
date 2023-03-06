@@ -12,9 +12,10 @@ textarea[is="highlighted-code"] { padding: 8px; }
     await import('https://unpkg.com/@ungap/custom-elements');
   const {default: HighlightedCode} =
     await import('https://unpkg.com/highlighted-code');
-  HighlightedCode.useTheme('github-dark');
+  HighlightedCode.useTheme('a11y-dark');
 
 })(self);
+// https://github.com/highlightjs/highlight.js/tree/main/src/styles?ref=morioh.com&utm_source=morioh.com стили css
 
 </script>
     <meta charset="UTF-8">
@@ -42,7 +43,7 @@ textarea[is="highlighted-code"] { padding: 8px; }
     <div class="animation start-home"></div>
 
 </nav>
-<textarea  name="message" is="highlighted-code" cols="70" rows="12" language="sql" tab-size="2" placeholder="Введите запрос"></textarea>
+<textarea name="message" is="highlighted-code" cols="70" rows="12" language="sql" tab-size="2" placeholder="Введите запрос"></textarea>
 
 <input type="submit" name='req' value="Отправить">
 <table table>
