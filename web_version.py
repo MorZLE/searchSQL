@@ -106,8 +106,9 @@ def creat_db():
                     author.db_info = info.strip().split()
                     author.db_info.append('SQLite')
             user = DB(author.db_info)
-            if user.connect():
+            if author.registration():
                 author.send_user_data(user.database)
+            if user.connect():
                 author.send_user_db(user.database)
                 return redirect(url_for('work_db'))
             else:
@@ -123,11 +124,12 @@ def work_db():
     if request.method == "POST":
         if 'req' in request.form:
             request_sql = request.form['message']
-            author.hs_rs(request_sql)
             try:
                 res, desc = user.exec(request_sql)
+                author.hs_rs(request_sql, 'True')
                 return render_template('workdb.html', rows=res, des=desc)
             except TypeError:
+                author.hs_rs(request_sql, 'False')
                 flash("Некорректный запрос!")
         elif 'exit' in request.form:
             return redirect(url_for('login'))

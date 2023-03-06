@@ -55,11 +55,13 @@ class DB:
         self.connection.execute('CREATE TABLE IF NOT EXISTS USER ('
                                 ' id INTEGER PRIMARY KEY '
                                 'AUTOINCREMENT NOT NULL, login text,'
-                                ' password text, db_info text);')
+                                'password text, db_info text);')
 
         self.connection.execute('CREATE TABLE IF NOT EXISTS history_rs '
                                 '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
-                                'request text, time TIMESTAMP DEFAULT CURRENT_TIMESTAMP'
+                                'request text, '
+                                'time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,'
+                                'condition text'
                                 'NOT NULL, user_id int);')
 
         self.connection.execute('CREATE TABLE IF NOT EXISTS userDBs( id INTEGER primary key,db_info TEXT not null,owner TEXT not null references USER (login),dbName  TEXT);')
