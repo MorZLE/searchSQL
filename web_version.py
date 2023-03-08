@@ -1,35 +1,27 @@
 from flask import Flask, request, render_template, session, flash, redirect, url_for
-import sqlite3 as sl
+import random
 import os
 import re
 from DB import DB
 from authorization import Storage
-from table import show_table
 
 DATABASE = '/tmp/flsite.db'
 DEBUG = True
 
+def app_secret_key():
+    chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+    randArray = []
+    for i in chars:
+        randArray.append(chars[random.randint(0, len(chars) - 1)])
+    return ''.join(randArray)
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
-app.config['SECRET_KEY'] = '8b8b21bdebbf2c5cf5198e6d8f49b3c4a9eefe59'
+app.config['SECRET_KEY'] = app_secret_key()
 
 user = None
 author = Storage()
-def web_con_db():
-    connection = sl.connect(app.config['DATABASE'])
-    connection.row_factory = sl.Row
-    return connection
-
-
-def web_create_db():
-    db = web_con_db()
-    with app.open_resource('sq_db.sql', mode='r') as f:
-        db.cursor().executescript(f.read())
-    db.commit()
-    db.close()
-
 
 @app.before_request
 def before_request():
@@ -107,9 +99,9 @@ def creat_db():
                     author.db_info.append('SQLite')
             user = DB(author.db_info)
             if author.registration():
-                author.send_user_data(user.database)
+                author.send_user_data(user.info.database)
             if user.connect():
-                author.send_user_db(user.database)
+                author.send_user_db(user.info.database)
                 return redirect(url_for('work_db'))
             else:
                 flash("Неверные данные подключения")
