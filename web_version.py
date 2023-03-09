@@ -16,12 +16,6 @@ app.config['SECRET_KEY'] = os.urandom(24)
 user = None
 author = Storage()
 
-@app.before_request
-def before_request():
-    pass
-
-
-
 @app.route('/')
 def index():
     if 'username' in session:
@@ -41,11 +35,12 @@ def login():
         author.db_info = author.identification()
         if author.db_info:
             user = DB(author.db_info)
-            if user.connect() == 'err':
-                flash("Неверные данные подключения")
+            if user.connect() != 'err':
+                return redirect(url_for('work_db'))
+            else:
+                flash("Ошибка подключения")
         else:
             flash("Пользователь не найден")
-        return redirect(url_for('work_db'))
     return render_template('login.html')
 
 @app.route('/test', methods=['POST', "GET"])
@@ -158,7 +153,7 @@ def test():
     return render_template('test.html')
 
 @app.errorhandler(404)
-def page_not_found(error):
+def err(error):
     return render_template('error.html'), 404
 
 
