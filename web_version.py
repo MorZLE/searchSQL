@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, session, flash, redirect, url_for
+from flask import Flask, request, render_template, session, flash, redirect, url_for, escape
 import random
 import os
 import re
@@ -8,17 +8,10 @@ from authorization import Storage
 DATABASE = '/tmp/flsite.db'
 DEBUG = True
 
-def app_secret_key():
-    chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-    randArray = []
-    for i in chars:
-        randArray.append(chars[random.randint(0, len(chars) - 1)])
-    return ''.join(randArray)
-
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
-app.config['SECRET_KEY'] = app_secret_key()
+app.config['SECRET_KEY'] = os.urandom(24)
 
 user = None
 author = Storage()
@@ -31,6 +24,10 @@ def before_request():
 
 @app.route('/')
 def index():
+    if 'username' in session:
+        escape(session['username'])
+        return render_template('workdb.html')
+
     return render_template('index.html')
 
 
@@ -38,6 +35,7 @@ def index():
 def login():
     global user
     if request.method == "POST":
+        session['username'] = request.form['username']
         author.login = request.form['username']
         author.passwd = request.form['password']
         author.db_info = author.identification()
@@ -58,6 +56,7 @@ def test():
 @app.route('/register', methods=['POST', "GET"])
 def register():
     if request.method == "POST":
+        session['username'] = request.form['username']
         author.login = request.form['username']
         author.passwd = request.form['password']
         confirm_password = request.form['confirm_password']
@@ -77,44 +76,44 @@ def register():
 @app.route('/creatdb', methods=['POST', "GET"])
 def creat_db():
     global user
-    if request.method == "POST":
-        vendr = request.form['vendor']
-        info = request.form['info_db']
-        if info:
-            match vendr[1:-1]:
-                case "PostgreSQL":
-                    author.db_info = re.sub('[:|@|/]', " ", info).split()
-                    author.db_info.append('PostgreSQL')
-                case "MySQL":
-                    author.db_info = re.sub('[;| =|]', " ", info).split()
-                    author.db_info.append('MySQL')
-                case "MSserver":
-                    # добавить драйвер
-                    s = re.sub('[;| =|>|<|]', " ", info).split()
-                    for i in [1, 3, 5, 7]:
-                        author.db_info.append(s[i])
-                    author.db_info.append('MSserver')
-                case "SQLite":
-                    author.db_info = info.strip().split()
-                    author.db_info.append('SQLite')
-            user = DB(author.db_info)
-            if author.registration():
-                author.send_user_data(user.info.database)
-            if user.connect():
-                author.send_user_db(user.info.database)
-                return redirect(url_for('work_db'))
-            else:
-                flash("Неверные данные подключения")
-    return render_template('creatdb.html')
-
+    if 'username' in session:
+        if request.method == "POST":
+            vendr = request.form['vendor']
+            info = request.form['info_db']
+            if info:
+                match vendr[1:-1]:
+                    case "PostgreSQL":
+                        author.db_info = re.sub('[:|@|/]', " ", info).split()
+                        author.db_info.append('PostgreSQL')
+                    case "MySQL":
+                        author.db_info = re.sub('[;| =|]', " ", info).split()
+                        author.db_info.append('MySQL')
+                    case "MSserver":
+                        # добавить драйвер
+                        s = re.sub('[;| =|>|<|]', " ", info).split()
+                        for i in [1, 3, 5, 7]:
+                            author.db_info.append(s[i])
+                        author.db_info.append('MSserver')
+                    case "SQLite":
+                        author.db_info = info.strip().split()
+                        author.db_info.append('SQLite')
+                user = DB(author.db_info)
+                if author.registration():
+                    author.send_user_data(user.info.database)
+                if user.connect():
+                    author.send_user_db(user.info.database)
+                    return redirect(url_for('work_db'))
+                else:
+                    flash("Неверные данные подключения")
+        return render_template('creatdb.html')
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route('/workdb', methods=['POST', "GET"])
 def work_db():
-    if user is None:
-        return redirect(url_for('login'))
-    if request.method == "POST":
-        if 'req' in request.form:
+    if 'username' in session:
+        if request.method == "POST":
             request_sql = request.form['message']
             try:
                 res, desc = user.exec(request_sql)
@@ -123,24 +122,36 @@ def work_db():
             except TypeError:
                 author.hs_rs(request_sql, 'False')
                 flash("Некорректный запрос!")
-        elif 'exit' in request.form:
-            return redirect(url_for('login'))
-    return render_template('workdb.html')
+
+        return render_template('workdb.html')
+    else:
+        return redirect(url_for('login'))
 @app.route('/history', methods=['POST', "GET"])
 def history():
-
-    author.user_id = author.get_user_id()
-    res, desc = author.out_rs()
-    return render_template('history.html', rows=res, des=desc)
-
+    if 'username' in session:
+        author.user_id = author.get_user_id()
+        res, desc = author.out_rs()
+        return render_template('history.html', rows=res, des=desc)
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/dbname', methods=['POST', "GET"])
 def dbname():
-    return render_template('dbname.html', rows=author.get_user_db())
+    if 'username' in session:
+        return render_template('dbname.html', rows=author.get_user_db())
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/profile', methods=['POST', "GET"])
 def profile():
-    return render_template('profile.html', name=author.login)
+    if 'username' in session:
+        return render_template('profile.html', name=author.login)
+    else:
+        return redirect(url_for('login'))
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect('/')
 
 
 def test():
