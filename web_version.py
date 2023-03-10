@@ -1,5 +1,4 @@
 from flask import Flask, request, render_template, session, flash, redirect, url_for, escape
-import random
 import os
 import re
 from DB import DB
@@ -33,6 +32,8 @@ def login():
         author.login = request.form['username']
         author.passwd = request.form['password']
         author.db_info = author.identification()
+       # session.permanent = True
+       # session.permanent = False
         if author.db_info:
             user = DB(author.db_info)
             if user.connect() != 'err':
@@ -153,7 +154,7 @@ def test():
     return render_template('test.html')
 
 @app.errorhandler(404)
-def err(error):
+def pageNot(error):
     return render_template('error.html'), 404
 
 

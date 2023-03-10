@@ -1,6 +1,9 @@
 from data_coll import data_collection
 from table import show_table
 from DB import DB
+import math
+import time
+import datetime
 
 
 class Storage(DB):
@@ -63,7 +66,10 @@ class Storage(DB):
 
     def hs_rs(self, req , cond):
         """Функция заполнения истории запроса пользователя"""
-        self.exec('INSERT INTO history_rs (request,user_id,condition) values (?,?,?)', req, self.user_id,cond)
+        #tm = math.floor(time.time())
+        tm = datetime.datetime.now()
+        tm = tm.strftime("%H:%M:%S %d-%m-%Y ")
+        self.exec('INSERT INTO history_rs (request,user_id,time,condition) values (?,?,?,?)', req, self.user_id,tm,cond)
 
     def out_rs(self):
         """Функция получения истории запроса определенного пользователя"""

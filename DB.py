@@ -96,7 +96,7 @@ class DB:
         self.connection.execute('CREATE TABLE IF NOT EXISTS history_rs '
                                 '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
                                 'request text, '
-                                'time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,'
+                                'time INTEGER NOT NULL,'
                                 'condition text'
                                 'NOT NULL, user_id int);')
 
