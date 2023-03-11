@@ -90,83 +90,76 @@ def register():
 @login_required
 def creat_db():
     global user
-    if 'username' in session:
-        if request.method == "POST":
-            vendr = request.form['vendor']
-            info = request.form['info_db']
-            if info:
-                match vendr[1:-1]:
-                    case "PostgreSQL":
-                        author.db_info = re.sub('[:|@|/]', " ", info).split()
-                        author.db_info.append('PostgreSQL')
-                    case "MySQL":
-                        author.db_info = re.sub('[;| =|]', " ", info).split()
-                        author.db_info.append('MySQL')
-                    case "MSserver":
-                        # добавить драйвер
-                        s = re.sub('[;| =|>|<|]', " ", info).split()
-                        for i in [1, 3, 5, 7]:
-                            author.db_info.append(s[i])
-                        author.db_info.append('MSserver')
-                    case "SQLite":
-                        author.db_info = info.strip().split()
-                        author.db_info.append('SQLite')
-                user = DB(author.db_info)
-                if author.registration():
-                    author.send_user_data(user.info.database)
-                if user.connect():
-                    author.send_user_db(user.info.database)
-                    return redirect(url_for('work_db'))
-                else:
-                    flash("Неверные данные подключения")
-        return render_template('creatdb.html')
-    else:
-        return redirect(url_for('login'))
+    if request.method == "POST":
+        vendr = request.form['vendor']
+        info = request.form['info_db']
+        if info:
+            match vendr[1:-1]:
+                case "PostgreSQL":
+                    author.db_info = re.sub('[:|@|/]', " ", info).split()
+                    author.db_info.append('PostgreSQL')
+                case "MySQL":
+                    author.db_info = re.sub('[;| =|]', " ", info).split()
+                    author.db_info.append('MySQL')
+                case "MSserver":
+                    # добавить драйвер
+                    s = re.sub('[;| =|>|<|]', " ", info).split()
+                    for i in [1, 3, 5, 7]:
+                        author.db_info.append(s[i])
+                    author.db_info.append('MSserver')
+                case "SQLite":
+                    author.db_info = info.strip().split()
+                    author.db_info.append('SQLite')
+            user = DB(author.db_info)
+            if author.registration():
+                author.send_user_data(user.info.database)
+            if user.connect():
+                author.send_user_db(user.info.database)
+                return redirect(url_for('work_db'))
+            else:
+                flash("Неверные данные подключения")
+    return render_template('creatdb.html')
+
+
 
 
 @app.route('/workdb', methods=['POST', "GET"])
 @login_required
 def work_db():
-    if 'username' in session:
-        if request.method == "POST":
-            request_sql = request.form['message']
-            try:
-                res, desc = user.exec(request_sql)
-                author.hs_rs(request_sql, 'True')
-                return render_template('workdb.html', rows=res, des=desc)
-            except TypeError:
-                author.hs_rs(request_sql, 'False')
-                flash("Некорректный запрос!")
+    if request.method == "POST":
+        request_sql = request.form['message']
+        try:
+            res, desc = user.exec(request_sql)
+            author.hs_rs(request_sql, 'True')
+            return render_template('workdb.html', rows=res, des=desc)
+        except TypeError:
+            author.hs_rs(request_sql, 'False')
+            flash("Некорректный запрос!")
 
-        return render_template('workdb.html')
-    else:
-        return redirect(url_for('login'))
+    return render_template('workdb.html')
+
+
 
 @app.route('/history', methods=['POST', "GET"])
 @login_required
 def history():
-    if 'username' in session:
-        author.user_id = author.get_user_id()
-        res, desc = author.out_rs()
-        return render_template('history.html', rows=res, des=desc)
-    else:
-        return redirect(url_for('login'))
+    author.user_id = author.get_user_id()
+    res, desc = author.out_rs()
+    return render_template('history.html', rows=res, des=desc)
+
+
 
 @app.route('/dbname', methods=['POST', "GET"])
 @login_required
 def dbname():
-    if 'username' in session:
-        return render_template('dbname.html', rows=author.get_user_db())
-    else:
-        return redirect(url_for('login'))
+    return render_template('dbname.html', rows=author.get_user_db())
+
 
 @app.route('/profile', methods=['POST', "GET"])
 @login_required
 def profile():
-    if 'username' in session:
-        return render_template('profile.html', name=session['username'])
-    else:
-        return redirect(url_for('login'))
+     return render_template('profile.html', name=session['username'])
+
 
 @app.route('/logout')
 @login_required
