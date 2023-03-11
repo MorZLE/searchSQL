@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 
+
 class UserLogin(UserMixin):
     def fromDB(self, author):
         self.user = author.login

@@ -1,13 +1,10 @@
 from flask import Flask, request, render_template, session, flash, redirect, url_for
 from UserLogin import UserLogin
-from flask_login import LoginManager, login_user, login_required
+from flask_login import LoginManager, login_user, login_required, logout_user,current_user
 import os
 import re
 from DB import DB
 from authorization import Storage
-
-
-
 
 
 DATABASE = '/tmp/flsite.db'
@@ -17,10 +14,15 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 app.config['SECRET_KEY'] = os.urandom(24)
+
 login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
+login_manager.login_message_category = "success"
+
 @login_manager.user_loader
 def load_user(user_id):
-    print('load')
+    print('load user', session['username'])
     return UserLogin().fromDB(author)
 
 
@@ -37,6 +39,8 @@ def index():
 @app.route('/login', methods=['POST', "GET"])
 def login():
     global user
+    if current_user.is_authenticated:
+        return redirect(url_for('work_db'))
     if request.method == "POST":
         session['username'] = request.form['username']
         author.login = request.form['username']
@@ -47,8 +51,8 @@ def login():
             user = DB(author.db_info)
             if user.connect() != 'err':
                 userlogin = UserLogin().create(author)
-                login_user(userlogin)
-                return redirect(url_for('work_db'))
+                login_user(userlogin, remember=rm)
+                return redirect(request.args.get('next') or url_for('work_db'))
             else:
                 flash("Ошибка подключения")
         else:
@@ -83,6 +87,7 @@ def register():
 
 
 @app.route('/creatdb', methods=['POST', "GET"])
+@login_required
 def creat_db():
     global user
     if 'username' in session:
@@ -120,6 +125,7 @@ def creat_db():
 
 
 @app.route('/workdb', methods=['POST', "GET"])
+@login_required
 def work_db():
     if 'username' in session:
         if request.method == "POST":
@@ -135,7 +141,9 @@ def work_db():
         return render_template('workdb.html')
     else:
         return redirect(url_for('login'))
+
 @app.route('/history', methods=['POST', "GET"])
+@login_required
 def history():
     if 'username' in session:
         author.user_id = author.get_user_id()
@@ -145,6 +153,7 @@ def history():
         return redirect(url_for('login'))
 
 @app.route('/dbname', methods=['POST', "GET"])
+@login_required
 def dbname():
     if 'username' in session:
         return render_template('dbname.html', rows=author.get_user_db())
@@ -152,24 +161,26 @@ def dbname():
         return redirect(url_for('login'))
 
 @app.route('/profile', methods=['POST', "GET"])
+@login_required
 def profile():
     if 'username' in session:
         return render_template('profile.html', name=session['username'])
     else:
         return redirect(url_for('login'))
+
 @app.route('/logout')
+@login_required
 def logout():
+    logout_user()
     session.pop('username', None)
     return redirect('/')
-
-
-def test():
-    return render_template('test.html')
 
 @app.errorhandler(404)
 def pageNot(error):
     return render_template('error.html'), 404
 
+def test():
+    return render_template('test.html')
 
 if __name__ == '__main__':
     app.run(debug = True)
