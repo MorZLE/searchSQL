@@ -1,8 +1,14 @@
-from flask import Flask, request, render_template, session, flash, redirect, url_for, escape
+from flask import Flask, request, render_template, session, flash, redirect, url_for
+from UserLogin import UserLogin
+from flask_login import LoginManager, login_user, login_required
 import os
 import re
 from DB import DB
 from authorization import Storage
+
+
+
+
 
 DATABASE = '/tmp/flsite.db'
 DEBUG = True
@@ -11,6 +17,12 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 app.config['SECRET_KEY'] = os.urandom(24)
+login_manager = LoginManager(app)
+@login_manager.user_loader
+def load_user(user_id):
+    print('load')
+    return UserLogin().fromDB(author)
+
 
 user = None
 author = Storage()
@@ -18,9 +30,7 @@ author = Storage()
 @app.route('/')
 def index():
     if 'username' in session:
-        escape(session['username'])
-        return render_template('workdb.html')
-
+        return redirect(url_for('work_db'))
     return render_template('index.html')
 
 
@@ -32,11 +42,12 @@ def login():
         author.login = request.form['username']
         author.passwd = request.form['password']
         author.db_info = author.identification()
-       # session.permanent = True
-       # session.permanent = False
+        rm = True if request.form.get('remainme') else False
         if author.db_info:
             user = DB(author.db_info)
             if user.connect() != 'err':
+                userlogin = UserLogin().create(author)
+                login_user(userlogin)
                 return redirect(url_for('work_db'))
             else:
                 flash("Ошибка подключения")
@@ -44,7 +55,9 @@ def login():
             flash("Пользователь не найден")
     return render_template('login.html')
 
+
 @app.route('/test', methods=['POST', "GET"])
+@login_required
 def test():
     return render_template('test.html')
 
@@ -59,7 +72,7 @@ def register():
         if author.login == '' or author.passwd == '':
             flash("Логин или пароль не могут быть пустыми")
         else:
-            if author.passwd == confirm_password :
+            if author.passwd == confirm_password:
                 if author.registration():
                     return redirect(url_for('creat_db'))
                 else:
@@ -141,7 +154,7 @@ def dbname():
 @app.route('/profile', methods=['POST', "GET"])
 def profile():
     if 'username' in session:
-        return render_template('profile.html', name=author.login)
+        return render_template('profile.html', name=session['username'])
     else:
         return redirect(url_for('login'))
 @app.route('/logout')

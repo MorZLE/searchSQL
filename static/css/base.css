@@ -214,12 +214,13 @@ textarea {
 
 .login-box p:first-child {
   margin: 0 0 30px;
-  padding: 5px;
+  padding: 10px;
   color: #fff;
   text-align: center;
   font-size: 1.5rem;
   font-weight: bold;
   letter-spacing: 1px;
+
 }
 
 .login-box .user-box {
@@ -369,14 +370,18 @@ textarea {
 
 .login-box a.a2 {
   color: #fff;
-  width: 50%;
+  width: 55%;
   text-decoration: none;
+
+
 }
 
 .login-box a.a2:hover {
   background: transparent;
+  align-items: center;
+  justify-content: center;
   color: #aaa;
-  border-radius: 5px;
+  border-radius: 10px;
 }
 
 
@@ -385,7 +390,5 @@ textarea {
   color: #FFFFFF;
   background-color: #2c3e50;
   border-radius: 5px;
-
-}
 
 
