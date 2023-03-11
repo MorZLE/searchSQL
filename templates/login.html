@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Авторизация</title>
-    {% for msg in get_flashed_messages() %}
-    <div class = "flash">{{msg}}</div>
-    {% endfor %}
     <link rel="stylesheet" href="static/css/base.css">
+    {% for msg in get_flashed_messages() %}
+    <div class = "flash"><p>{{msg}}</p></div>
+    {% endfor %}
+
+
 </head>
 <body>
 <div class="login-box">
@@ -29,6 +31,7 @@
         <input type="submit" value="Войти">
 
   </form>
+
   <p>Нету аккаунта? <a href="{{url_for('register')}}" class="a2">Регистрация!</a></p>
 </div>
 </body>

@@ -42,7 +42,7 @@ class Info:
                 case 'SQLite':
                     self.database = self.data_db[0]
             self.isValid = True
-        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, IndexError):
+        except (IndexError):
             self.isValid = False
 
 
@@ -54,36 +54,39 @@ class DB:
 
 
     def connect(self):
-        if self.info.isValid:
-            match self.info.Vendor:
-                case 'PostgreSQL':
-                    self.connection = psycopg2.connect(
-                        database=self.info.database,
-                        user=self.info.user,
-                        password=self.info.password,
-                        host=self.info.host,
-                        port=self.info.port)
-                    self.cursor = self.connection.cursor()
-                case 'MySQL':
-                    self.connection = mysql.connector.connect(
-                        user=self.info.user,
-                        password=self.info.password,
-                        host=self.info.host,
-                        database=self.info.database)
-                    self.cursor = self.connection.cursor(buffered=True)
-                case 'MSserver':
-                    self.connection = pyodbc.connect(f"Driver={self.info.Driver};"
-                                                     f"Server={self.info.Server};"
-                                                     f"Database={self.info.database};"
-                                                     f"uid={self.info.user};"
-                                                     f"pwd={self.info.password}")
-                    self.cursor = self.connection.cursor()
-                case 'SQLite':
-                    self.connection = sqlite3.connect(f'{self.info.database}', check_same_thread=False)
-                    self.cursor = self.connection.cursor()
-            return True
-        else:
-            return False
+        try:
+            if self.info.isValid:
+                match self.info.Vendor:
+                    case 'PostgreSQL':
+                        self.connection = psycopg2.connect(
+                            database=self.info.database,
+                            user=self.info.user,
+                            password=self.info.password,
+                            host=self.info.host,
+                            port=self.info.port)
+                        self.cursor = self.connection.cursor()
+                    case 'MySQL':
+                        self.connection = mysql.connector.connect(
+                            user=self.info.user,
+                            password=self.info.password,
+                            host=self.info.host,
+                            database=self.info.database)
+                        self.cursor = self.connection.cursor(buffered=True)
+                    case 'MSserver':
+                        self.connection = pyodbc.connect(f"Driver={self.info.Driver};"
+                                                         f"Server={self.info.Server};"
+                                                         f"Database={self.info.database};"
+                                                         f"uid={self.info.user};"
+                                                         f"pwd={self.info.password}")
+                        self.cursor = self.connection.cursor()
+                    case 'SQLite':
+                        self.connection = sqlite3.connect(f'{self.info.database}', check_same_thread=False)
+                        self.cursor = self.connection.cursor()
+                return True
+            else:
+                return False
+        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError):
+                return False
 
     def con_db_app(self):
         self.connection = sqlite3.connect('data_user', check_same_thread=False)

@@ -4,12 +4,21 @@
     <meta charset="UTF-8">
     <title>Подключение бд</title>
     {% for msg in get_flashed_messages() %}
-    <div class = "flash">{{msg}}</div>
+    <div class = "flash"><p>{{msg}}</p></div>
     {% endfor %}
     <link rel="stylesheet" href="static/css/base.css">
     <script src="static/js/vendr_create.js" ></script>
 </head>
 <body>
+<nav>
+    <a href = "{{url_for('work_db')}}">SQL</a>
+    <a href = "{{url_for('dbname')}}">Список бд</a>
+    <a href = "{{url_for('history')}}">История</a>
+    <a href = "{{url_for('profile')}}">Профиль</a>
+    <a href = "{{url_for('logout')}}">Выход</a>
+    <div class="animation start-home"></div>
+
+</nav>
 <div class="login-box">
   <p>Добавление бд</p>
   <form action="/creatdb" method="post">

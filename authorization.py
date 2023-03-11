@@ -55,7 +55,7 @@ class Storage(DB):
         self.get_user_id()
 
     def get_user_db(self):
-        res, desc = self.exec('SELECT dbname FROM userDBs WHERE owner =?', self.login)
+        res, desc = self.exec('SELECT dbname,id FROM userDBs WHERE owner =?', self.login)
         return res
 
     def get_user_id(self):

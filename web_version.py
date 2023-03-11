@@ -128,14 +128,16 @@ def creat_db():
 def work_db():
     if request.method == "POST":
         request_sql = request.form['message']
-        try:
-            res, desc = user.exec(request_sql)
-            author.hs_rs(request_sql, 'True')
-            return render_template('workdb.html', rows=res, des=desc)
-        except TypeError:
-            author.hs_rs(request_sql, 'False')
-            flash("Некорректный запрос!")
-
+        if request_sql != '':
+            try:
+                res, desc = user.exec(request_sql)
+                author.hs_rs(request_sql, 'True')
+                return render_template('workdb.html', rows=res, des=desc)
+            except TypeError:
+                author.hs_rs(request_sql, 'False')
+                flash("Некорректный запрос!")
+        else:
+            flash("Запрос не может быть пустым!")
     return render_template('workdb.html')
 
 
@@ -152,6 +154,7 @@ def history():
 @app.route('/dbname', methods=['POST', "GET"])
 @login_required
 def dbname():
+    print(author.get_user_db())
     return render_template('dbname.html', rows=author.get_user_db())
 
 
