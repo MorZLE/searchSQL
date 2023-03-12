@@ -17,18 +17,17 @@ app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 app.config['SECRET_KEY'] = os.urandom(24)
 
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'FlaskApp:login'
 login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
 login_manager.login_message_category = "success"
 
 
 class FlaskApp(FlaskView):
-    default_methods = ['GET', 'POST']
-
+    author = Storage()
     @login_manager.user_loader
     def load_user(self):
         print('load user', session['username'])
-        return UserLogin().fromDB(self.author.login)
+        return UserLogin().fromDB(session['username'])
 
 
     def index(self):
@@ -39,7 +38,6 @@ class FlaskApp(FlaskView):
 
     @route('/login', methods=['POST', "GET"])
     def login(self):
-        self.author = Storage()
         if current_user.is_authenticated:
             return redirect(url_for('FlaskApp:work_db'))
         if request.method == "POST":
@@ -47,6 +45,7 @@ class FlaskApp(FlaskView):
             self.author.login = request.form['username']
             self.author.passwd = request.form['password']
             self.author.db_info = self.author.identification()
+            print(self.author.login)
             rm = True if request.form.get('remainme') else False
             if self.author.db_info:
                 self.user = DB(self.author.db_info)
@@ -69,7 +68,7 @@ class FlaskApp(FlaskView):
 
     @route('/register', methods=['POST', "GET"])
     def reg(self):
-        self.author = Storage()
+
         if request.method == "POST":
             session['username'] = request.form['username']
             self.author.login = request.form['username']
@@ -99,10 +98,10 @@ class FlaskApp(FlaskView):
             if self.info:
                 match self.vendr[1:-1]:
                     case "PostgreSQL":
-                        self.author.db_info = re.sub('[:|@|/]', " ", info).split()
+                        self.author.db_info = re.sub('[:|@|/]', " ", self.info).split()
                         self.author.db_info.append('PostgreSQL')
                     case "MySQL":
-                        self.author.db_info = re.sub('[;| =|]', " ", info).split()
+                        self.author.db_info = re.sub('[;| =|]', " ", self.info).split()
                         self.author.db_info.append('MySQL')
                     case "MSserver":
                         # добавить драйвер
@@ -111,7 +110,7 @@ class FlaskApp(FlaskView):
                             self.author.db_info.append(s[i])
                         self.author.db_info.append('MSserver')
                     case "SQLite":
-                        self.author.db_info = info.strip().split()
+                        self.author.db_info = self.info.strip().split()
                         self.author.db_info.append('SQLite')
                 self.user = DB(self.author.db_info)
                 if self.author.registration():
@@ -122,9 +121,6 @@ class FlaskApp(FlaskView):
                 else:
                     flash("Неверные данные подключения")
         return render_template('creatdb.html')
-
-
-
 
     @route('/work_db', methods=['POST', "GET"])
     @login_required
@@ -157,7 +153,6 @@ class FlaskApp(FlaskView):
     @route('/dbname', methods=['POST', "GET"])
     @login_required
     def dbname(self):
-        print(self.author.get_user_db())
         return render_template('dbname.html', rows=self.author.get_user_db())
 
 
@@ -174,13 +169,11 @@ class FlaskApp(FlaskView):
         session.pop('username', None)
         return redirect('/')
 
-    #@errorhandler(404)
-    #def pageNot(self, error):
-    #     return render_template('error.html'), 404
-
     def test(self):
         return render_template('test.html')
-
+@app.errorhandler(404)
+def pageNot(error):
+    return render_template('error.html'), 404
 
 FlaskApp.register(app, route_base='/')
 
