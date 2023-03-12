@@ -6,6 +6,8 @@ import os
 import re
 from DB import DB
 from authorization import Storage
+from usecase import UseCase, UniqueUsernameCheckFailed
+
 
 
 DATABASE = '/tmp/flsite.db'
@@ -24,17 +26,22 @@ login_manager.login_message_category = "success"
 
 class FlaskApp(FlaskView):
     author = Storage()
+    logic = None
+
+    def __init__(self):
+        super().__init__()
+        self.logic = UseCase()
+
+
     @login_manager.user_loader
     def load_user(self):
         print('load user', session['username'])
         return UserLogin().fromDB(session['username'])
 
-
     def index(self):
         if 'username' in session:
             return redirect(url_for('FlaskApp:work_db'))
         return render_template('index.html')
-
 
     @route('/login', methods=['POST', "GET"])
     def login(self):
@@ -42,19 +49,15 @@ class FlaskApp(FlaskView):
             return redirect(url_for('FlaskApp:work_db'))
         if request.method == "POST":
             session['username'] = request.form['username']
-            self.author.login = request.form['username']
-            self.author.passwd = request.form['password']
-            self.author.db_info = self.author.identification()
-            print(self.author.login)
+            login = request.form['username']
+            passwd = request.form['password']
+            db_info = self.author.identification(login, passwd)
             rm = True if request.form.get('remainme') else False
             if self.author.db_info:
                 self.user = DB(self.author.db_info)
-                if self.user.connect() != 'err':
-                    userlogin = UserLogin().create(self.author.login)
-                    login_user(userlogin, remember=rm)
-                    return redirect(request.args.get('next') or url_for('FlaskApp:work_db'))
-                else:
-                    flash("Ошибка подключения")
+                userlogin = UserLogin().create(self.author.login)
+                login_user(userlogin, remember=rm)
+                return redirect(request.args.get('next') or url_for('FlaskApp:work_db'))
             else:
                 flash("Пользователь не найден")
         return render_template('login.html')
@@ -68,24 +71,24 @@ class FlaskApp(FlaskView):
 
     @route('/register', methods=['POST', "GET"])
     def reg(self):
-
         if request.method == "POST":
             session['username'] = request.form['username']
-            self.author.login = request.form['username']
-            self.author.passwd = request.form['password']
-            self.confirm_password = request.form['confirm_password']
-            if self.author.login == '' or self.author.passwd == '':
+            login = request.form['username']
+            passwd = request.form['password']
+            confirm_password = request.form['confirm_password']
+            if login == '' or passwd == '':
                 flash("Логин или пароль не могут быть пустыми")
+                return render_template('register.html')
+            if passwd == confirm_password:
+                try:
+                    self.logic.create_user(login, passwd)
+                except UniqueUsernameCheckFailed:
+                    flash("Имя пользователя занято")
+                userlogin = UserLogin().create(session['username'])
+                login_user(userlogin)
+                return redirect(url_for('FlaskApp:creat_db'))
             else:
-                if self.author.passwd == confirm_password:
-                    if self.author.registration():
-                        self.userlogin = UserLogin().create(self.author)
-                        login_user(self.userlogin)
-                        return redirect(url_for('FlaskApp:creat_db'))
-                    else:
-                        flash("Имя пользователя занято")
-                else:
-                    flash("Пароли не совпадают")
+                flash("Пароли не совпадают")
         return render_template('register.html')
 
 
@@ -113,6 +116,7 @@ class FlaskApp(FlaskView):
                         self.author.db_info = self.info.strip().split()
                         self.author.db_info.append('SQLite')
                 self.user = DB(self.author.db_info)
+
                 if self.author.registration():
                     self.author.send_user_data(self.user.info.database)
                 if self.user.connect():
@@ -176,8 +180,6 @@ def pageNot(error):
     return render_template('error.html'), 404
 
 FlaskApp.register(app, route_base='/')
-
-
 
 
 if __name__ == '__main__':

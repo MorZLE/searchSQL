@@ -22,39 +22,46 @@ class Storage(DB):
             print('Пароль или логин не должен быть пустым')
             return self.enter_pas_log()
 
-    def identification(self):
+    def identification(self, login, passwd):
         try:
-            if self.db_info is None and self.login is None and self.passwd is None:
-                self.enter_pas_log()
-            res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.passwd)
+            #if self.db_info is None and self.login is None and self.passwd is None:
+            #    self.enter_pas_log()
+            res, desc = self.exec('SELECT id FROM userDBs WHERE login = ? and password = ?',login, passwd)
+
             for row in res:
                 return "".join(row).split()
         except TypeError as err:
                 print(err)
 
-    def registration(self):
-        if self.db_info is None and self.login is None and self.passwd is None:
-            self.db_info = data_collection()
-            self.enter_pas_log()
-        res, desc = self.exec('SELECT * FROM USER WHERE login = ?', self.login)
-        for row in res:
-            if not (row is None):
-                print('Этот логин уже занят')
-                return False
-        return True
+    def registration(self, login, passwd):
+       # if self.db_info is None and self.login is None and self.passwd is None:
+         #   self.db_info = data_collection()
+        #    self.enter_pas_log()
 
-    def send_user_data(self, dbname):
+      #res, desc = self.exec('SELECT * FROM USER WHERE login = ?', login)
+      # for row in res:
+      #     if not (row is None):
+      #         print('Этот логин уже занят')
+      #         return False
+      # return True
+
+        res, desc = self.exec('INSERT INTO USER (login, password) values(?, ?)' login, passwd)
+
+
+    def send_user_data(self, login, passwd, db_info):
         """Функция заполнения данных пользователя в бд"""
         res, desc = self.exec('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
-                              self.login, self.passwd, ' '.join(self.db_info))
+                              login, passwd, ' '.join(db_info))
         self.get_user_id()
 
     def send_user_db(self, dbname):
+        """Функция добавления новой базы пользователя в бд"""
         res, desc = self.exec('INSERT INTO userDBs (db_info, owner, dbname) values(?, ?, ?)',
                               ' '.join(self.db_info), self.login, dbname)
         self.get_user_id()
 
     def get_user_db(self):
+        """Функция получения баз пользователя"""
         res, desc = self.exec('SELECT dbname,id FROM userDBs WHERE owner =?', self.login)
         return res
 

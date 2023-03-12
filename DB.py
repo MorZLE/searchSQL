@@ -92,9 +92,9 @@ class DB:
         self.connection = sqlite3.connect('data_user', check_same_thread=False)
         self.cursor = self.connection.cursor()
         self.connection.execute('CREATE TABLE IF NOT EXISTS USER ('
-                                ' id INTEGER PRIMARY KEY '
-                                'AUTOINCREMENT NOT NULL, login text,'
-                                'password text, db_info text);')
+                                ' id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
+                                'login text UNIQUE,'
+                                'password text);')
 
         self.connection.execute('CREATE TABLE IF NOT EXISTS history_rs '
                                 '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
