@@ -66,7 +66,6 @@ class Storage(DB):
 
     def hs_rs(self, req , cond):
         """Функция заполнения истории запроса пользователя"""
-        #tm = math.floor(time.time())
         tm = datetime.datetime.now()
         tm = tm.strftime("%H:%M:%S %d-%m-%Y ")
         self.exec('INSERT INTO history_rs (request,user_id,time,condition) values (?,?,?,?)', req, self.user_id,tm,cond)

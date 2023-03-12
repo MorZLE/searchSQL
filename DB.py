@@ -2,7 +2,7 @@ import psycopg2
 import mysql.connector
 import pyodbc
 import sqlite3
-from flask import flash
+
 
 
 class Info:
