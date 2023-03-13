@@ -1,6 +1,9 @@
 from data_coll import data_collection
 from table import show_table
 from DB import DB
+import math
+import time
+import datetime
 
 
 class Storage(DB):
@@ -21,7 +24,7 @@ class Storage(DB):
 
     def identification(self):
         try:
-            if self.db_info is None:
+            if self.db_info is None and self.login is None and self.passwd is None:
                 self.enter_pas_log()
             res, desc = self.exec('SELECT db_info FROM USER WHERE login = ? and password = ?', self.login, self.passwd)
             for row in res:
@@ -30,36 +33,48 @@ class Storage(DB):
                 print(err)
 
     def registration(self):
-        if self.db_info is None:
+        if self.db_info is None and self.login is None and self.passwd is None:
             self.db_info = data_collection()
             self.enter_pas_log()
         res, desc = self.exec('SELECT * FROM USER WHERE login = ?', self.login)
         for row in res:
             if not (row is None):
                 print('Этот логин уже занят')
-                self.registration()
-        return self.db_info
+                return False
+        return True
 
-    def send_user_data(self):
+    def send_user_data(self, dbname):
         """Функция заполнения данных пользователя в бд"""
         res, desc = self.exec('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',
                               self.login, self.passwd, ' '.join(self.db_info))
         self.get_user_id()
 
+    def send_user_db(self, dbname):
+        res, desc = self.exec('INSERT INTO userDBs (db_info, owner, dbname) values(?, ?, ?)',
+                              ' '.join(self.db_info), self.login, dbname)
+        self.get_user_id()
+
+    def get_user_db(self):
+        res, desc = self.exec('SELECT dbname,id FROM userDBs WHERE owner =?', self.login)
+        return res
+
     def get_user_id(self):
         """Функция получения id пользователя"""
         res, desc = self.exec('SELECT id FROM USER WHERE login = ?', self.login)
         for row in res:
-            self.user_id = row[0]
+            return row[0]
 
-    def hs_rs(self, req):
+    def hs_rs(self, req , cond):
         """Функция заполнения истории запроса пользователя"""
-        self.exec('INSERT INTO history_rs (request,user_id) values (?,?)', req, self.user_id)
+        #tm = math.floor(time.time())
+        tm = datetime.datetime.now()
+        tm = tm.strftime("%H:%M:%S %d-%m-%Y ")
+        self.exec('INSERT INTO history_rs (request,user_id,time,condition) values (?,?,?,?)', req, self.user_id,tm,cond)
 
     def out_rs(self):
         """Функция получения истории запроса определенного пользователя"""
-        res, desc = self.exec('SELECT request,time FROM history_rs WHERE user_id =?', self.user_id)
-        show_table(res, desc)
+        res, desc = self.exec('SELECT request,condition,time FROM history_rs WHERE user_id =?', self.user_id)
+        return res, desc
 
     def last_rs(self):
         """Функция отправки последнего запроса определенного пользователя."""

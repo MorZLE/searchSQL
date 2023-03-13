@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+textarea[is="highlighted-code"] { padding: 8px; }
+</style>
+
+<script type="module">
+(async ({chrome, netscape}) => {
+  if (!chrome && !netscape)
+    await import('https://unpkg.com/@ungap/custom-elements');
+  const {default: HighlightedCode} =
+    await import('https://unpkg.com/highlighted-code');
+  HighlightedCode.useTheme('a11y-dark');
+
+})(self);
+// https://github.com/highlightjs/highlight.js/tree/main/src/styles?ref=morioh.com&utm_source=morioh.com стили css
+
+</script>
+    <meta charset="UTF-8">
+    <div>
+        <p class="font-sans">
+        {% for msg in get_flashed_messages() %}
+        {{msg}}
+        {% endfor %}
+        </p>
+    </div>
+
+    <title>SQL</title>
+    <link rel="stylesheet" href="static/css/base.css">
+
+    <form action="/workdb" method="post">
+</head>
+<body>
+<div class="workdb">
+<nav>
+    <a href = "{{url_for('work_db')}}">SQL</a>
+    <a href = "{{url_for('dbname')}}">Список бд</a>
+    <a href = "{{url_for('history')}}">История</a>
+    <a href = "{{url_for('profile')}}">Профиль</a>
+    <a href = "{{url_for('logout')}}">Выход</a>
+    <div class="animation start-home"></div>
+
+</nav>
+<textarea name="message" is="highlighted-code" cols="70" rows="12" language="sql" tab-size="2" placeholder="Введите запрос"></textarea>
+
+<input type="submit" name='req' value="Отправить">
+<table table>
+    <tr>
+   {% for d in des %}
+           <th>{{d[0]}}</th>
+   {% endfor %}
+    </tr>
+   {% for row in rows %}
+       <tr>
+           {% for r in row %}
+               <td>{{r}}</td>
+           {% endfor %}
+       </tr>
+   {% endfor %}
+</div>
+</table>
+</html>
