@@ -14,14 +14,6 @@ class Storage(DB):
         self.db_info = None
         self.user_id = None
 
-    def enter_pas_log(self):
-        """Функция сбора логина и пароля"""
-        self.login = input('Введите логин: ').strip()
-        self.passwd = input('Введите пароль: ').strip()
-        if self.login == '' or self.passwd == '':
-            print('Пароль или логин не должен быть пустым')
-            return self.enter_pas_log()
-
     def identification(self, login, passwd):
          res, desc = self.exec('SELECT id FROM USER WHERE login = ? and password = ?',login, passwd)
          return res[0]

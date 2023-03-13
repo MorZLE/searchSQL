@@ -55,38 +55,37 @@ class DB:
 
     def connect(self):
         try:
-            if self.info.isValid:
-                match self.info.Vendor:
-                    case 'PostgreSQL':
-                        self.connection = psycopg2.connect(
-                            database=self.info.database,
-                            user=self.info.user,
-                            password=self.info.password,
-                            host=self.info.host,
-                            port=self.info.port)
-                        self.cursor = self.connection.cursor()
-                    case 'MySQL':
-                        self.connection = mysql.connector.connect(
-                            user=self.info.user,
-                            password=self.info.password,
-                            host=self.info.host,
-                            database=self.info.database)
-                        self.cursor = self.connection.cursor(buffered=True)
-                    case 'MSserver':
-                        self.connection = pyodbc.connect(f"Driver={self.info.Driver};"
-                                                         f"Server={self.info.Server};"
-                                                         f"Database={self.info.database};"
-                                                         f"uid={self.info.user};"
-                                                         f"pwd={self.info.password}")
-                        self.cursor = self.connection.cursor()
-                    case 'SQLite':
-                        self.connection = sqlite3.connect(f'{self.info.database}', check_same_thread=False)
-                        self.cursor = self.connection.cursor()
-                return True
-            else:
+            if not self.info.isValid:
                 return False
+            match self.info.Vendor:
+                case 'PostgreSQL':
+                    self.connection = psycopg2.connect(
+                        database=self.info.database,
+                        user=self.info.user,
+                        password=self.info.password,
+                        host=self.info.host,
+                        port=self.info.port)
+                    self.cursor = self.connection.cursor()
+                case 'MySQL':
+                    self.connection = mysql.connector.connect(
+                        user=self.info.user,
+                        password=self.info.password,
+                        host=self.info.host,
+                        database=self.info.database)
+                    self.cursor = self.connection.cursor(buffered=True)
+                case 'MSserver':
+                    self.connection = pyodbc.connect(f"Driver={self.info.Driver};"
+                                                     f"Server={self.info.Server};"
+                                                     f"Database={self.info.database};"
+                                                     f"uid={self.info.user};"
+                                                     f"pwd={self.info.password}")
+                    self.cursor = self.connection.cursor()
+                case 'SQLite':
+                    self.connection = sqlite3.connect(f'{self.info.database}', check_same_thread=False)
+                    self.cursor = self.connection.cursor()
+            return True
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError):
-                return False
+            return False
 
     def con_db_app(self):
         self.connection = sqlite3.connect('data_user', check_same_thread=False)
@@ -103,20 +102,9 @@ class DB:
                                 'condition text'
                                 'NOT NULL, user_id int);')
 
-        self.connection.execute('CREATE TABLE IF NOT EXISTS userDBs( id INTEGER primary key,db_info TEXT not null,owner TEXT not null references USER (login),dbName  TEXT);')
-
+        self.connection.execute('CREATE TABLE IF NOT EXISTS userDBs( id INTEGER primary key,db_info TEXT not null,'
+                                'owner TEXT not null references USER (login),dbName  TEXT);')
         self.connection.commit()
-
-    def web_con_db(self, app):
-        self.connection = sqlite3.connect(app.config['DATABASE'])
-        self.connection.row_factory = sqlite3.Row
-        return self.connection
-    def web_create_db(self, app):
-        db = self.web_con_db(app)
-        with app.open_resource('sq_db.sql', mode = 'r') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
-        db.close()
 
     def exec(self, query, *args):
         """Функция отправки запроса"""

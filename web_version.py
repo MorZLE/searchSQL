@@ -33,6 +33,7 @@ class FlaskApp(FlaskView):
         self.logic = UseCase()
 
 
+
     @login_manager.user_loader
     def load_user(self):
         print('load user', session['username'])
@@ -63,12 +64,11 @@ class FlaskApp(FlaskView):
             except DbNotFound:
                 flash("Нету подключенных бд")
 
-            self.user = DB(db_info)
+            self.logic.connect(db_info)
 
             userlogin = UserLogin().create(login)
             login_user(userlogin, remember=rm)
             return redirect(request.args.get('next') or url_for('FlaskApp:work_db'))
-
         return render_template('login.html')
 
     @route('/register', methods=['POST', "GET"])
@@ -103,21 +103,21 @@ class FlaskApp(FlaskView):
             if info:
                 match vendr[1:-1]:
                     case "PostgreSQL":
-                        db_info = re.sub('[:|@|/]', " ", self.info).split()
+                        db_info = re.sub('[:|@|/]', " ", info).split()
                         db_info.append('PostgreSQL')
                         database = db_info[4]
                     case "MySQL":
-                        db_info = re.sub('[;| =|]', " ", self.info).split()
+                        db_info = re.sub('[;| =|]', " ", info).split()
                         db_info.append('MySQL')
                         database = db_info[3]
-                    case "MSserver":
-                        # добавить драйвер
-                        s = re.sub('[;| =|>|<|]', " ", info).split()
-                        for i in [1, 3, 5, 7]:
-                            db_info.append(s[i])
-                        db_info.append('MSserver')
+                   #case "MSserver":
+                   #    # добавить драйвер
+                   #    s = re.sub('[;| =|>|<|]', " ", info).split()
+                   #    for i in [1, 3, 5, 7]:
+                   #        db_info.append(s[i])
+                   #    db_info.append('MSserver')
                     case "SQLite":
-                        db_info = self.info.strip().split()
+                        db_info = info.strip().split()
                         db_info.append('SQLite')
                         database = db_info[0]
 
