@@ -6,7 +6,7 @@ import os
 import re
 from DB import DB
 from authorization import Storage
-from usecase import UseCase, UniqueUsernameCheckFailed
+from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound
 
 
 
@@ -51,23 +51,25 @@ class FlaskApp(FlaskView):
             session['username'] = request.form['username']
             login = request.form['username']
             passwd = request.form['password']
-            db_info = self.author.identification(login, passwd)
             rm = True if request.form.get('remainme') else False
-            if self.author.db_info:
-                self.user = DB(self.author.db_info)
-                userlogin = UserLogin().create(self.author.login)
-                login_user(userlogin, remember=rm)
-                return redirect(request.args.get('next') or url_for('FlaskApp:work_db'))
-            else:
+
+            try:
+                session['id'] = self.logic.identification(login, passwd)
+            except UserNotFound:
                 flash("Пользователь не найден")
+
+            try:
+                db_info = self.logic.get_user_db(login)[0]
+            except DbNotFound:
+                flash("Нету подключенных бд")
+
+            self.user = DB(db_info)
+
+            userlogin = UserLogin().create(login)
+            login_user(userlogin, remember=rm)
+            return redirect(request.args.get('next') or url_for('FlaskApp:work_db'))
+
         return render_template('login.html')
-
-
-    @route('/test')
-    @login_required
-    def test(self):
-        return render_template('test.html')
-
 
     @route('/register', methods=['POST', "GET"])
     def reg(self):
@@ -96,31 +98,32 @@ class FlaskApp(FlaskView):
     @login_required
     def create_db(self):
         if request.method == "POST":
-            self.vendr = request.form['vendor']
-            self.info = request.form['info_db']
-            if self.info:
-                match self.vendr[1:-1]:
+            vendr = request.form['vendor']
+            info = request.form['info_db']
+            if info:
+                match vendr[1:-1]:
                     case "PostgreSQL":
-                        self.author.db_info = re.sub('[:|@|/]', " ", self.info).split()
-                        self.author.db_info.append('PostgreSQL')
+                        db_info = re.sub('[:|@|/]', " ", self.info).split()
+                        db_info.append('PostgreSQL')
+                        database = db_info[4]
                     case "MySQL":
-                        self.author.db_info = re.sub('[;| =|]', " ", self.info).split()
-                        self.author.db_info.append('MySQL')
+                        db_info = re.sub('[;| =|]', " ", self.info).split()
+                        db_info.append('MySQL')
+                        database = db_info[3]
                     case "MSserver":
                         # добавить драйвер
                         s = re.sub('[;| =|>|<|]', " ", info).split()
                         for i in [1, 3, 5, 7]:
-                            self.author.db_info.append(s[i])
-                        self.author.db_info.append('MSserver')
+                            db_info.append(s[i])
+                        db_info.append('MSserver')
                     case "SQLite":
-                        self.author.db_info = self.info.strip().split()
-                        self.author.db_info.append('SQLite')
-                self.user = DB(self.author.db_info)
+                        db_info = self.info.strip().split()
+                        db_info.append('SQLite')
+                        database = db_info[0]
 
-                if self.author.registration():
-                    self.author.send_user_data(self.user.info.database)
-                if self.user.connect():
-                    self.author.send_user_db(self.user.info.database)
+                self.user = DB(db_info)
+                login = session['username']
+                self.logic.send_user_db(db_info, login, database)
                     return redirect(url_for('FlaskApp:work_db'))
                 else:
                     flash("Неверные данные подключения")
@@ -173,8 +176,12 @@ class FlaskApp(FlaskView):
         session.pop('username', None)
         return redirect('/')
 
+    @route('/test')
+    @login_required
     def test(self):
         return render_template('test.html')
+
+
 @app.errorhandler(404)
 def pageNot(error):
     return render_template('error.html'), 404

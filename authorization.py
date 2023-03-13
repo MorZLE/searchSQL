@@ -23,30 +23,16 @@ class Storage(DB):
             return self.enter_pas_log()
 
     def identification(self, login, passwd):
-        try:
-            #if self.db_info is None and self.login is None and self.passwd is None:
-            #    self.enter_pas_log()
-            res, desc = self.exec('SELECT id FROM userDBs WHERE login = ? and password = ?',login, passwd)
-
-            for row in res:
-                return "".join(row).split()
-        except TypeError as err:
-                print(err)
+         res, desc = self.exec('SELECT id FROM USER WHERE login = ? and password = ?',login, passwd)
+         return res[0]
 
     def registration(self, login, passwd):
-       # if self.db_info is None and self.login is None and self.passwd is None:
-         #   self.db_info = data_collection()
-        #    self.enter_pas_log()
+        res, desc = self.exec('INSERT INTO USER (login, password) values(?, ?)', login, passwd)
 
-      #res, desc = self.exec('SELECT * FROM USER WHERE login = ?', login)
-      # for row in res:
-      #     if not (row is None):
-      #         print('Этот логин уже занят')
-      #         return False
-      # return True
-
-        res, desc = self.exec('INSERT INTO USER (login, password) values(?, ?)' login, passwd)
-
+    def get_user_db(self, login):
+        """Функция получения баз пользователя"""
+        res, desc = self.exec('SELECT dbname,id FROM userDBs WHERE owner =?', login)
+        return res
 
     def send_user_data(self, login, passwd, db_info):
         """Функция заполнения данных пользователя в бд"""
@@ -54,16 +40,13 @@ class Storage(DB):
                               login, passwd, ' '.join(db_info))
         self.get_user_id()
 
-    def send_user_db(self, dbname):
+    def send_user_db(self, db_info, login, dbname):
         """Функция добавления новой базы пользователя в бд"""
         res, desc = self.exec('INSERT INTO userDBs (db_info, owner, dbname) values(?, ?, ?)',
-                              ' '.join(self.db_info), self.login, dbname)
+                              ' '.join(db_info), login, dbname)
         self.get_user_id()
 
-    def get_user_db(self):
-        """Функция получения баз пользователя"""
-        res, desc = self.exec('SELECT dbname,id FROM userDBs WHERE owner =?', self.login)
-        return res
+
 
     def get_user_id(self):
         """Функция получения id пользователя"""
