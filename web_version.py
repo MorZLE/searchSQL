@@ -36,7 +36,6 @@ class FlaskApp(FlaskView):
 
     @login_manager.user_loader
     def load_user(self):
-        print('load user', session['username'])
         return UserLogin().fromDB(session['username'])
 
     def index(self):
