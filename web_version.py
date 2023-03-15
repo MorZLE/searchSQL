@@ -64,7 +64,7 @@ class FlaskApp(FlaskView):
             except DbNotFound:
                 flash("Нету подключенных бд")
 
-            self.logic.connect(db_info)
+            self.logic.addDB(db_info)
 
             userlogin = UserLogin().create(login)
             login_user(userlogin, remember=rm)
@@ -124,9 +124,9 @@ class FlaskApp(FlaskView):
                 self.user = DB(db_info)
                 login = session['username']
                 self.logic.send_user_db(db_info, login, database)
-                    return redirect(url_for('FlaskApp:work_db'))
-                else:
-                    flash("Неверные данные подключения")
+                return redirect(url_for('FlaskApp:work_db'))
+            else:
+                flash("Неверные данные подключения")
         return render_template('creatdb.html')
 
     @route('/work_db', methods=['POST', "GET"])

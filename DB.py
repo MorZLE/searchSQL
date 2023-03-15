@@ -55,6 +55,7 @@ class DB:
 
     def connect(self):
         try:
+
             if not self.info.isValid:
                 return False
             match self.info.Vendor:
@@ -83,9 +84,9 @@ class DB:
                 case 'SQLite':
                     self.connection = sqlite3.connect(f'{self.info.database}', check_same_thread=False)
                     self.cursor = self.connection.cursor()
-            return True
-        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError):
-            return False
+            return self.cursor
+        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError) as DBerr:
+            raise DBerr
 
     def con_db_app(self):
         self.connection = sqlite3.connect('data_user', check_same_thread=False)
