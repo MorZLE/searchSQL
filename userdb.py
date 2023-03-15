@@ -19,6 +19,7 @@ class ConnStorage(DB):
             raise IndexError
         self.active = cur
         self.dbs[info.database] = cur
+        print(self.dbs, 'база' )
 
     def get_active(self):
         return self.active
@@ -33,12 +34,11 @@ class UserDBs:
     def getUserDbs(self, user):
         if self.dbs.get(user) is None:
             self.dbs[user] = ConnStorage()
+            print(self.dbs, 'контейнер')
         return self.dbs[user]
 
 
     def getConnStorage(self, user):
-        if self.dbs.get(user) is not None:
-            self.dbs[user] = get_active()
-            return self.dbs[user]
-        else:
-            None
+        print(self.dbs, '2 раз')
+        return self.dbs[user]
+

@@ -63,5 +63,6 @@ class UseCase:
 
     def exec(self, query, username):
         db = DB()
-        con = self.userDBs.getConnStorage(username)
+        cs = self.userDBs.getConnStorage(username)
+        cs.get_active()
         return db.userExec(con, query)
