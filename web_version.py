@@ -63,12 +63,11 @@ class FlaskApp(FlaskView):
 
             try:
                 db_info = self.logic.get_user_db(login)[0]
-            except IndexError:
-                flash("Нету подключенных бд")
-            except DbNotFound:
+            except (IndexError, DbNotFound):
                 flash("Нету подключенных бд")
 
-            if db_info!=None:self.logic.addDB(db_info)
+
+            if db_info!=None:self.logic.addDB(db_info, session['username'])
 
             userlogin = UserLogin().create(login)
             login_user(userlogin, remember=rm)
@@ -104,7 +103,7 @@ class FlaskApp(FlaskView):
         if request.method == "POST":
             vendr = request.form['vendor']
             info = request.form['info_db']
-            if info:
+            try:
                 match vendr[1:-1]:
                     case "PostgreSQL":
                         db_info = re.sub('[:|@|/]', " ", info).split()
@@ -114,24 +113,33 @@ class FlaskApp(FlaskView):
                         db_info = re.sub('[;| =|]', " ", info).split()
                         db_info.append('MySQL')
                         database = db_info[3]
-                   #case "MSserver":
-                   #    # добавить драйвер
-                   #    s = re.sub('[;| =|>|<|]', " ", info).split()
-                   #    for i in [1, 3, 5, 7]:
-                   #        db_info.append(s[i])
-                   #    db_info.append('MSserver')
+                    # case "MSserver":
+                    #    # добавить драйвер
+                    #    s = re.sub('[;| =|>|<|]', " ", info).split()
+                    #    for i in [1, 3, 5, 7]:
+                    #        db_info.append(s[i])
+                    #    db_info.append('MSserver')
                     case "SQLite":
                         db_info = info.strip().split()
                         db_info.append('SQLite')
                         database = db_info[0]
-
-                login = session['username']
-                self.logic.addDB(db_info)
-                self.logic.send_user_db(db_info, login, database)
-                return redirect(url_for('FlaskApp:work_db'))
-            else:
+            except IndexError:
                 flash("Неверные данные подключения")
-        return render_template('creatdb.html')
+                return render_template('createdb.html')
+
+            login = session['username']
+
+            try:
+                self.logic.addDB(db_info, login)
+            except IndexError:
+                flash("Неверные данные подключения")
+                return render_template('createdb.html')
+
+            self.logic.send_user_db(db_info, login, database)
+            return redirect(url_for('FlaskApp:work_db'))
+
+
+        return render_template('createdb.html')
 
     @route('/work_db', methods=['POST', "GET"])
     @login_required
@@ -140,7 +148,7 @@ class FlaskApp(FlaskView):
             request_sql = request.form['message']
             if request_sql != '':
                 try:
-                    res, desc = self.logic.exec(request_sql,session['username'])
+                    res, desc = self.logic.exec(request_sql, session['username'])
                     self.logic.hs_rs(session['username'], request_sql, 'True')
                     return render_template('workdb.html', rows=res, des=desc)
                 except TypeError:

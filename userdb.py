@@ -13,9 +13,16 @@ class ConnStorage(DB):
 
     def record(self, info):
         db = DB()
-        cur = db.connect(info.data_db)
+        try:
+            cur = db.connect(info.data_db)
+        except IndexError:
+            raise IndexError
         self.active = cur
         self.dbs[info.database] = cur
+
+    def get_active(self):
+        return self.active
+
 
 class UserDBs:
     dbs: typing.Dict[str, ConnStorage] = {}
@@ -29,5 +36,9 @@ class UserDBs:
         return self.dbs[user]
 
 
-
-
+    def getConnStorage(self, user):
+        if self.dbs.get(user) is not None:
+            self.dbs[user] = get_active()
+            return self.dbs[user]
+        else:
+            None

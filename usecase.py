@@ -46,11 +46,14 @@ class UseCase:
     def send_user_db(self, db_info, login, database):
         return self.storage.send_user_db(db_info, login, database)
 
-    def addDB(self, db_info):
+    def addDB(self, db_info, username):
         info = Info(db_info)
         info.parse_connection_string()
-        cs = self.userDBs.getUserDbs(info.user)
-        cs.record(info)
+        cs = self.userDBs.getUserDbs(username)
+        try:
+            cs.record(info)
+        except IndexError:
+            raise IndexError
 
     def hs_rs(self, user, req, cond):
         return self.storage.hs_rs(user, req, cond)
@@ -58,8 +61,7 @@ class UseCase:
     def out_rs(self, user):
         return self.storage.out_rs(user)
 
-    def exes(self, query, user):
+    def exec(self, query, username):
         db = DB()
-        con = self.userDBs[user]
-        cursor = con.active
-        return self.db.exec(cursor, query)
+        con = self.userDBs.getConnStorage(username)
+        return db.userExec(con, query)

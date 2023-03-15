@@ -55,7 +55,7 @@ class DB:
         self.info = Info(data_db)
         try:
             if not self.info.isValid:
-                return False
+                raise IndexError
             match self.info.Vendor:
                 case 'PostgreSQL':
                     self.connection = psycopg2.connect(
@@ -82,7 +82,7 @@ class DB:
                 case 'SQLite':
                     self.connection = sqlite3.connect(f'{self.info.database}', check_same_thread=False)
                     self.cursor = self.connection.cursor()
-            return self.cursor
+            return self.connection
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError) as DBerr:
             raise DBerr
 
@@ -124,3 +124,22 @@ class DB:
             else:
                 print(err)
                 pass
+
+
+    def userExec(self, connection, query):
+        cursor = connection.cursor()
+        try:
+            cursor.execute(query, args)
+            connection.commit()
+            result = cursor.fetchall()
+            return result, cursor.description
+        except (psycopg2.errors.InFailedSqlTransaction, mysql.connector.errors.ProgrammingError):
+            connection.rollback()
+        except TypeError as te:
+            print(te)
+        except (psycopg2.ProgrammingError, mysql.connector.errors.DataError, mysql.connector.errors.DatabaseError,
+                mysql.connector.errors.ProgrammingError, sqlite3.OperationalError, UnboundLocalError) as err:
+            if 'no results to fetch' in str(err):
+                print('Нету данных для вывода!')
+            else:
+                print(err)
