@@ -47,15 +47,13 @@ class Info:
 
 
 class DB:
-    def __init__(self, data_db):
-        self.info = Info(data_db)
+    def __init__(self):
         self.connection = None
         self.cursor = None
 
-
-    def connect(self):
+    def connect(self, data_db):
+        self.info = Info(data_db)
         try:
-
             if not self.info.isValid:
                 return False
             match self.info.Vendor:
@@ -101,7 +99,8 @@ class DB:
                                 'request text, '
                                 'time INTEGER NOT NULL,'
                                 'condition text'
-                                'NOT NULL, user_id int);')
+                                'NOT NULL, '
+                                'owner TEXT not null references USER (login));')
 
         self.connection.execute('CREATE TABLE IF NOT EXISTS userDBs( id INTEGER primary key,db_info TEXT not null,'
                                 'owner TEXT not null references USER (login),dbName  TEXT);')

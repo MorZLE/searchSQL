@@ -1,6 +1,6 @@
 from authorization import Storage
 from userdb import UserDBs
-from DB import Info
+from DB import Info, DB
 
 class UniqueUsernameCheckFailed(Exception):
     pass
@@ -17,6 +17,7 @@ class UserNotFound(Exception):
 class UseCase:
     storage = None
     userDBs = None
+
 
     def __init__(self):
         self.storage = Storage()
@@ -51,7 +52,14 @@ class UseCase:
         cs = self.userDBs.getUserDbs(info.user)
         cs.record(info)
 
+    def hs_rs(self, user, req, cond):
+        return self.storage.hs_rs(user, req, cond)
 
+    def out_rs(self, user):
+        return self.storage.out_rs(user)
 
-    def exes(self, query, *args):
-        return self.db.exec(query, *args)
+    def exes(self, query, user):
+        db = DB()
+        con = self.userDBs[user]
+        cursor = con.active
+        return self.db.exec(cursor, query)

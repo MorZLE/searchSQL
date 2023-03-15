@@ -12,8 +12,8 @@ class ConnStorage(DB):
         self.dbs: typing.Dict[str, DB] = {}
 
     def record(self, info):
-        db = DB(info.data_db)
-        cur = db.connect()
+        db = DB()
+        cur = db.connect(info.data_db)
         self.active = cur
         self.dbs[info.database] = cur
 

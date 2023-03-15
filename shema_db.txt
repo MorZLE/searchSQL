@@ -17,5 +17,5 @@ CREATE TABLE IF NOT EXISTS history_rs
 	request text,
 	time TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	Condition text;
-	user_id int
+	owner TEXT not null references USER (login)
 );

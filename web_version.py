@@ -53,18 +53,22 @@ class FlaskApp(FlaskView):
             login = request.form['username']
             passwd = request.form['password']
             rm = True if request.form.get('remainme') else False
-
+            db_info = None
             try:
                 session['id'] = self.logic.identification(login, passwd)
             except UserNotFound:
                 flash("Пользователь не найден")
+                return render_template('login.html')
+
 
             try:
                 db_info = self.logic.get_user_db(login)[0]
+            except IndexError:
+                flash("Нету подключенных бд")
             except DbNotFound:
                 flash("Нету подключенных бд")
 
-            self.logic.addDB(db_info)
+            if db_info!=None:self.logic.addDB(db_info)
 
             userlogin = UserLogin().create(login)
             login_user(userlogin, remember=rm)
@@ -88,7 +92,7 @@ class FlaskApp(FlaskView):
                     flash("Имя пользователя занято")
                 userlogin = UserLogin().create(session['username'])
                 login_user(userlogin)
-                return redirect(url_for('FlaskApp:creat_db'))
+                return redirect(url_for('FlaskApp:create_db'))
             else:
                 flash("Пароли не совпадают")
         return render_template('register.html')
@@ -121,8 +125,8 @@ class FlaskApp(FlaskView):
                         db_info.append('SQLite')
                         database = db_info[0]
 
-                self.user = DB(db_info)
                 login = session['username']
+                self.logic.addDB(db_info)
                 self.logic.send_user_db(db_info, login, database)
                 return redirect(url_for('FlaskApp:work_db'))
             else:
@@ -136,11 +140,11 @@ class FlaskApp(FlaskView):
             request_sql = request.form['message']
             if request_sql != '':
                 try:
-                    res, desc = self.user.exec(request_sql)
-                    self.author.hs_rs(request_sql, 'True')
+                    res, desc = self.logic.exec(request_sql,session['username'])
+                    self.logic.hs_rs(session['username'], request_sql, 'True')
                     return render_template('workdb.html', rows=res, des=desc)
                 except TypeError:
-                    self.author.hs_rs(request_sql, 'False')
+                    self.logic.hs_rs(session['username'], request_sql, 'False')
                     flash("Некорректный запрос!")
             else:
                 flash("Запрос не может быть пустым!")
@@ -151,8 +155,7 @@ class FlaskApp(FlaskView):
     @route('/history', methods=['POST', "GET"])
     @login_required
     def history(self):
-        self.author.user_id = self.author.get_user_id()
-        res, desc = self.author.out_rs()
+        res, desc = self.logic.out_rs(session['username'])
         return render_template('history.html', rows=res, des=desc)
 
 
@@ -160,8 +163,10 @@ class FlaskApp(FlaskView):
     @route('/dbname', methods=['POST', "GET"])
     @login_required
     def dbname(self):
-        return render_template('dbname.html', rows=self.author.get_user_db())
-
+        try:
+            return render_template('dbname.html', rows=self.logic.get_user_db(session['username']))
+        except DbNotFound:
+            return render_template('dbname.html', rows=[])
 
     @route('/profile', methods=['POST', "GET"])
     @login_required
