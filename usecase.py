@@ -43,6 +43,12 @@ class UseCase:
         except Exception:
             raise DbNotFound
 
+    def get_user_data_db(self, username):
+        try:
+            return self.storage.get_user_data_db(username)
+        except Exception:
+            raise DbNotFound
+
     def send_user_db(self, db_info, login, database):
         return self.storage.send_user_db(db_info, login, database)
 
@@ -63,6 +69,6 @@ class UseCase:
 
     def exec(self, query, username):
         db = DB()
-        cs = self.userDBs.getConnStorage(username)
+        cs = self.userDBs.getUserDbs(username)
         cs.get_active()
         return db.userExec(con, query)

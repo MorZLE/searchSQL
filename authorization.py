@@ -26,6 +26,11 @@ class Storage(DB):
         res, desc = self.exec('SELECT dbname,id FROM userDBs WHERE owner =?', login)
         return res
 
+    def get_user_data_db(self, login):
+        """Функция получения баз пользователя"""
+        res, desc = self.exec('SELECT db_info FROM userDBs WHERE owner =?', login)
+        return res
+
     def send_user_data(self, login, passwd, db_info):
         """Функция заполнения данных пользователя в бд"""
         res, desc = self.exec('INSERT INTO USER (login, password, db_info) values(?, ?, ?)',

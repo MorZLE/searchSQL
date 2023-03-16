@@ -28,6 +28,7 @@ class FlaskApp(FlaskView):
     author = Storage()
     logic = None
 
+
     def __init__(self):
         super().__init__()
         self.logic = UseCase()
@@ -45,6 +46,7 @@ class FlaskApp(FlaskView):
 
     @route('/login', methods=['POST', "GET"])
     def login(self):
+        print(self)
         if current_user.is_authenticated:
             return redirect(url_for('FlaskApp:work_db'))
         if request.method == "POST":
@@ -61,7 +63,8 @@ class FlaskApp(FlaskView):
 
 
             try:
-                db_info = self.logic.get_user_db(login)[0]
+                db_info = self.logic.get_user_data_db(login)[0]
+                db_info = ''.join(db_info).split()
             except (IndexError, DbNotFound):
                 flash("Нету подключенных бд")
 
@@ -143,6 +146,7 @@ class FlaskApp(FlaskView):
     @route('/work_db', methods=['POST', "GET"])
     @login_required
     def work_db(self):
+        print(self)
         if request.method == "POST":
             request_sql = request.form['message']
             if request_sql != '':
