@@ -5,7 +5,7 @@
     <title>Список бд</title>
 
     <link rel="stylesheet" href="static/css/base.css">
-    <form action="/workdb" method="post">
+    <form action="/dbname" method="post">
 </head>
 <body>
 <div class="workdb">
@@ -22,8 +22,10 @@
 <div class="login-box">
     <h1>Ваши базы данных</h1>
     {% for data in rows %}
-          <h2 align="center"> <input type="radio" name='namedb' id={{data[1]}}><a class="a2">{{data[0]}}</a><h2>
+          <h2 align="center"> <input type="radio" name='namedb' value={{data[0]}}><a class="a2">{{data[0]}}</a><h2>
     {% endfor %}
+
+    <p><input type="submit"  name="submit_button" value="Подключиться"></p>
 
     <p><a class="a2" href = "{{url_for('FlaskApp:create_db')}}">Создать бд</p>
 

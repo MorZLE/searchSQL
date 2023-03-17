@@ -23,13 +23,20 @@ class Storage(DB):
 
     def get_user_db(self, login):
         """Функция получения баз пользователя"""
-        res, desc = self.exec('SELECT dbname,id FROM userDBs WHERE owner =?', login)
+        res, desc = self.exec('SELECT dbname FROM userDBs WHERE owner =?', login)
         return res
 
     def get_user_data_db(self, login):
-        """Функция получения баз пользователя"""
+        """Функция получения данных баз пользователя"""
         res, desc = self.exec('SELECT db_info FROM userDBs WHERE owner =?', login)
         return res
+
+
+    def get_user_data_con_db(self, login, namedb):
+        """Функция получения данных баз пользователя"""
+        res, desc = self.exec('SELECT db_info FROM userDBs WHERE owner =? and dbname =?', login, namedb)
+        return res
+
 
     def send_user_data(self, login, passwd, db_info):
         """Функция заполнения данных пользователя в бд"""

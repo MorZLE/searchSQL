@@ -61,6 +61,14 @@ class UseCase:
         except IndexError:
             raise IndexError
 
+    def connDB(self, username , namedb):
+        cs = self.userDBs.getUserDbs(username)
+        db_info = self.storage.get_user_data_con_db(username, namedb)[0]
+        db_info = ''.join(db_info).split()
+        print(db_info)
+        cs.get_new_active(namedb, db_info)
+
+
     def hs_rs(self, user, req, cond):
         return self.storage.hs_rs(user, req, cond)
 

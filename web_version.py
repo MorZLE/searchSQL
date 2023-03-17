@@ -175,6 +175,9 @@ class FlaskApp(FlaskView):
     @route('/dbname', methods=['POST', "GET"])
     @login_required
     def dbname(self):
+        if request.method == "POST":
+            namedb = request.form.getlist('namedb')[0]
+            self.logic.connDB(session['username'], namedb)
         try:
             return render_template('dbname.html', rows=self.logic.get_user_db(session['username']))
         except DbNotFound:
