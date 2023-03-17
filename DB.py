@@ -129,7 +129,7 @@ class DB:
     def userExec(self, connection, query):
         cursor = connection.cursor()
         try:
-            cursor.execute(query, args)
+            cursor.execute(query)
             connection.commit()
             result = cursor.fetchall()
             return result, cursor.description

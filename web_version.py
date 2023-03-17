@@ -28,11 +28,14 @@ class FlaskApp(FlaskView):
     author = Storage()
     logic = None
 
-
     def __init__(self):
         super().__init__()
         self.logic = UseCase()
 
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(cls, "instance"):
+            cls.instance = super(FlaskApp, cls).__new__(cls)
+        return cls.instance
 
 
     @login_manager.user_loader
@@ -46,7 +49,6 @@ class FlaskApp(FlaskView):
 
     @route('/login', methods=['POST', "GET"])
     def login(self):
-        print(self)
         if current_user.is_authenticated:
             return redirect(url_for('FlaskApp:work_db'))
         if request.method == "POST":
@@ -146,7 +148,6 @@ class FlaskApp(FlaskView):
     @route('/work_db', methods=['POST', "GET"])
     @login_required
     def work_db(self):
-        print(self)
         if request.method == "POST":
             request_sql = request.form['message']
             if request_sql != '':
