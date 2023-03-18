@@ -23,17 +23,14 @@ class ConnStorage(DB):
     def get_active(self):
         return self.active
 
-    def get_new_active(self, namedb, db_info):
+    def get_new_active(self, namedb):
+        self.active = self.dbs[namedb]
+
+    def check_db(self, namedb):
         if self.dbs.get(namedb) is None:
-            db = DB()
-            try:
-                cur = db.connect(db_info)
-            except IndexError:
-                raise IndexError
-            self.active = cur
-            self.dbs[namedb] = cur
+            return False
         else:
-            self.active = self.dbs[namedb]
+            return True
 
 class UserDBs:
     dbs: typing.Dict[str, ConnStorage] = {}
