@@ -6,6 +6,9 @@
 
     <link rel="stylesheet" href="static/css/base.css">
     <form action="/dbname" method="post">
+    {% for msg in get_flashed_messages() %}
+    <div class = "flash"><p>{{msg}}</p></div>
+    {% endfor %}
 </head>
 <body>
 <div class="workdb">

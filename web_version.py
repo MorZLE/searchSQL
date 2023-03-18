@@ -64,11 +64,11 @@ class FlaskApp(FlaskView):
                 return render_template('login.html')
 
 
-            try:
-                db_info = self.logic.get_user_data_db(login)[0]
-                db_info = ''.join(db_info).split()
-            except (IndexError, DbNotFound):
-                flash("Нету подключенных бд")
+            #try:
+            #    db_info = self.logic.get_user_data_db(login)[0]
+            #    db_info = ''.join(db_info).split()
+            #except (IndexError, DbNotFound):
+            #    flash("Нету подключенных бд")
 
 
             if db_info!=None:self.logic.addDB(db_info, session['username'])
@@ -148,16 +148,20 @@ class FlaskApp(FlaskView):
     @route('/work_db', methods=['POST', "GET"])
     @login_required
     def work_db(self):
+        username = session['username']
         if request.method == "POST":
             request_sql = request.form['message']
             if request_sql != '':
-                try:
-                    res, desc = self.logic.exec(request_sql, session['username'])
-                    self.logic.hs_rs(session['username'], request_sql, 'True')
-                    return render_template('workdb.html', rows=res, des=desc)
-                except TypeError:
-                    self.logic.hs_rs(session['username'], request_sql, 'False')
-                    flash("Некорректный запрос!")
+                if self.logic.check_active(username):
+                    try:
+                        res, desc = self.logic.exec(request_sql, username)
+                        self.logic.hs_rs(session['username'], request_sql, 'True')
+                        return render_template('workdb.html', rows=res, des=desc)
+                    except TypeError:
+                        self.logic.hs_rs(session['username'], request_sql, 'False')
+                        flash("Некорректный запрос!")
+                else:
+                    flash("У вас нету активной бд!!!")
             else:
                 flash("Запрос не может быть пустым!")
         return render_template('workdb.html')
@@ -176,8 +180,11 @@ class FlaskApp(FlaskView):
     @login_required
     def dbname(self):
         if request.method == "POST":
-            namedb = request.form.getlist('namedb')[0]
-            self.logic.connDB(session['username'], namedb)
+            if request.form.getlist('namedb') != []:
+                namedb = request.form.getlist('namedb')[0]
+                self.logic.connDB(session['username'], namedb)
+            else:
+                flash("Вы ничего не выбрали!")
         try:
             return render_template('dbname.html', rows=self.logic.get_user_db(session['username']))
         except DbNotFound:

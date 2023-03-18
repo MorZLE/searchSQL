@@ -71,6 +71,12 @@ class UseCase:
             db_info = ''.join(db_info).split()
             self.addDB(db_info, username)
 
+    def check_active(self, username):
+        cs = self.userDBs.getUserDbs(username)
+        if cs.active is None:
+            return False
+        else:
+            return True
 
     def hs_rs(self, user, req, cond):
         return self.storage.hs_rs(user, req, cond)

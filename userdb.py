@@ -10,6 +10,7 @@ class ConnStorage(DB):
 
     def __init__(self):
         self.dbs: typing.Dict[str, DB] = {}
+        self.active = None
 
     def record(self, info):
         db = DB()
