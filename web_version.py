@@ -170,13 +170,16 @@ class FlaskApp(FlaskView):
     @login_required
     def table(self):
         username = session['username']
-        namedb = self.logic.print_table(session['username'], session['active'])
-        res = []
-        desc = []
+        try:
+            namedb = self.logic.print_table(session['username'], session['active'])
+        except KeyError:
+            flash('Выберите активную базу')
+            return redirect(url_for('FlaskApp:dbname'))
         if request.method == 'POST':
             table = request.form['table']
             res, desc = self.logic.exec(f'SELECT * FROM {table}', username)
-        return render_template("table.html", rows=res, des=desc, namedb=namedb)
+            return render_template("table.html", rows=res, des=desc, namedb=namedb)
+        return render_template("table.html", namedb=namedb)
 
 
     @route('/history', methods=['POST', "GET"])
