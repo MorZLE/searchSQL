@@ -3,7 +3,9 @@ CREATE TABLE userDBs
     id      INTEGER primary key,
     db_info TEXT not null,
     owner   TEXT not null references USER (login),
-    dbName  TEXT
+    dbName  TEXT,
+    vender  TEXT
+
 );
 
 CREATE TABLE IF NOT EXISTS USER

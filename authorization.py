@@ -46,8 +46,9 @@ class Storage(DB):
 
     def send_user_db(self, db_info, login, dbname):
         """Функция добавления новой базы пользователя в бд"""
-        res, desc = self.exec('INSERT INTO userDBs (db_info, owner, dbname) values(?, ?, ?)',
-                              ' '.join(db_info), login, dbname)
+        vender = db_info[-1]
+        res, desc = self.exec('INSERT INTO userDBs (db_info, owner, dbname,vender) values(?, ?, ?, ?)',
+                              ' '.join(db_info), login, dbname, vender)
         self.get_user_id()
 
 
@@ -79,3 +80,7 @@ class Storage(DB):
 
     def clear_hs_user(self, user):
         res, desc = self.exec("delete from history_rs where owner =?", user)
+
+    def vender_db(self, user, namedb):
+        res, desc = self.exec("SELECT vender from userDBs where owner=? and dbname=?", user, namedb)
+        return res

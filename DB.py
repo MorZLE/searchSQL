@@ -103,7 +103,7 @@ class DB:
                                 'owner TEXT not null references USER (login));')
 
         self.connection.execute('CREATE TABLE IF NOT EXISTS userDBs( id INTEGER primary key,db_info TEXT not null,'
-                                'owner TEXT not null references USER (login),dbName  TEXT);')
+                                'owner TEXT not null references USER (login),dbName  TEXT,vender TEXT);')
         self.connection.commit()
 
     def exec(self, query, *args):

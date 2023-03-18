@@ -166,6 +166,17 @@ class FlaskApp(FlaskView):
                 flash("Запрос не может быть пустым!")
         return render_template('workdb.html')
 
+    @route('/table', methods=['POST', "GET"])
+    @login_required
+    def table(self):
+        username = session['username']
+        namedb = self.logic.print_table(session['username'], session['active'])
+        res = []
+        desc = []
+        if request.method == 'POST':
+            table = request.form['table']
+            res, desc = self.logic.exec(f'SELECT * FROM {table}', username)
+        return render_template("table.html", rows=res, des=desc, namedb=namedb)
 
 
     @route('/history', methods=['POST', "GET"])
@@ -184,6 +195,7 @@ class FlaskApp(FlaskView):
         if request.method == "POST":
             if request.form.getlist('namedb') != []:
                 namedb = request.form.getlist('namedb')[0]
+                session['active'] = namedb
                 self.logic.connDB(session['username'], namedb)
             else:
                 flash("Вы ничего не выбрали!")
@@ -205,10 +217,12 @@ class FlaskApp(FlaskView):
         session.pop('username', None)
         return redirect('/')
 
+
     @route('/test')
     @login_required
     def test(self):
         return render_template('test.html')
+
 
 
 @app.errorhandler(404)

@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Профиль</title>
+    <title>Таблицы</title>
 
     <link rel="stylesheet" href="static/css/base.css">
-    <form action="/workdb" method="post">
+    <form action="/table" method="post">
 </head>
 <body>
-  <div class="workdb">
+<div class="workdb">
   <nav>
       <a href = "{{url_for('FlaskApp:work_db')}}">SQL</a>
       <a href = "{{url_for('FlaskApp:table')}}">Таблицы</a>
@@ -19,10 +19,29 @@
       <div class="animation start-home"></div>
   </nav>
 
-<div class="login-box">
-  <p>{{name}}</p>
-    </form>
+    <p>Выберите таблицу
+    <select name="table" id="table" top='50%'>
+        {% for name in namedb %}
+        <option value={{name[0]}}>{{name[0]}}</option>
+        {% endfor %}
+    </p>
+  <input type="submit" value="Посмотреть">
 
-  </div>
+<table table>
+    <tr>
+   {% for d in des %}
+           <th>{{d[0]}}</th>
+   {% endfor %}
+    </tr>
+   {% for row in rows %}
+       <tr>
+           {% for r in row %}
+               <td>{{r}}</td>
+           {% endfor %}
+       </tr>
+   {% endfor %}
+
+
+</table>
 </body>
 </html>

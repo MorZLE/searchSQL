@@ -71,6 +71,8 @@ class UseCase:
             db_info = ''.join(db_info).split()
             self.addDB(db_info, username)
 
+
+
     def check_active(self, username):
         cs = self.userDBs.getUserDbs(username)
         if cs.active is None:
@@ -92,3 +94,17 @@ class UseCase:
 
     def clear_hs_user(self, username):
         self.storage.clear_hs_user(username)
+
+    def print_table(self, username, active):
+        vender = ' '.join(self.storage.vender_db(username, active)[0])
+        match vender:
+            case 'PostgreSQL':
+                res, desc = self.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'", username)
+            case 'MySQL':
+                res, desc = self.exec("SHOW TABLES")
+            case 'MSserver':
+                res, desc = self.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'", username)
+            case 'SQLite':
+                res, desc = self.exec("SELECT name FROM sqlite_master WHERE type='table' and name != 'sqlite_sequence';", username)
+        return res
+
