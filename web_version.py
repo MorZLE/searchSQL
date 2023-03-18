@@ -171,6 +171,8 @@ class FlaskApp(FlaskView):
     @route('/history', methods=['POST', "GET"])
     @login_required
     def history(self):
+        if request.method == 'POST':
+            self.logic.clear_hs_user(session['username'])
         res, desc = self.logic.out_rs(session['username'])
         return render_template('history.html', rows=res, des=desc)
 

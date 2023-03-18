@@ -89,3 +89,6 @@ class UseCase:
         cs = self.userDBs.getUserDbs(username)
         con = cs.get_active()
         return db.userExec(con, query)
+
+    def clear_hs_user(self, username):
+        self.storage.clear_hs_user(username)

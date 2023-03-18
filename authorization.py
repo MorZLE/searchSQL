@@ -75,3 +75,7 @@ class Storage(DB):
                               "WHERE user_id = ? ORDER BY ID DESC LIMIT 1", self.user_id)
         for row in res:
             return "".join(row)
+
+
+    def clear_hs_user(self, user):
+        res, desc = self.exec("delete from history_rs where owner =?", user)
