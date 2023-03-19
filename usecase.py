@@ -1,4 +1,4 @@
-from authorization import Storage
+from storage import Storage
 from userdb import UserDBs
 from DB import Info, DB
 
@@ -17,12 +17,12 @@ class UserNotFound(Exception):
 class UseCase:
     storage = None
     userDBs = None
-
+    db = None
 
     def __init__(self):
         self.storage = Storage()
         self.userDBs = UserDBs()
-
+        self.db = DB()
 
 
     def create_user(self, username, password):
@@ -43,11 +43,6 @@ class UseCase:
         except Exception:
             raise DbNotFound
 
-    def get_user_data_db(self, username):
-        try:
-            return self.storage.get_user_data_db(username)
-        except Exception:
-            raise DbNotFound
 
     def send_user_db(self, db_info, login, database):
         return self.storage.send_user_db(db_info, login, database)
@@ -63,8 +58,8 @@ class UseCase:
 
     def connDB(self, username, namedb):
         cs = self.userDBs.getUserDbs(username)
-        db = cs.check_db(namedb)
-        if db:
+        isActive = cs.check_db(namedb)
+        if isActive:
             cs.get_new_active(namedb)
         else:
             db_info = self.storage.get_user_data_con_db(username, namedb)[0]
@@ -87,10 +82,12 @@ class UseCase:
         return self.storage.out_rs(user)
 
     def exec(self, query, username):
-        db = DB()
+
         cs = self.userDBs.getUserDbs(username)
         con = cs.get_active()
-        return db.userExec(con, query)
+       # return cs.active.cursor().execute(query)
+        #return con.exec(query)
+        return self.db.userExec(con, query)
 
     def clear_hs_user(self, username):
         self.storage.clear_hs_user(username)

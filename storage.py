@@ -26,12 +26,6 @@ class Storage(DB):
         res, desc = self.exec('SELECT dbname FROM userDBs WHERE owner =?', login)
         return res
 
-    def get_user_data_db(self, login):
-        """Функция получения данных баз пользователя"""
-        res, desc = self.exec('SELECT db_info FROM userDBs WHERE owner =?', login)
-        return res
-
-
     def get_user_data_con_db(self, login, namedb):
         """Функция получения данных баз пользователя"""
         res, desc = self.exec('SELECT db_info FROM userDBs WHERE owner =? and dbname =?', login, namedb)

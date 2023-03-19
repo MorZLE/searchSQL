@@ -15,11 +15,11 @@ class ConnStorage(DB):
     def record(self, info):
         db = DB()
         try:
-            cur = db.connect(info.data_db)
+            con = db.connect(info.data_db)
         except IndexError:
             raise IndexError
-        self.active = cur
-        self.dbs[info.database] = cur
+        self.active = con
+        self.dbs[info.database] = con
 
     def get_active(self):
         return self.active

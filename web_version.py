@@ -4,8 +4,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user,cu
 from flask_classful import FlaskView, route
 import os
 import re
-from DB import DB
-from authorization import Storage
+from storage import Storage
 from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound
 
 
@@ -43,8 +42,6 @@ class FlaskApp(FlaskView):
         return UserLogin().fromDB(session['username'])
 
     def index(self):
-        if 'username' in session:
-            return redirect(url_for('FlaskApp:work_db'))
         return render_template('index.html')
 
     @route('/login', methods=['POST', "GET"])
@@ -56,22 +53,12 @@ class FlaskApp(FlaskView):
             login = request.form['username']
             passwd = request.form['password']
             rm = True if request.form.get('remainme') else False
-            db_info = None
+
             try:
                 session['id'] = self.logic.identification(login, passwd)
             except UserNotFound:
                 flash("Пользователь не найден")
                 return render_template('login.html')
-
-
-            #try:
-            #    db_info = self.logic.get_user_data_db(login)[0]
-            #    db_info = ''.join(db_info).split()
-            #except (IndexError, DbNotFound):
-            #    flash("Нету подключенных бд")
-
-
-            if db_info!=None:self.logic.addDB(db_info, session['username'])
 
             userlogin = UserLogin().create(login)
             login_user(userlogin, remember=rm)
@@ -93,6 +80,7 @@ class FlaskApp(FlaskView):
                     self.logic.create_user(login, passwd)
                 except UniqueUsernameCheckFailed:
                     flash("Имя пользователя занято")
+                    return render_template('register.html')
                 userlogin = UserLogin().create(session['username'])
                 login_user(userlogin)
                 return redirect(url_for('FlaskApp:create_db'))

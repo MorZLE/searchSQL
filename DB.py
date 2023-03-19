@@ -6,16 +6,19 @@ import sqlite3
 
 
 class Info:
+
+    Driver = ''
+    Server = ''
+    password = ''
+    database = ''
+    host = ''
+    port = ''
+    user = ''
+
     def __init__(self, data_db):
         self.data_db = data_db
         self.Vendor = data_db[-1]
-        self.Driver = None
-        self.Server = None
-        self.password = None
-        self.database = None
-        self.host = None
-        self.port = None
-        self.user = None
+
         self.parse_connection_string()
 
     def parse_connection_string(self):
