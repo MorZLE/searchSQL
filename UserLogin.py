@@ -2,13 +2,13 @@ from flask_login import UserMixin
 
 
 class UserLogin(UserMixin):
-    def fromDB(self, author):
-        self.user = author.login
+    def fromDB(self, login):
+        self.__user = login
         return self
 
-    def create(self, author):
-        self.user = author.login
+    def create(self, login):
+        self.__user = login
         return self
 
     def get_id(self):
-        return str(self.user)
+        return str(self.__user)

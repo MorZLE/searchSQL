@@ -1,10 +1,12 @@
 from flask import Flask, request, render_template, session, flash, redirect, url_for
 from UserLogin import UserLogin
 from flask_login import LoginManager, login_user, login_required, logout_user,current_user
+from flask_classful import FlaskView, route
 import os
 import re
-from DB import DB
-from authorization import Storage
+from storage import Storage
+from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound
+
 
 
 DATABASE = '/tmp/flsite.db'
@@ -16,167 +18,210 @@ app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 app.config['SECRET_KEY'] = os.urandom(24)
 
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'FlaskApp:login'
 login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
 login_manager.login_message_category = "success"
 
-@login_manager.user_loader
-def load_user(user_id):
-    print('load user', session['username'])
-    return UserLogin().fromDB(author)
+
+class FlaskApp(FlaskView):
+    author = Storage()
+    logic = None
+
+    def __init__(self):
+        super().__init__()
+        self.logic = UseCase()
+
+    def __new__(cls, *args, **kwargs):
+        if not hasattr(cls, "instance"):
+            cls.instance = super(FlaskApp, cls).__new__(cls)
+        return cls.instance
 
 
-user = None
-author = Storage()
+    @login_manager.user_loader
+    def load_user(self):
+        return UserLogin().fromDB(session['username'])
 
-@app.route('/')
-def index():
-    if 'username' in session:
-        return redirect(url_for('work_db'))
-    return render_template('index.html')
+    def index(self):
+        return render_template('index.html')
 
+    @route('/login', methods=['POST', "GET"])
+    def login(self):
+        if current_user.is_authenticated:
+            return redirect(url_for('FlaskApp:work_db'))
+        if request.method == "POST":
+            session['username'] = request.form['username']
+            login = request.form['username']
+            passwd = request.form['password']
+            rm = True if request.form.get('remainme') else False
 
-@app.route('/login', methods=['POST', "GET"])
-def login():
-    global user
-    if current_user.is_authenticated:
-        return redirect(url_for('work_db'))
-    if request.method == "POST":
-        session['username'] = request.form['username']
-        author.login = request.form['username']
-        author.passwd = request.form['password']
-        author.db_info = author.identification()
-        rm = True if request.form.get('remainme') else False
-        if author.db_info:
-            user = DB(author.db_info)
-            if user.connect() != 'err':
-                userlogin = UserLogin().create(author)
-                login_user(userlogin, remember=rm)
-                return redirect(request.args.get('next') or url_for('work_db'))
-            else:
-                flash("Ошибка подключения")
-        else:
-            flash("Пользователь не найден")
-    return render_template('login.html')
+            try:
+                session['id'] = self.logic.identification(login, passwd)
+            except UserNotFound:
+                flash("Пользователь не найден")
+                return render_template('login.html')
 
+            userlogin = UserLogin().create(login)
+            login_user(userlogin, remember=rm)
+            return redirect(request.args.get('next') or url_for('FlaskApp:work_db'))
+        return render_template('login.html')
 
-@app.route('/test', methods=['POST', "GET"])
-@login_required
-def test():
-    return render_template('test.html')
-
-
-@app.route('/register', methods=['POST', "GET"])
-def register():
-    if request.method == "POST":
-        session['username'] = request.form['username']
-        author.login = request.form['username']
-        author.passwd = request.form['password']
-        confirm_password = request.form['confirm_password']
-        if author.login == '' or author.passwd == '':
-            flash("Логин или пароль не могут быть пустыми")
-        else:
-            if author.passwd == confirm_password:
-                if author.registration():
-                    return redirect(url_for('creat_db'))
-                else:
+    @route('/register', methods=['POST', "GET"])
+    def reg(self):
+        if request.method == "POST":
+            session['username'] = request.form['username']
+            login = request.form['username']
+            passwd = request.form['password']
+            confirm_password = request.form['confirm_password']
+            if login == '' or passwd == '':
+                flash("Логин или пароль не могут быть пустыми")
+                return render_template('register.html')
+            if passwd == confirm_password:
+                try:
+                    self.logic.create_user(login, passwd)
+                except UniqueUsernameCheckFailed:
                     flash("Имя пользователя занято")
+                    return render_template('register.html')
+                userlogin = UserLogin().create(session['username'])
+                login_user(userlogin)
+                return redirect(url_for('FlaskApp:create_db'))
             else:
                 flash("Пароли не совпадают")
-    return render_template('register.html')
+        return render_template('register.html')
 
 
-@app.route('/creatdb', methods=['POST', "GET"])
-@login_required
-def creat_db():
-    global user
-    if request.method == "POST":
-        vendr = request.form['vendor']
-        info = request.form['info_db']
-        if info:
-            match vendr[1:-1]:
-                case "PostgreSQL":
-                    author.db_info = re.sub('[:|@|/]', " ", info).split()
-                    author.db_info.append('PostgreSQL')
-                case "MySQL":
-                    author.db_info = re.sub('[;| =|]', " ", info).split()
-                    author.db_info.append('MySQL')
-                case "MSserver":
-                    # добавить драйвер
-                    s = re.sub('[;| =|>|<|]', " ", info).split()
-                    for i in [1, 3, 5, 7]:
-                        author.db_info.append(s[i])
-                    author.db_info.append('MSserver')
-                case "SQLite":
-                    author.db_info = info.strip().split()
-                    author.db_info.append('SQLite')
-            user = DB(author.db_info)
-            if author.registration():
-                author.send_user_data(user.info.database)
-            if user.connect():
-                author.send_user_db(user.info.database)
-                return redirect(url_for('work_db'))
-            else:
-                flash("Неверные данные подключения")
-    return render_template('creatdb.html')
-
-
-
-
-@app.route('/workdb', methods=['POST', "GET"])
-@login_required
-def work_db():
-    if request.method == "POST":
-        request_sql = request.form['message']
-        if request_sql != '':
+    @route('/createdb', methods=['POST', "GET"])
+    @login_required
+    def create_db(self):
+        if request.method == "POST":
+            vendr = request.form['vendor']
+            info = request.form['info_db']
             try:
-                res, desc = user.exec(request_sql)
-                author.hs_rs(request_sql, 'True')
-                return render_template('workdb.html', rows=res, des=desc)
-            except TypeError:
-                author.hs_rs(request_sql, 'False')
-                flash("Некорректный запрос!")
-        else:
-            flash("Запрос не может быть пустым!")
-    return render_template('workdb.html')
+                match vendr[1:-1]:
+                    case "PostgreSQL":
+                        db_info = re.sub('[:|@|/]', " ", info).split()
+                        db_info.append('PostgreSQL')
+                        database = db_info[4]
+                    case "MySQL":
+                        db_info = re.sub('[;| =|]', " ", info).split()
+                        db_info.append('MySQL')
+                        database = db_info[3]
+                    # case "MSserver":
+                    #    # добавить драйвер
+                    #    s = re.sub('[;| =|>|<|]', " ", info).split()
+                    #    for i in [1, 3, 5, 7]:
+                    #        db_info.append(s[i])
+                    #    db_info.append('MSserver')
+                    case "SQLite":
+                        db_info = info.strip().split()
+                        db_info.append('SQLite')
+                        database = db_info[0]
+            except IndexError:
+                flash("Неверные данные подключения")
+                return render_template('createdb.html')
+
+            login = session['username']
+
+            try:
+                self.logic.addDB(db_info, login)
+            except IndexError:
+                flash("Неверные данные подключения")
+                return render_template('createdb.html')
+
+            self.logic.send_user_db(db_info, login, database)
+            return redirect(url_for('FlaskApp:work_db'))
+
+
+        return render_template('createdb.html')
+
+    @route('/work_db', methods=['POST', "GET"])
+    @login_required
+    def work_db(self):
+        username = session['username']
+        if request.method == "POST":
+            request_sql = request.form['message']
+            if request_sql != '':
+                if self.logic.check_active(username):
+                    try:
+                        res, desc = self.logic.exec(request_sql, username)
+                        self.logic.hs_rs(session['username'], request_sql, 'True')
+                        return render_template('workdb.html', rows=res, des=desc)
+                    except TypeError:
+                        self.logic.hs_rs(session['username'], request_sql, 'False')
+                        flash("Некорректный запрос!")
+                else:
+                    flash("У вас нету активной бд!!!")
+            else:
+                flash("Запрос не может быть пустым!")
+        return render_template('workdb.html')
+
+    @route('/table', methods=['POST', "GET"])
+    @login_required
+    def table(self):
+        username = session['username']
+        try:
+            namedb = self.logic.print_table(session['username'], session['active'])
+        except KeyError:
+            flash('Выберите активную базу')
+            return redirect(url_for('FlaskApp:dbname'))
+        if request.method == 'POST':
+            table = request.form['table']
+            res, desc = self.logic.exec(f'SELECT * FROM {table}', username)
+            return render_template("table.html", rows=res, des=desc, namedb=namedb)
+        return render_template("table.html", namedb=namedb)
+
+
+    @route('/history', methods=['POST', "GET"])
+    @login_required
+    def history(self):
+        if request.method == 'POST':
+            self.logic.clear_hs_user(session['username'])
+        res, desc = self.logic.out_rs(session['username'])
+        return render_template('history.html', rows=res, des=desc)
 
 
 
-@app.route('/history', methods=['POST', "GET"])
-@login_required
-def history():
-    author.user_id = author.get_user_id()
-    res, desc = author.out_rs()
-    return render_template('history.html', rows=res, des=desc)
+    @route('/dbname', methods=['POST', "GET"])
+    @login_required
+    def dbname(self):
+        if request.method == "POST":
+            if request.form.getlist('namedb') != []:
+                namedb = request.form.getlist('namedb')[0]
+                session['active'] = namedb
+                self.logic.connDB(session['username'], namedb)
+            else:
+                flash("Вы ничего не выбрали!")
+        try:
+            return render_template('dbname.html', rows=self.logic.get_user_db(session['username']))
+        except DbNotFound:
+            return render_template('dbname.html', rows=[])
+
+    @route('/profile', methods=['POST', "GET"])
+    @login_required
+    def profile(self):
+         return render_template('profile.html', name=session['username'])
 
 
-
-@app.route('/dbname', methods=['POST', "GET"])
-@login_required
-def dbname():
-    print(author.get_user_db())
-    return render_template('dbname.html', rows=author.get_user_db())
-
-
-@app.route('/profile', methods=['POST', "GET"])
-@login_required
-def profile():
-     return render_template('profile.html', name=session['username'])
+    @route('/logout', methods=['POST', "GET"])
+    @login_required
+    def logout(self):
+        logout_user()
+        session.pop('username', None)
+        return redirect('/')
 
 
-@app.route('/logout')
-@login_required
-def logout():
-    logout_user()
-    session.pop('username', None)
-    return redirect('/')
+    @route('/test')
+    @login_required
+    def test(self):
+        return render_template('test.html')
+
+
 
 @app.errorhandler(404)
 def pageNot(error):
     return render_template('error.html'), 404
 
-def test():
-    return render_template('test.html')
+FlaskApp.register(app, route_base='/')
+
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(debug=True)
