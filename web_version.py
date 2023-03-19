@@ -9,12 +9,11 @@ from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound
 
 
 
-DATABASE = '/tmp/flsite.db'
+
 DEBUG = True
 
 app = Flask(__name__)
 app.config.from_object(__name__)
-app.config.update(dict(DATABASE=os.path.join(app.root_path, 'flsite.db')))
 app.config['SECRET_KEY'] = os.urandom(24)
 
 login_manager = LoginManager(app)
