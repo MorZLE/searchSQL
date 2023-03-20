@@ -47,6 +47,7 @@ class Info:
                 case 'SQLite':
                     self.database = self.data_db[0]
             self.isValid = True
+
         except (IndexError):
             self.isValid = False
 
