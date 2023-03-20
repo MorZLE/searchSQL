@@ -8,8 +8,6 @@ from storage import Storage
 from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound
 
 
-
-
 DEBUG = True
 
 app = Flask(__name__)
@@ -35,7 +33,6 @@ class FlaskApp(FlaskView):
             cls.instance = super(FlaskApp, cls).__new__(cls)
         return cls.instance
 
-
     @login_manager.user_loader
     def load_user(self):
         return UserLogin().fromDB(session['username'])
@@ -58,8 +55,8 @@ class FlaskApp(FlaskView):
             except UserNotFound:
                 flash("Пользователь не найден")
                 return render_template('login.html')
-
             userlogin = UserLogin().create(login)
+
             login_user(userlogin, remember=rm)
             return redirect(request.args.get('next') or url_for('FlaskApp:work_db'))
         return render_template('login.html')
@@ -86,7 +83,6 @@ class FlaskApp(FlaskView):
             else:
                 flash("Пароли не совпадают")
         return render_template('register.html')
-
 
     @route('/createdb', methods=['POST', "GET"])
     @login_required
@@ -128,8 +124,6 @@ class FlaskApp(FlaskView):
 
             self.logic.send_user_db(db_info, login, database)
             return redirect(url_for('FlaskApp:work_db'))
-
-
         return render_template('createdb.html')
 
     @route('/work_db', methods=['POST', "GET"])
@@ -168,7 +162,6 @@ class FlaskApp(FlaskView):
             return render_template("table.html", rows=res, des=desc, namedb=namedb)
         return render_template("table.html", namedb=namedb)
 
-
     @route('/history', methods=['POST', "GET"])
     @login_required
     def history(self):
@@ -176,8 +169,6 @@ class FlaskApp(FlaskView):
             self.logic.clear_hs_user(session['username'])
         res, desc = self.logic.out_rs(session['username'])
         return render_template('history.html', rows=res, des=desc)
-
-
 
     @route('/dbname', methods=['POST', "GET"])
     @login_required
@@ -200,7 +191,6 @@ class FlaskApp(FlaskView):
         statistics = self.logic.get_statistics_user(session['username'])
         return render_template('profile.html', name=session['username'], statistics=statistics)
 
-
     @route('/logout', methods=['POST', "GET"])
     @login_required
     def logout(self):
@@ -213,10 +203,10 @@ class FlaskApp(FlaskView):
     def test(self):
         return render_template('test.html')
 
+
 @app.errorhandler(404)
 def pageNot(error):
     return render_template('error.html'), 404
-
 
 
 FlaskApp.register(app, route_base='/')
