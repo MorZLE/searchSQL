@@ -138,19 +138,19 @@ class FlaskApp(FlaskView):
         username = session['username']
         if request.method == "POST":
             request_sql = request.form['message']
-            if request_sql != '':
-                if self.logic.check_active(username):
-                    try:
-                        res, desc = self.logic.exec(request_sql, username)
-                        self.logic.hs_rs(session['username'], request_sql, 'True')
-                        return render_template('workdb.html', rows=res, des=desc)
-                    except TypeError:
-                        self.logic.hs_rs(session['username'], request_sql, 'False')
-                        flash("Некорректный запрос!")
-                else:
-                    flash("У вас нету активной бд!!!")
-            else:
+            if request_sql == '':
                 flash("Запрос не может быть пустым!")
+                return render_template('workdb.html')
+            if not self.logic.check_active(username):
+                flash("У вас нету активной бд!!!")
+                return render_template('workdb.html')
+            st, res, desc = self.logic.exec(request_sql, username)
+            if st:
+                self.logic.hs_rs(session['username'], request_sql, 'True')
+                return render_template('workdb.html', rows=res, des=desc)
+            else:
+                self.logic.hs_rs(session['username'], request_sql, 'False')
+                flash(f"Некорректный запрос!\n{res}")
         return render_template('workdb.html')
 
     @route('/table', methods=['POST', "GET"])
@@ -164,7 +164,7 @@ class FlaskApp(FlaskView):
             return redirect(url_for('FlaskApp:dbname'))
         if request.method == 'POST':
             table = request.form['table']
-            res, desc = self.logic.exec(f'SELECT * FROM {table}', username)
+            _, res, desc = self.logic.exec(f'SELECT * FROM {table}', username)
             return render_template("table.html", rows=res, des=desc, namedb=namedb)
         return render_template("table.html", namedb=namedb)
 
@@ -197,7 +197,8 @@ class FlaskApp(FlaskView):
     @route('/profile', methods=['POST', "GET"])
     @login_required
     def profile(self):
-         return render_template('profile.html', name=session['username'])
+        statistics = self.logic.get_statistics_user(session['username'])
+        return render_template('profile.html', name=session['username'], statistics=statistics)
 
 
     @route('/logout', methods=['POST', "GET"])
@@ -207,17 +208,16 @@ class FlaskApp(FlaskView):
         session.pop('username', None)
         return redirect('/')
 
-
     @route('/test')
     @login_required
     def test(self):
         return render_template('test.html')
 
-
-
 @app.errorhandler(404)
 def pageNot(error):
     return render_template('error.html'), 404
+
+
 
 FlaskApp.register(app, route_base='/')
 

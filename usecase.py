@@ -2,6 +2,9 @@ from storage import Storage
 from userdb import UserDBs
 from DB import Info, DB
 
+
+
+
 class UniqueUsernameCheckFailed(Exception):
     pass
 
@@ -82,11 +85,8 @@ class UseCase:
         return self.storage.out_rs(user)
 
     def exec(self, query, username):
-
         cs = self.userDBs.getUserDbs(username)
         con = cs.get_active()
-       # return cs.active.cursor().execute(query)
-        #return con.exec(query)
         return self.db.userExec(con, query)
 
     def clear_hs_user(self, username):
@@ -96,12 +96,14 @@ class UseCase:
         vender = ' '.join(self.storage.vender_db(username, active)[0])
         match vender:
             case 'PostgreSQL':
-                res, desc = self.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'", username)
+                _, res, desc = self.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'", username)
             case 'MySQL':
-                res, desc = self.exec("SHOW TABLES")
+                _, res, desc = self.exec("SHOW TABLES")
             case 'MSserver':
-                res, desc = self.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'", username)
+                _, res, desc = self.exec("SELECT table_name FROM information_schema.tables WHERE table_schema='public'", username)
             case 'SQLite':
-                res, desc = self.exec("SELECT name FROM sqlite_master WHERE type='table' and name != 'sqlite_sequence';", username)
+                _, res, desc = self.exec("SELECT name FROM sqlite_master WHERE type='table' and name != 'sqlite_sequence';", username)
         return res
 
+    def get_statistics_user(self, username):
+        return self.storage.get_statistics_user(username)

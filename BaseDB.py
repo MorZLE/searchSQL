@@ -13,7 +13,7 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=True)
 
 
-class UserDBs(db.Model):
+class Userdbs(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     db_info = db.Column(db.Text, nullable=True)
     owner = db.Column(db.Text, db.ForeignKey('user.login'), nullable=True)

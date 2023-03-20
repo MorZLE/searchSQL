@@ -1,7 +1,7 @@
 import logging
 from collecting import sql_request
 from DB import DB
-from authorization import Storage 
+from storage import Storage
 
 def main():
   def reg(author):

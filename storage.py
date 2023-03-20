@@ -78,3 +78,13 @@ class Storage(DB):
     def vender_db(self, user, namedb):
         res, desc = self.exec("SELECT vender from userDBs where owner=? and dbname=?", user, namedb)
         return res
+
+    def get_statistics_user(self, user):
+        resT, desc = self.exec("SELECT count(*) from history_rs where owner=? and condition='True'", user)
+        resF, desc = self.exec("SELECT count(*) from history_rs where owner=? and condition='False'", user)
+        t = int(tuple(resT)[0][0])
+        f = int(tuple(resF)[0][0])
+        cf = 0
+        if t > 0 and f > 0:
+            cf = int(t/((t+f)/100))
+        return cf

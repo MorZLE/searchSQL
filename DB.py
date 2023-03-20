@@ -4,6 +4,8 @@ import pyodbc
 import sqlite3
 
 
+class DBerr(Exception):
+    pass
 
 class Info:
 
@@ -86,8 +88,9 @@ class DB:
                     self.connection = sqlite3.connect(f'{self.info.database}', check_same_thread=False)
                     self.cursor = self.connection.cursor()
             return self.connection
-        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError) as DBerr:
-            raise DBerr
+        except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError):
+            raise IndexError
+
 
     def con_db_app(self):
         self.connection = sqlite3.connect('data_user', check_same_thread=False)
@@ -126,8 +129,6 @@ class DB:
                 print('Нету данных для вывода!')
             else:
                 print(err)
-                pass
-
 
     def userExec(self, connection, query):
         cursor = connection.cursor()
@@ -135,14 +136,11 @@ class DB:
             cursor.execute(query)
             connection.commit()
             result = cursor.fetchall()
-            return result, cursor.description
+            return True, result, cursor.description
         except (psycopg2.errors.InFailedSqlTransaction, mysql.connector.errors.ProgrammingError):
             connection.rollback()
         except TypeError as te:
             print(te)
         except (psycopg2.ProgrammingError, mysql.connector.errors.DataError, mysql.connector.errors.DatabaseError,
                 mysql.connector.errors.ProgrammingError, sqlite3.OperationalError, UnboundLocalError) as err:
-            if 'no results to fetch' in str(err):
-                print('Нету данных для вывода!')
-            else:
-                print(err)
+            return False, err, False
