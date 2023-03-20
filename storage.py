@@ -88,3 +88,11 @@ class Storage(DB):
         if t > 0 and f > 0:
             cf = int(t/((t+f)/100))
         return cf
+
+    def check_psw_user(self, username, psw):
+        res, desc = self.exec("SELECT count(*) from user where login=? and password=?", username, psw)
+        res = int(tuple(res)[0][0])
+        return True if res == 1 else False
+
+    def set_user_psw(self, username, psw):
+        res, desc = self.exec("UPDATE user SET password =? WHERE login=?", psw, username)

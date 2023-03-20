@@ -107,3 +107,9 @@ class UseCase:
 
     def get_statistics_user(self, username):
         return self.storage.get_statistics_user(username)
+
+    def check_psw_user(self, username, psw):
+        return self.storage.check_psw_user(username, psw)
+
+    def set_user_psw(self, username, psw):
+        self.storage.set_user_psw(username, psw)

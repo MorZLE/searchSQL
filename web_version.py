@@ -191,6 +191,30 @@ class FlaskApp(FlaskView):
         statistics = self.logic.get_statistics_user(session['username'])
         return render_template('profile.html', name=session['username'], statistics=statistics)
 
+    @route('/setpsw', methods=['POST', "GET"])
+    @login_required
+    def setpsw(self):
+        if request.method == "POST":
+            username = session['username']
+            oldpasswd = request.form['oldpassword']
+            passwd = request.form['password']
+            confirm_password = request.form['confirm_password']
+            if passwd == '' or oldpasswd =='' or confirm_password =='':
+                flash("Пароль не может быть пустым")
+                return render_template('setpsw.html')
+            if not self.logic.check_psw_user(username,oldpasswd):
+                flash("Старый пароль не верен!")
+                return render_template('setpsw.html')
+            if passwd != confirm_password:
+                flash("Пароли не совпадают")
+                return render_template('setpsw.html')
+            self.logic.set_user_psw(username, passwd)
+            flash("Пароль изменен")
+            return redirect(url_for('FlaskApp:profile'))
+
+
+        return render_template('setpsw.html')
+
     @route('/logout', methods=['POST', "GET"])
     @login_required
     def logout(self):
@@ -202,6 +226,7 @@ class FlaskApp(FlaskView):
     @login_required
     def test(self):
         return render_template('test.html')
+
 
 
 @app.errorhandler(404)
