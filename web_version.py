@@ -188,8 +188,8 @@ class FlaskApp(FlaskView):
     @route('/profile', methods=['POST', "GET"])
     @login_required
     def profile(self):
-        statistics = self.logic.get_statistics_user(session['username'])
-        return render_template('profile.html', name=session['username'], statistics=statistics)
+        all, true, statistics = self.logic.get_statistics_user(session['username'])
+        return render_template('profile.html', name=session['username'], statistics=statistics, tr=true, all=all)
 
     @route('/setpsw', methods=['POST', "GET"])
     @login_required
@@ -211,8 +211,6 @@ class FlaskApp(FlaskView):
             self.logic.set_user_psw(username, passwd)
             flash("Пароль изменен")
             return redirect(url_for('FlaskApp:profile'))
-
-
         return render_template('setpsw.html')
 
     @route('/logout', methods=['POST', "GET"])
@@ -226,7 +224,6 @@ class FlaskApp(FlaskView):
     @login_required
     def test(self):
         return render_template('test.html')
-
 
 
 @app.errorhandler(404)

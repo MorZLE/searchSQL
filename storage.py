@@ -84,10 +84,11 @@ class Storage(DB):
         resF, desc = self.exec("SELECT count(*) from history_rs where owner=? and condition='False'", user)
         t = int(tuple(resT)[0][0])
         f = int(tuple(resF)[0][0])
+        all = t+f
         cf = 0
         if t > 0 and f > 0:
-            cf = int(t/((t+f)/100))
-        return cf
+            cf = int(t/((all)/100))
+        return all, t, cf
 
     def check_psw_user(self, username, psw):
         res, desc = self.exec("SELECT count(*) from user where login=? and password=?", username, psw)

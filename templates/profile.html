@@ -21,9 +21,11 @@
 
 <div class="login-box">
   <p>{{name}}</p>
-    <p>Успешные запросы {{statistics}}%</p>
-    </form>
-    <p> <a href="{{url_for('FlaskApp:setpsw')}}" class="a2">Изменить пароль</a></p>
+  <p>Всего запросов {{all}}</p>
+  <p>Успешных запросов {{tr}}</p>
+  <p>Успешные запросы {{statistics}}%</p>
+  </form>
+  <p> <a href="{{url_for('FlaskApp:setpsw')}}" class="a2">Изменить пароль</a></p>
   </div>
 </body>
 </html>
