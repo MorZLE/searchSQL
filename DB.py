@@ -91,7 +91,6 @@ class DB:
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError):
             raise IndexError
 
-
     def con_db_app(self):
         self.connection = sqlite3.connect('data_user', check_same_thread=False)
         self.cursor = self.connection.cursor()
