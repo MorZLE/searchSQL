@@ -180,16 +180,22 @@ class FlaskApp(FlaskView):
     @login_required
     def dbname(self):
         if request.method == "POST":
-            if request.form.getlist('namedb') != []:
-                namedb = request.form.getlist('namedb')[0]
-                session['active'] = namedb
-                self.logic.connDB(session['username'], namedb)
-            else:
-                flash("Вы ничего не выбрали!")
+            username = session['username']
+            if request.form.get('submit') == 'Подключиться':
+                if request.form.getlist('namedb') != []:
+                    namedb = request.form.getlist('namedb')[0]
+                    session['active'] = namedb
+                    self.logic.connDB(username, namedb)
+                else:
+                    flash("Вы ничего не выбрали!")
+            elif request.form.get('delete') == 'Удалить':
+                if request.form.getlist('namedb') != []:
+                    self.logic.del_db_user(username, request.form.getlist('namedb')[0])
         try:
             return render_template('dbname.html', rows=self.logic.get_user_db(session['username']))
         except DbNotFound:
             return render_template('dbname.html', rows=[])
+
 
     @route('/profile', methods=['POST', "GET"])
     @login_required

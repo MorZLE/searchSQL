@@ -97,3 +97,8 @@ class Storage(DB):
 
     def set_user_psw(self, username, psw):
         res, desc = self.exec("UPDATE user SET password =? WHERE login=?", psw, username)
+
+    def del_db_user(self, username, namedb):
+        self.exec("DELETE FROM userdbs where owner =? and dbname =?", username, namedb)
+
+

@@ -33,6 +33,9 @@ class ConnStorage(DB):
         else:
             return True
 
+    def del_db(self, namedb):
+        del self.dbs[namedb]
+
 class UserDBs:
     dbs: typing.Dict[str, ConnStorage] = {}
 

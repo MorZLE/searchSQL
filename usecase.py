@@ -113,3 +113,10 @@ class UseCase:
 
     def set_user_psw(self, username, psw):
         self.storage.set_user_psw(username, psw)
+
+    def del_db_user(self, username, namedb):
+        self.storage.del_db_user(username, namedb)
+        cs = self.userDBs.getUserDbs(username)
+        db = cs.check_db(namedb)
+        if db:
+            cs.del_db(namedb)
