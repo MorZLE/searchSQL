@@ -16,6 +16,10 @@ class DbNotFound(Exception):
 class UserNotFound(Exception):
     pass
 
+class ВuplicateDB(Exception):
+    pass
+
+
 
 class UseCase:
     storage = None
@@ -52,12 +56,14 @@ class UseCase:
 
     def addDB(self, db_info, username):
         info = Info(db_info)
-        info.parse_connection_string()
-        cs = self.userDBs.getUserDbs(username)
-        try:
-            cs.record(info)
-        except IndexError:
-            raise IndexError
+        if self.storage.check_db(username, info.database):
+            cs = self.userDBs.getUserDbs(username)
+            try:
+                cs.record(info)
+            except IndexError:
+                raise IndexError
+        else:
+            raise ВuplicateDB
 
     def connDB(self, username, namedb):
         cs = self.userDBs.getUserDbs(username)

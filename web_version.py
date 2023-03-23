@@ -5,7 +5,7 @@ from flask_classful import FlaskView, route
 import os
 import re
 from storage import Storage
-from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound
+from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound, ВuplicateDB
 
 
 DEBUG = True
@@ -121,7 +121,9 @@ class FlaskApp(FlaskView):
             except IndexError:
                 flash("Неверные данные подключения")
                 return render_template('createdb.html')
-
+            except ВuplicateDB:
+                flash("У вас уже есть база с этим именем")
+                return render_template('createdb.html')
             self.logic.send_user_db(db_info, login, database)
             return redirect(url_for('FlaskApp:work_db'))
         return render_template('createdb.html')

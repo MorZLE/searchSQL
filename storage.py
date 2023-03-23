@@ -101,4 +101,8 @@ class Storage(DB):
     def del_db_user(self, username, namedb):
         self.exec("DELETE FROM userdbs where owner =? and dbname =?", username, namedb)
 
+    def check_db(self, username, database):
+        res, desc = self.exec("SELECT count(*) from userdbs where owner =? and dbname =?", username, database)
+        res = int(tuple(res)[0][0])
+        return True if res == 0 else False
 
