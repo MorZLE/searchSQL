@@ -17,9 +17,12 @@
       <div class="animation start-home"></div>
   </nav>
 <div class="login-box">
-  <p>СТРАНИЦА НЕ НАЙДЕНА</p>
+  {% if err == 404 %}
+    <p>СТРАНИЦА НЕ НАЙДЕНА</p>
+  {% else %}
+    <p>ОШИБКА</p>
+  {% endif %}
     </form>
-
   </div>
 </body>
 </html>

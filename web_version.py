@@ -141,6 +141,9 @@ class FlaskApp(FlaskView):
             st, res, desc = self.logic.exec(request_sql, username)
             if st:
                 self.logic.hs_rs(session['username'], request_sql, 'True')
+                if desc is None:
+                    flash('Нету данных для вывода')
+                    return render_template('workdb.html')
                 return render_template('workdb.html', rows=res, des=desc)
             else:
                 self.logic.hs_rs(session['username'], request_sql, 'False')
@@ -157,7 +160,10 @@ class FlaskApp(FlaskView):
             flash('Выберите активную базу')
             return redirect(url_for('FlaskApp:dbname'))
         if request.method == 'POST':
-            table = request.form['table']
+            try:
+                table = request.form['table']
+            except KeyError:
+                return render_template("table.html", namedb=namedb)
             _, res, desc = self.logic.exec(f'SELECT * FROM {table}', username)
             return render_template("table.html", rows=res, des=desc, namedb=namedb)
         return render_template("table.html", namedb=namedb)
@@ -228,8 +234,11 @@ class FlaskApp(FlaskView):
 
 @app.errorhandler(404)
 def pageNot(error):
-    return render_template('error.html'), 404
+    return render_template('error.html', err=404)
 
+app.errorhandler(500)
+def err(error):
+    return render_template('error.html', err=500)
 
 FlaskApp.register(app, route_base='/')
 
