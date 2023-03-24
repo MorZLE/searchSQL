@@ -53,15 +53,15 @@ class Storage(DB):
         for row in res:
             return row[0]
 
-    def hs_rs(self, user, req, cond):
+    def hs_rs(self, user, req, cond, namedb):
         """Функция заполнения истории запроса пользователя"""
         tm = datetime.datetime.now()
         tm = tm.strftime("%H:%M:%S %d-%m-%Y ")
-        self.exec('INSERT INTO history_rs (request,owner ,time,condition) values (?,?,?,?)', req, user,tm,cond)
+        self.exec('INSERT INTO history_rs (request,owner ,time,condition,namedb) values (?,?,?,?,?)', req, user,tm,cond,namedb)
 
     def out_rs(self, user):
         """Функция получения истории запроса определенного пользователя"""
-        res, desc = self.exec('SELECT request,condition,time FROM history_rs WHERE owner  =?',user)
+        res, desc = self.exec('SELECT request,namedb,condition,time FROM history_rs WHERE owner  =?', user)
         return res, desc
 
     def last_rs(self):

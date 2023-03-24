@@ -103,9 +103,9 @@ class DB:
         self.connection.execute('CREATE TABLE IF NOT EXISTS history_rs '
                                 '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
                                 'request text, '
+                                'namedb text,'
                                 'time INTEGER NOT NULL,'
-                                'condition text'
-                                'NOT NULL, '
+                                'condition text NOT NULL,'
                                 'owner TEXT not null references USER (login));')
 
         self.connection.execute('CREATE TABLE IF NOT EXISTS userDBs( id INTEGER primary key,db_info TEXT not null,'

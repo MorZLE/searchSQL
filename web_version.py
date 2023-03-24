@@ -5,7 +5,7 @@ from flask_classful import FlaskView, route
 import os
 import re
 from storage import Storage
-from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound, ВuplicateDB
+from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound, DuplicateDB
 
 
 DEBUG = True
@@ -121,7 +121,7 @@ class FlaskApp(FlaskView):
             except IndexError:
                 flash("Неверные данные подключения")
                 return render_template('createdb.html')
-            except ВuplicateDB:
+            except DuplicateDB:
                 flash("У вас уже есть база с этим именем")
                 return render_template('createdb.html')
             self.logic.send_user_db(db_info, login, database)
@@ -141,14 +141,15 @@ class FlaskApp(FlaskView):
                 flash("У вас нету активной бд!!!")
                 return render_template('workdb.html')
             st, res, desc = self.logic.exec(request_sql, username)
+            active = session['active']
             if st:
-                self.logic.hs_rs(session['username'], request_sql, 'True')
+                self.logic.hs_rs(username, request_sql, 'True', active)
                 if desc is None:
                     flash('Нету данных для вывода')
                     return render_template('workdb.html')
                 return render_template('workdb.html', rows=res, des=desc)
             else:
-                self.logic.hs_rs(session['username'], request_sql, 'False')
+                self.logic.hs_rs(username, request_sql, 'False', active)
                 flash(f"Некорректный запрос!\n{res}")
         return render_template('workdb.html')
 
@@ -158,9 +159,10 @@ class FlaskApp(FlaskView):
         username = session['username']
         try:
             namedb = self.logic.print_table(session['username'], session['active'])
-        except KeyError:
+        except(IndexError, KeyError):
             flash('Выберите активную базу')
             return redirect(url_for('FlaskApp:dbname'))
+
         if request.method == 'POST':
             try:
                 table = request.form['table']
@@ -188,8 +190,6 @@ class FlaskApp(FlaskView):
                     namedb = request.form.getlist('namedb')[0]
                     session['active'] = namedb
                     self.logic.connDB(username, namedb)
-                else:
-                    flash("Вы ничего не выбрали!")
             elif request.form.get('delete') == 'Удалить':
                 if request.form.getlist('namedb') != []:
                     self.logic.del_db_user(username, request.form.getlist('namedb')[0])

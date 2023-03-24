@@ -16,9 +16,9 @@ class DbNotFound(Exception):
 class UserNotFound(Exception):
     pass
 
-class ВuplicateDB(Exception):
-    pass
 
+class DuplicateDB(Exception):
+    pass
 
 
 class UseCase:
@@ -30,7 +30,6 @@ class UseCase:
         self.storage = Storage()
         self.userDBs = UserDBs()
         self.db = DB()
-
 
     def create_user(self, username, password):
         try:
@@ -50,7 +49,6 @@ class UseCase:
         except Exception:
             raise DbNotFound
 
-
     def send_user_db(self, db_info, login, database):
         return self.storage.send_user_db(db_info, login, database)
 
@@ -63,7 +61,7 @@ class UseCase:
             except IndexError:
                 raise IndexError
         else:
-            raise ВuplicateDB
+            raise DuplicateDB
 
     def connDB(self, username, namedb):
         cs = self.userDBs.getUserDbs(username)
@@ -73,7 +71,9 @@ class UseCase:
         else:
             db_info = self.storage.get_user_data_con_db(username, namedb)[0]
             db_info = ''.join(db_info).split()
-            self.addDB(db_info, username)
+            info = Info(db_info)
+            cs = self.userDBs.getUserDbs(username)
+            cs.record(info)
 
 
 
@@ -84,8 +84,8 @@ class UseCase:
         else:
             return True
 
-    def hs_rs(self, user, req, cond):
-        return self.storage.hs_rs(user, req, cond)
+    def hs_rs(self, user, req, cond,namedb):
+        return self.storage.hs_rs(user, req, cond,namedb)
 
     def out_rs(self, user):
         return self.storage.out_rs(user)
