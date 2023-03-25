@@ -1,6 +1,6 @@
-from storage import Storage
-from userdb import UserDBs
-from DB import Info, DB
+from DB.storage import Storage
+from logic.userdb import UserDBs
+from DB.DB import Info, DB
 
 
 
@@ -74,8 +74,6 @@ class UseCase:
             info = Info(db_info)
             cs = self.userDBs.getUserDbs(username)
             cs.record(info)
-
-
 
     def check_active(self, username):
         cs = self.userDBs.getUserDbs(username)

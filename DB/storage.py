@@ -1,6 +1,4 @@
-from data_coll import data_collection
-from table import show_table
-from DB import DB
+from DB.DB import DB
 import math
 import time
 import datetime

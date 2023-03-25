@@ -93,7 +93,7 @@ class DB:
             raise IndexError
 
     def con_db_app(self):
-        self.connection = sqlite3.connect('data_user', check_same_thread=False)
+        self.connection = sqlite3.connect('D:\\python\\searchSQL\\instance\\data_user', check_same_thread=False)
         self.cursor = self.connection.cursor()
         self.connection.execute('CREATE TABLE IF NOT EXISTS USER ('
                                 ' id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '

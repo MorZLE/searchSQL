@@ -1,11 +1,11 @@
 from flask import Flask, request, render_template, session, flash, redirect, url_for
-from UserLogin import UserLogin
+from logic.UserLogin import UserLogin
 from flask_login import LoginManager, login_user, login_required, logout_user,current_user
 from flask_classful import FlaskView, route
 import os
 import re
-from storage import Storage
-from usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound, DuplicateDB
+from DB.storage import Storage
+from logic.usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound, DuplicateDB
 
 
 DEBUG = True

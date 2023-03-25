@@ -1,4 +1,4 @@
-from DB import DB
+from DB.DB import DB
 import typing
 
 

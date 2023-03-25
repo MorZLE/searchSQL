@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
-from flask import Flask
+from app.web_version import app
 
-app = Flask(__name__)
+
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///D:/python/searchSQL/data_user_test.db'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -24,6 +24,7 @@ class Userdbs(db.Model):
 class History(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     request = db.Column(db.Text, nullable=True)
+    namedb = db.Column(db.Text, nullable=True)
     time = db.Column(db.Text, nullable=True)
     condition = db.Column(db.Text, nullable=True)
     owner = db.Column(db.Text, db.ForeignKey('user.login'), nullable=True)
