@@ -86,7 +86,7 @@ class DB:
                                                      f"pwd={self.info.password}")
                     self.cursor = self.connection.cursor()
                 case 'SQLite':
-                    self.connection = sqlite3.connect(f'{self.info.database}', check_same_thread=False)
+                    self.connection = sqlite3.connect(f'D:\\python\\searchSQL\\app\\sqlitedb\\{self.info.database}', check_same_thread=False)
                     self.cursor = self.connection.cursor()
             return self.connection
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError):

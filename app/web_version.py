@@ -37,8 +37,9 @@ class FlaskApp(FlaskView):
     def load_user(self):
         return UserLogin().fromDB(session['username'])
 
+    @route('/', methods=['POST', "GET"])
     def index(self):
-        return render_template('index.html')
+        return redirect(url_for('FlaskApp:login'))
 
     @route('/login', methods=['POST', "GET"])
     def login(self):
