@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/css/reset.css">
+    <link rel="stylesheet" href="static/css/work-sql.css">
+    <title>SQL</title>
+    <p>
+        {% for msg in get_flashed_messages() %}
+        {{msg}}
+        {% endfor %}
+    </p>
+<script type="module">
+(async ({chrome, netscape}) => {
+  if (!chrome && !netscape)
+    await import('https://unpkg.com/@ungap/custom-elements');
+  const {default: HighlightedCode} =
+    await import('https://unpkg.com/highlighted-code');
+  HighlightedCode.useTheme('a11y-dark');
+
+})(self);
+</script>
+     <meta charset="UTF-8">
+    <div>
+        <p>
+        {% for msg in get_flashed_messages() %}
+        {{msg}}
+        {% endfor %}
+        </p>
+    </div>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="menu-wrapper">
+                <a class="logo">
+                    SQL
+                </a>  
+                <nav class="nav">
+                    <ul class="menu">
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:work_db')}}" class="menu-link">SQL</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:table')}}" class="menu-link">Таблицы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:dbname')}}" class="menu-link">Список БД</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:history')}}" class="menu-link">История</a></li>
+                    </ul>
+                </nav>
+            <a class="profile" href="{{url_for('FlaskApp:profile')}}">Профиль</a>
+            <a class="exit" href="{{url_for('FlaskApp:logout')}}">Выход</a>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <section class="workfield">
+            <div class="container">
+                <form class="input__text" action="/work_db" method="post">
+                    <textarea class="textarea" name="message" cols="60" rows="15" placeholder="Введите команду" is="highlighted-code" language="sql" tab-size="2"></textarea>
+                    <br>
+                    <button class="input__text-btn" type="submit" name='req'>Отправить</button>
+                    <button class="input__text-btn" type="reset">Очистить</button>
+                </form>  
+            </div>
+        </section>
+        <section class="table-section">
+            <div class="container">
+            <h1 class="table-section__title">Выборка</h1>
+                <table class="table-fill">
+                     <thead>
+                     <tr>
+                     {% for d in des %}
+                     <th class="text-left">{{d[0]}}</th>
+                     {% endfor %}
+                     </tr>
+                    </thead>
+                    <tbody class="table-hover">
+                    <tr>
+                    <td class="text-left"></td>
+                    <td class="text-left"></td>
+                    </tr>
+                    {% for row in rows %}
+                       <tr>
+                           {% for r in row %}
+                               <td class="text-left">{{r}}</td>
+                           {% endfor %}
+                       </tr>
+                    {% endfor %}
+                    </tbody>
+                    </table>
+        </div>
+        </section>
+    </main>
+</body>
+</html>

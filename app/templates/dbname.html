@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/css/reset.css">
+    <link rel="stylesheet" href="static/css/basedate.css">
+    <title>Список БД</title>
+    <div>
+        <p>
+        {% for msg in get_flashed_messages() %}
+        {{msg}}
+        {% endfor %}
+        </p>
+    </div>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+        <div class="menu-wrapper">
+            <a class="logo">
+                SQL
+            </a>  
+            <nav class="nav">
+                <ul class="menu">
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:work_db')}}" class="menu-link">SQL</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:table')}}" class="menu-link">Таблицы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:dbname')}}" class="menu-link">Список БД</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:history')}}" class="menu-link">История</a></li>
+                </ul>
+            </nav>
+            <a class="profile" href="{{url_for('FlaskApp:profile')}}">Профиль</a>
+            <a class="exit" href="{{url_for('FlaskApp:logout')}}">Выход</a>
+        </div>
+    </div>
+  </header>
+  <section class="base">
+    <div class="container">
+      <div class="base-block">
+        <h2 class="base-block__title">
+          Ваши базы данных
+        </h2>
+        <form class="base__form" action="/dbname" method="post">
+          <div class="base__form-input-block">
+            {% for data in rows %}
+            <label><input class="base__form-input" type="radio" name='namedb' value={{data[0]}}>{{data[0]}}</label>
+            {% endfor %}
+          </div>
+          <div class="btn">
+            <button class="base__form-btn" type="submit" name="submit" value="Подключиться">Подключиться</button>
+            <button class="base__form-btn" type="submit"  name="delete" value="Удалить">Удалить</button>
+            <a href="{{url_for('FlaskApp:create_db')}}" class="base__form-btn">Создать бд</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</body>
+</html>
