@@ -26,13 +26,6 @@
 })(self);
 </script>
      <meta charset="UTF-8">
-    <div>
-        <p>
-        {% for msg in get_flashed_messages() %}
-        {{msg}}
-        {% endfor %}
-        </p>
-    </div>
 </head>
 <body>
     <header class="header">
@@ -45,7 +38,7 @@
                     <ul class="menu">
                     <li class="menu-item"><a href="{{url_for('FlaskApp:work_db')}}" class="menu-link">SQL</a></li>
                     <li class="menu-item"><a href="{{url_for('FlaskApp:table')}}" class="menu-link">Таблицы</a></li>
-                    <li class="menu-item"><a href="{{url_for('FlaskApp:dbname')}}" class="menu-link">Список БД</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:dbname')}}" class="menu-link">Базы</a></li>
                     <li class="menu-item"><a href="{{url_for('FlaskApp:history')}}" class="menu-link">История</a></li>
                     </ul>
                 </nav>
@@ -58,7 +51,7 @@
         <section class="workfield">
             <div class="container">
                 <form class="input__text" action="/work_db" method="post">
-                    <textarea class="textarea" name="message" cols="60" rows="15" placeholder="Введите команду" is="highlighted-code" language="sql" tab-size="2"></textarea>
+                    <textarea class="textarea" name="message" cols="80" rows="15" placeholder="Введите команду" is="highlighted-code" language="sql" tab-size="2" spellcheck="false" ></textarea>
                     <br>
                     <button class="input__text-btn" type="submit" name='req'>Отправить</button>
                     <button class="input__text-btn" type="reset">Очистить</button>
@@ -67,7 +60,7 @@
         </section>
         <section class="table-section">
             <div class="container">
-            <h1 class="table-section__title">Выборка</h1>
+            <h1 class="table-section__title"></h1>
                 <table class="table-fill">
                      <thead>
                      <tr>
@@ -77,10 +70,7 @@
                      </tr>
                     </thead>
                     <tbody class="table-hover">
-                    <tr>
-                    <td class="text-left"></td>
-                    <td class="text-left"></td>
-                    </tr>
+
                     {% for row in rows %}
                        <tr>
                            {% for r in row %}

@@ -33,7 +33,8 @@
       <input class="login-input" type="password" placeholder="Пароль"  name="password" required>
       <input class="login-input" type="password" placeholder="Повторите пароль" name="confirm_password" required>
       <button class="login-btn" type="submit">Зарегистрироваться</button>
-      <a href="{{url_for('FlaskApp:reg')}" class="login-registrations">Войти если есть аккаунт!</a>
+
+      <a href="{{url_for('FlaskApp:login')}}" class="login-registrations">Войти если есть аккаунт!</a>
 
     </form>
   </div>

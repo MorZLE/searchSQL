@@ -135,3 +135,16 @@ body {
     border: 2px solid #000;
 }
 
+.login-registrations {
+    display: inline-block;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000;
+    text-decoration: none;
+    margin: 15px 40px 0 47px;
+}
+
+.login-registrations:hover {
+    color: #005C9E;
+}
