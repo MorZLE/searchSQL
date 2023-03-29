@@ -13,17 +13,6 @@ a {
   color: #000;
 }
 
-body {
-  font-family: 'Source Sans Pro', sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  background: #8BB6D6;
-  background-image: url(../img/web-img.png);
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-}
-
 .container {
   max-width: 1330px;
   padding: 0 15px;

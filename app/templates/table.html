@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/css/menu.css">
     <link rel="stylesheet" href="static/css/reset.css">
     <link rel="stylesheet" href="static/css/table.css">
 
@@ -87,7 +88,7 @@
         {% for row in rows %}
            <tr>
                {% for r in row %}
-                   <td class="text-left">{{r}}</td>
+                   <td>{{r}}</td>
                {% endfor %}
            </tr>
         {% endfor %}
