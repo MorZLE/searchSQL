@@ -1,0 +1,56 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  background: #8BB6D6;
+  background-image: url(../img/web-img.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.table-fill {
+ font-family: "Source Sans Pro", sans-serif;
+ background: white;
+ border-radius: 20px;
+ width: 1100px;
+ padding: 0 5px;
+ max-height: 0;
+ box-shadow: 0 5px 10px rgba(69, 106, 134, 0.86);
+ overflow: hidden;
+ margin: 0 auto;
+}
+
+/*стили истории*/
+.history__block {
+    margin: 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    width: 450px;
+    height: auto;
+    position: absolute;
+    top: 37%;
+    left: 37%;
+    padding: 35px 25px 35px 25px;
+    box-shadow: 0px 0px 4px 6px rgba(149, 140, 140, 0.25);
+    min-height: 100px;
+    overflow: hidden;
+}
+p{
+ text-align: center;
+ color:#666B85;
+ font-size:35px;
+ font-weight: bold;
+ top: auto;
+}
+

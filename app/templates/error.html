@@ -1,28 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Профиль</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/css/menu.css">
+    <link rel="stylesheet" href="static/css/reset.css">
+    <link rel="stylesheet" href="static/css/err.css">
+    <title>Ошибка</title>
 
-    <link rel="stylesheet" href="static/css/base.css">
 </head>
 <body>
-  <div class="workdb">
-  <nav>
-      <a href = "{{url_for('FlaskApp:work_db')}}">SQL</a>
-      <a href = "{{url_for('FlaskApp:dbname')}}">Список бд</a>
-      <a href = "{{url_for('FlaskApp:history')}}">История</a>
-      <a href = "{{url_for('FlaskApp:profile')}}">Профиль</a>
-      <a href = "{{url_for('FlaskApp:logout')}}">Выход</a>
-      <div class="animation start-home"></div>
-  </nav>
-<div class="login-box">
-  {% if err == 404 %}
-    <p>СТРАНИЦА НЕ НАЙДЕНА</p>
-  {% else %}
-    <p>ОШИБКА</p>
-  {% endif %}
-    </form>
-  </div>
+  <form action="/error" method="post">
+  <header class="header">
+    <div class="container">
+        <div class="menu-wrapper">
+            <a class="logo">
+                SQL
+            </a>
+            <nav class="nav">
+                <ul class="menu">
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:work_db')}}" class="menu-link">SQL</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:table')}}" class="menu-link">Таблицы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:dbname')}}" class="menu-link">Базы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:history')}}" class="menu-link">История</a></li>
+                </ul>
+            </nav>
+            <a class="profile" href="{{url_for('FlaskApp:profile')}}">Профиль</a>
+            <a class="exit" href="{{url_for('FlaskApp:logout')}}">Выход</a>
+        </div>
+    </div>
+  </header>
+  <section class="table-section">
+      <div class="history__block">
+         {% if err == 404 %}
+        <p>СТРАНИЦА НЕ НАЙДЕНА</p>
+        {% else %}
+        <p>ОШИБКА</p>
+        {% endif %}
+      </div>
+
+  </section>
+  </form>
 </body>
 </html>
