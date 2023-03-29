@@ -1,0 +1,105 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+a {
+  text-decoration: none;
+  color: #000;
+}
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  background: #8BB6D6;
+  background-image: url(../img/web-img.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.container {
+  max-width: 1330px;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+.menu-wrapper {
+  display: flex;
+  /* justify-content: space-between; */
+  padding-top: 50px;
+  align-items: center;
+}
+
+.logo {
+  background: #000;
+  padding: 22px 17px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  font-weight: 400;
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+  margin-right: 110px;
+}
+
+.menu {
+  display: flex;
+  gap: 60px;
+  margin-right: 55px;
+
+}
+
+
+.menu-link {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 23px;
+  line-height: 35px;
+  border-radius: 20px;
+  background: #fff;
+  padding: 10px 25px;
+}
+
+.menu-link:hover {
+  background: rgb(93, 151, 192);
+}
+
+.profile {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 23px;
+  line-height: 35px;
+  border-radius: 20px;
+  background: #fff;
+  padding: 10px 25px;
+  margin-right: 30px;
+}
+.profile:hover {
+  background: rgb(93, 151, 192);
+}
+
+.exit {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 600;
+  font-size: 23px;
+  line-height: 35px;
+  border-radius: 20px;
+  background: rgb(255, 255, 255);
+  padding: 10px 25px;
+}
+
+.exit:hover {
+  background: #b50e0e;
+  color: #fff;
+}
+

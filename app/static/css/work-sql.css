@@ -110,15 +110,15 @@ body {
 .textarea {
   width: 1318px;
   height: 574px;
-  background: #000;
+  background: #030303;
   color: #fff;
   resize: none;
-  border-radius: 10px;
+  border-radius: 5px;
   padding-top: 45px;
   padding-left: 65px;
   font-family: 'Source Sans Pro';
   font-weight: 400;
-  font-size: 28px;
+  font-size: 25px;
   line-height: 35px;
 }
 
@@ -196,7 +196,7 @@ body {
 
 th {
  color:#ffffff;;
- background:#000000;
+ background: rgba(69, 106, 134, 0.56);
  border-bottom:4px solid #000000;
  border-right: 1px solid #000000;
  font-size:23px;

@@ -11,6 +11,12 @@ html {
 a {
   text-decoration: none;
   color: #000;
+  text-align: center;
+}
+
+label{
+  font-size: 25px;
+
 }
 
 body {
@@ -127,7 +133,9 @@ body {
 
 }
 .base__form-input {
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+  width: 10%;
+
 }
 
 .base__form-input-block {
@@ -146,8 +154,9 @@ body {
   font-family: "Source Sans Pro", sans-serif;
   font-weight: 700;
   font-size: 16px;
-  background: #FD0000;
+  background: rgba(69, 106, 134, 0.56);
   border-radius: 20px;
+  border: 2px solid #000;
   padding: 15px 30px;
   width: 300px;
   margin: 0 auto;
@@ -158,4 +167,19 @@ body {
 .base__form-btn:hover {
   background: #fff;
   border: 2px solid #000;
+}
+
+.name_db {
+    margin: 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    width: 500px;
+    height: auto;
+    position: relative;
+    top: 16%;
+    left: 25%;
+    padding: 35px 25px 35px 25px;
+    box-shadow: 0px 0px 4px 6px rgba(149, 140, 140, 0.25);
+    min-height: 100px;
+    overflow: hidden;
 }

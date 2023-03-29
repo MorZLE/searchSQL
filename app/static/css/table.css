@@ -144,7 +144,7 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: 400;
   font-size: 16px;  
-  background: #000000;
+  background: rgba(69, 106, 134, 0.87);
   color: #fff;
   border: none;
   width: 300px;
@@ -154,7 +154,7 @@ body {
   text-align: center;
 }
 .table-section__btn:hover {
-  background: #4e4c4c;
+  background: rgba(82, 127, 164, 0.96);
 }
 
 .table-fill {
@@ -171,7 +171,7 @@ body {
 
 th {
  color:#ffffff;;
- background:#000000;
+ background: rgba(69, 106, 134, 0.56);
  border-bottom:4px solid #000000;
  border-right: 1px solid #000000;
  font-size:23px;
@@ -221,3 +221,14 @@ td {
   width: 300px;
 }
 
+.login__block {
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    /* width: 420px; */
+    /* height: 480px; */
+    position: absolute;
+    top: 26%;
+    left: 39%;
+    padding: 35px 25px 35px 25px;
+    box-shadow: 0px 0px 4px 6px rgba(149, 140, 140, 0.25);
+}

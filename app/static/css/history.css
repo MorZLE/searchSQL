@@ -52,7 +52,8 @@ body {
 .menu {
   display: flex;
   gap: 60px;
-  margin-right: 100px;
+  margin-right: 55px;
+
 }
 
 
@@ -68,7 +69,7 @@ body {
 }
 
 .menu-link:hover {
-  background: #3ae1a7a1;
+  background: rgb(93, 151, 192);
 }
 
 .profile {
@@ -83,7 +84,7 @@ body {
   margin-right: 30px;
 }
 .profile:hover {
-  background: #2231ffa1;
+  background: rgb(93, 151, 192);
 }
 
 .exit {
@@ -93,7 +94,7 @@ body {
   font-size: 23px;
   line-height: 35px;
   border-radius: 20px;
-  background: #FD0000;
+  background: rgb(255, 255, 255);
   padding: 10px 25px;
 }
 
@@ -125,7 +126,7 @@ body {
 }
 
 .table-section-history {
-  background: #000;
+  background: rgba(69, 106, 134, 0.86);
   width: 300px;
   border-radius: 20px;
   margin: 0 auto;
@@ -144,7 +145,7 @@ body {
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: 400;
   font-size: 16px;  
-  background: #000000;
+  background: rgba(69, 106, 134, 0.87);
   color: #fff;
   border: none;
   width: 300px;
@@ -154,7 +155,7 @@ body {
   text-align: center;
 }
 .table-section__btn:hover {
-  background: #4e4c4c;
+  background: rgba(82, 127, 164, 0.96);
 }
 
 .table-fill {
@@ -164,47 +165,39 @@ body {
  width: 1100px;
  padding: 0 5px;
  max-height: 0;
- box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+ box-shadow: 0 5px 10px rgba(69, 106, 134, 0.86);
  overflow: hidden;
  margin: 0 auto;
 }
 
-th {
- color:#ffffff;;
- background:#000000;
- border-bottom:4px solid #000000;
- border-right: 1px solid #000000;
- font-size:23px;
- font-weight: 400;
- padding:24px;
- text-align:left;
- text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
- vertical-align:middle;
- text-align: center;
+/*стили истории*/
+.history__block {
+    margin: 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    width: 600px;
+    height: auto;
+    position: relative;
+    top: 16%;
+    left: 25%;
+    padding: 35px 25px 35px 25px;
+    box-shadow: 0px 0px 4px 6px rgba(149, 140, 140, 0.25);
+    min-height: 100px;
+    overflow: hidden;
 }
-
-
-tr {
- border-top: 1px solid #000000;
- border-bottom: 1px solid #000000;
+p{
+ text-align: left;
  color:#666B85;
- font-size:16px;
+ font-size:25px;
  font-weight:normal;
- text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+ top: auto;
 }
 
-
-
-td {
- background:#FFFFFF;
- padding:20px;
- text-align:left;
- vertical-align:middle;
- font-weight:300;
- font-size:18px;
- text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
- border-right: 1px solid #000000;
+h2{
+ text-align: center;
+ color: #030303;
+ font-size:25px;
+ font-weight:normal;
+ top: auto;
+ font-weight:bold;
 }
-
-
-
