@@ -1,8 +1,7 @@
 from DB.storage import Storage
 from logic.userdb import UserDBs
 from DB.DB import Info, DB
-
-
+from sqlite3 import Binary
 
 
 class UniqueUsernameCheckFailed(Exception):
@@ -124,3 +123,25 @@ class UseCase:
         db = cs.check_db(namedb)
         if db:
             cs.del_db(namedb)
+
+    def verifyExt(self, filename):
+        ext = filename.rsplit('.', 1)[1]
+        if ext == "png" or ext == "PNG":
+            return True
+        return False
+
+    def updateUserAvatar(self, avatar, username):
+        if not avatar:
+            return False
+        try:
+            binary = Binary(avatar)
+            self.storage.send_avatar(username, binary)
+        except Exception:
+            return False
+        return True
+
+    def get_avatar(self, username):
+        img = self.storage.get_avatar(username)
+        if img is None:
+            '''Написать если нету авы картинку по умолчанию'''
+        return img

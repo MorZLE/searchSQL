@@ -104,3 +104,9 @@ class Storage(DB):
         res = int(tuple(res)[0][0])
         return True if res == 0 else False
 
+    def send_avatar(self, username, avatar):
+        self.exec("UPDATE USER SET avatar = ? WHERE login = ?", avatar, username)
+
+    def get_avatar(self, username):
+        res, desc = self.exec("SELECT avatar from USER where login =?", username)
+        return res[0] if res == 0 else None

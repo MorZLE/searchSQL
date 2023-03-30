@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, session, flash, redirect, url_for
+from flask import Flask, request, render_template, session, flash, redirect, url_for,make_response
 from logic.UserLogin import UserLogin
 from flask_login import LoginManager, login_user, login_required, logout_user,current_user
 from flask_classful import FlaskView, route
@@ -13,6 +13,8 @@ DEBUG = True
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
+
+MAX_CONTENT_LENGTH = 1024 * 1024
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'FlaskApp:login'
@@ -205,6 +207,36 @@ class FlaskApp(FlaskView):
     def profile(self):
         all, true, statistics = self.logic.get_statistics_user(session['username'])
         return render_template('profile.html', name=session['username'], statistics=statistics, tr=true, all=all)
+
+    @route('/upload', methods=['POST', "GET"])
+    @login_required
+    def upload(self):
+        if request.method == 'POST':
+            file = request.files['file']
+            if file and self.logic.verifyExt(file.filename):
+                try:
+                    img = file.read()
+                    res = self.logic.updateUserAvatar(img,session['username'])
+                    if not res:
+                        flash("Ошибка обновления аватара", "error")
+                        return redirect(url_for('profile'))
+                    flash("Аватар обновлен", "success")
+                except FileNotFoundError as e:
+                    flash("Ошибка чтения файла", "error")
+            else:
+                flash("Ошибка обновления аватара", "error")
+        return redirect(url_for('profile'))
+
+    @route('/userava', methods=["POST", "GET"])
+    @login_required
+    def userava(self):
+        img = self.logic.get_avatar(session['username'])
+        if img == '':
+            return ""
+        h = make_response(img)
+        h.headers['Content-Type'] = 'image/png'
+        return h
+
 
     @route('/setpsw', methods=['POST', "GET"])
     @login_required

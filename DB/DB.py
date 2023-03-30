@@ -98,7 +98,8 @@ class DB:
         self.connection.execute('CREATE TABLE IF NOT EXISTS USER ('
                                 ' id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
                                 'login text UNIQUE,'
-                                'password text);')
+                                'password text,'
+                                'avator BLOB DEFAULT NULL);')
 
         self.connection.execute('CREATE TABLE IF NOT EXISTS history_rs '
                                 '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '

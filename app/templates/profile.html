@@ -43,8 +43,11 @@
       <div class="login-block">
         <div class="login-block__left">
           <div class="login-block__img-block">
-            <img class="login-block__img" src="img/avatar.png" alt="Аватарка">
-            <a href="#" class="login-block__link">Изменить аватарку</a>
+          <img class="login-block__img" src="{{url_for('FlaskApp:userava')}}" alt="Аватарка">
+           <form action="{{url_for('FlaskApp:upload')}}" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file">
+                <input class="login-block__right__link" type="submit" value="Загрузить">
+            </form>
           </div>
         </div>
         <div class="login-block__right">
