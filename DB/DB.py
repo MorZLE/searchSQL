@@ -99,7 +99,7 @@ class DB:
                                 ' id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
                                 'login text UNIQUE,'
                                 'password text,'
-                                'avator BLOB DEFAULT NULL);')
+                                'avatar BLOB DEFAULT NULL);')
 
         self.connection.execute('CREATE TABLE IF NOT EXISTS history_rs '
                                 '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '

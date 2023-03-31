@@ -206,9 +206,10 @@ class FlaskApp(FlaskView):
     @login_required
     def profile(self):
         all, true, statistics = self.logic.get_statistics_user(session['username'])
+
         return render_template('profile.html', name=session['username'], statistics=statistics, tr=true, all=all)
 
-    @route('/upload', methods=['POST', "GET"])
+    @route('/upload', methods=["POST", "GET"])
     @login_required
     def upload(self):
         if request.method == 'POST':
@@ -216,7 +217,7 @@ class FlaskApp(FlaskView):
             if file and self.logic.verifyExt(file.filename):
                 try:
                     img = file.read()
-                    res = self.logic.updateUserAvatar(img,session['username'])
+                    res = self.logic.updateUserAvatar(img, session['username'])
                     if not res:
                         flash("Ошибка обновления аватара", "error")
                         return redirect(url_for('profile'))
@@ -225,16 +226,18 @@ class FlaskApp(FlaskView):
                     flash("Ошибка чтения файла", "error")
             else:
                 flash("Ошибка обновления аватара", "error")
-        return redirect(url_for('profile'))
+        return redirect(url_for('FlaskApp:profile'))
 
     @route('/userava', methods=["POST", "GET"])
     @login_required
     def userava(self):
-        img = self.logic.get_avatar(session['username'])
-        if img == '':
-            return ""
+        img = self.logic.get_avatar(session['username'], app)
+        if not img:
+            return ''
+
         h = make_response(img)
         h.headers['Content-Type'] = 'image/png'
+        print(h)
         return h
 
 

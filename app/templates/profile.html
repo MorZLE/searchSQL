@@ -18,7 +18,7 @@
     </p>
 </head>
 <body>
-  <form action="/work_db" method="post">
+
   <header class="header">
     <div class="container">
         <div class="menu-wrapper">
@@ -44,10 +44,14 @@
         <div class="login-block__left">
           <div class="login-block__img-block">
           <img class="login-block__img" src="{{url_for('FlaskApp:userava')}}" alt="Аватарка">
-           <form action="{{url_for('FlaskApp:upload')}}" method="POST" enctype="multipart/form-data">
-                <input type="file" name="file">
-                <input class="login-block__right__link" type="submit" value="Загрузить">
-            </form>
+           <form action="/upload" method="POST" enctype="multipart/form-data">
+               <label class="input-file">
+                    <input type="file" name="file">
+                    <span>Выберите файл</span>
+
+               </label>
+               <input type="submit" class='load' value="Загрузить">
+           </form>
           </div>
         </div>
         <div class="login-block__right">
@@ -60,6 +64,12 @@
       </div>
     </div>
   </section>
-  </form>
+
 </body>
+<script>
+ $('.input-file input[type=file]').on('change', function(){
+	let file = this.files[0];
+	$(this).next().html(file.name);
+});
+</script>
 </html>

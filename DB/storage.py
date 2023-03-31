@@ -109,4 +109,4 @@ class Storage(DB):
 
     def get_avatar(self, username):
         res, desc = self.exec("SELECT avatar from USER where login =?", username)
-        return res[0] if res == 0 else None
+        return res[0][0]

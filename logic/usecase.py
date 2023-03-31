@@ -140,8 +140,13 @@ class UseCase:
             return False
         return True
 
-    def get_avatar(self, username):
+    def get_avatar(self, username, app):
         img = self.storage.get_avatar(username)
         if img is None:
-            '''Написать если нету авы картинку по умолчанию'''
+            try:
+                with app.open_resource('static\\img\\avatar.png', mode="rb") as f:
+                    img = f.read()
+            except FileNotFoundError as e:
+                print("Не найден аватар по умолчанию: " + str(e))
+
         return img
