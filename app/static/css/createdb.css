@@ -134,7 +134,7 @@ body {
   margin-top: 10px;
 }
 .user-box__btn:hover {
-  background: #000;
+  background: rgba(69, 106, 134, 0.56);
   color: #fff;
 }
 

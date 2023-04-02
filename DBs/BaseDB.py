@@ -1,16 +1,11 @@
-from flask_sqlalchemy import SQLAlchemy
-from app.web_version import app
+from app.web_version import db,app
 
-
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///D:/python/searchSQL/data_user_test.db'
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-db = SQLAlchemy(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     login = db.Column(db.Text, nullable=True)
     password = db.Column(db.Text, nullable=True)
+    avatar = db.Column(db.BLOB, nullable=True)
 
 
 class Userdbs(db.Model):
@@ -28,6 +23,7 @@ class History(db.Model):
     time = db.Column(db.Text, nullable=True)
     condition = db.Column(db.Text, nullable=True)
     owner = db.Column(db.Text, db.ForeignKey('user.login'), nullable=True)
+
 
 with app.app_context():
     db.create_all()

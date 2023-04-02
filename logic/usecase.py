@@ -1,6 +1,6 @@
-from DB.storage import Storage
+from DBs.storages import Storage
 from logic.userdb import UserDBs
-from DB.DB import Info, DB
+from DBs.DB import Info, DB
 from sqlite3 import Binary
 
 
@@ -17,6 +17,10 @@ class UserNotFound(Exception):
 
 
 class DuplicateDB(Exception):
+    pass
+
+
+class DBerr(Exception):
     pass
 
 
@@ -57,8 +61,8 @@ class UseCase:
             cs = self.userDBs.getUserDbs(username)
             try:
                 cs.record(info)
-            except IndexError:
-                raise IndexError
+            except DBerr:
+                raise DBerr
         else:
             raise DuplicateDB
 

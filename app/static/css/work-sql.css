@@ -53,7 +53,7 @@ body {
 }
 
 .input__text-btn:hover{
-  background: rgba(69, 106, 134, 0.96);
+  background: rgb(93, 151, 192);
   color: #fff;
 }
 
@@ -128,7 +128,7 @@ th {
 tr {
  border-top: 1px solid #000000;
  border-bottom: 1px solid #000000;
- color:#666B85;
+ color: rgb(0, 0, 0);
  font-size:16px;
  font-weight:normal;
  text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);

@@ -2,17 +2,18 @@ from flask import Flask, request, render_template, session, flash, redirect, url
 from logic.UserLogin import UserLogin
 from flask_login import LoginManager, login_user, login_required, logout_user,current_user
 from flask_classful import FlaskView, route
-import os
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate, migrate
 import re
-from DB.storage import Storage
+from app.config import Config
+from DBs.storages import Storage
 from logic.usecase import UseCase, UniqueUsernameCheckFailed, UserNotFound, DbNotFound, DuplicateDB
 
-
-DEBUG = True
-
 app = Flask(__name__)
-app.config.from_object(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config.from_object(Config)
+
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 MAX_CONTENT_LENGTH = 1024 * 1024
 
@@ -20,6 +21,10 @@ login_manager = LoginManager(app)
 login_manager.login_view = 'FlaskApp:login'
 login_manager.login_message = "Авторизуйтесь для доступа к закрытым страницам"
 login_manager.login_message_category = "success"
+
+
+class DBerr(Exception):
+    pass
 
 
 class FlaskApp(FlaskView):
@@ -52,7 +57,6 @@ class FlaskApp(FlaskView):
             login = request.form['username']
             passwd = request.form['password']
             rm = True if request.form.get('remainme') else False
-
             try:
                 session['id'] = self.logic.identification(login, passwd)
             except UserNotFound:
@@ -121,7 +125,7 @@ class FlaskApp(FlaskView):
 
             try:
                 self.logic.addDB(db_info, login)
-            except IndexError:
+            except DBerr:
                 flash("Неверные данные подключения")
                 return render_template('createdb.html')
             except DuplicateDB:
@@ -243,7 +247,7 @@ class FlaskApp(FlaskView):
 
     @route('/setpsw', methods=['POST', "GET"])
     @login_required
-    def setpsw(self):
+    def set_password(self):
         if request.method == "POST":
             username = session['username']
             oldpasswd = request.form['oldpassword']

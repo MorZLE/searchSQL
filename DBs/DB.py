@@ -2,13 +2,21 @@ import psycopg2
 import mysql.connector
 import pyodbc
 import sqlite3
+import logging
+
+
+logging.basicConfig(level=logging.INFO, filename="py_log.log",filemode="w")
+logging.debug("A DEBUG Message")
+logging.info("An INFO")
+logging.warning("A WARNING")
+logging.error("An ERROR")
+logging.critical("A message of CRITICAL severity")
 
 
 class DBerr(Exception):
     pass
 
 class Info:
-
     Driver = ''
     Server = ''
     password = ''
@@ -90,12 +98,12 @@ class DB:
                     self.cursor = self.connection.cursor()
             return self.connection
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError):
-            raise IndexError
+            raise DBerr
 
     def con_db_app(self):
         self.connection = sqlite3.connect('D:\\python\\searchSQL\\instance\\data_user', check_same_thread=False)
         self.cursor = self.connection.cursor()
-        self.connection.execute('CREATE TABLE IF NOT EXISTS USER ('
+        """self.connection.execute('CREATE TABLE IF NOT EXISTS USER ('
                                 ' id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
                                 'login text UNIQUE,'
                                 'password text,'
@@ -111,7 +119,7 @@ class DB:
 
         self.connection.execute('CREATE TABLE IF NOT EXISTS userDBs( id INTEGER primary key,db_info TEXT not null,'
                                 'owner TEXT not null references USER (login),dbName  TEXT,vender TEXT);')
-        self.connection.commit()
+        self.connection.commit()"""
 
     def exec(self, query, *args):
         """Функция отправки запроса"""
@@ -123,13 +131,13 @@ class DB:
         except (psycopg2.errors.InFailedSqlTransaction, mysql.connector.errors.ProgrammingError):
             self.connection.rollback()
         except TypeError as te:
-            print(te)
+            logging.error(te)
         except (psycopg2.ProgrammingError, mysql.connector.errors.DataError, mysql.connector.errors.DatabaseError,
                 mysql.connector.errors.ProgrammingError,sqlite3.OperationalError,UnboundLocalError) as err:
             if 'no results to fetch' in str(err):
                 print('Нету данных для вывода!')
             else:
-                print(err)
+                logging.error(err)
 
     def userExec(self, connection, query):
         cursor = connection.cursor()
@@ -141,7 +149,8 @@ class DB:
         except (psycopg2.errors.InFailedSqlTransaction, mysql.connector.errors.ProgrammingError):
             connection.rollback()
         except TypeError as te:
-            print(te)
+            logging.error(te)
+            raise DBerr
         except (psycopg2.ProgrammingError, mysql.connector.errors.DataError, mysql.connector.errors.DatabaseError,
                 mysql.connector.errors.ProgrammingError, sqlite3.OperationalError, UnboundLocalError) as err:
             return False, err, False
