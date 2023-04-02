@@ -15,7 +15,6 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-MAX_CONTENT_LENGTH = 1024 * 1024
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'FlaskApp:login'

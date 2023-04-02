@@ -3,15 +3,17 @@ import mysql.connector
 import pyodbc
 import sqlite3
 import logging
+from app.config import Config
 
 
-logging.basicConfig(level=logging.INFO, filename="py_log.log",filemode="w")
+logging.basicConfig(level=logging.ERROR, filename="py_log.log",filemode="w")
 logging.debug("A DEBUG Message")
 logging.info("An INFO")
 logging.warning("A WARNING")
 logging.error("An ERROR")
 logging.critical("A message of CRITICAL severity")
 
+config = Config()
 
 class DBerr(Exception):
     pass
@@ -94,32 +96,16 @@ class DB:
                                                      f"pwd={self.info.password}")
                     self.cursor = self.connection.cursor()
                 case 'SQLite':
-                    self.connection = sqlite3.connect(f'D:\\python\\searchSQL\\app\\sqlitedb\\{self.info.database}', check_same_thread=False)
+                    self.connection = sqlite3.connect(f'{config.DB_PATH}{self.info.database}', check_same_thread=False)
                     self.cursor = self.connection.cursor()
             return self.connection
         except (psycopg2.OperationalError, mysql.connector.errors.DatabaseError, pyodbc.InterfaceError, sqlite3.OperationalError):
             raise DBerr
 
     def con_db_app(self):
-        self.connection = sqlite3.connect('D:\\python\\searchSQL\\instance\\data_user', check_same_thread=False)
+        self.connection = sqlite3.connect(config.MAIN_DB_CON_NAME, check_same_thread=False)
         self.cursor = self.connection.cursor()
-        """self.connection.execute('CREATE TABLE IF NOT EXISTS USER ('
-                                ' id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
-                                'login text UNIQUE,'
-                                'password text,'
-                                'avatar BLOB DEFAULT NULL);')
 
-        self.connection.execute('CREATE TABLE IF NOT EXISTS history_rs '
-                                '(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, '
-                                'request text, '
-                                'namedb text,'
-                                'time INTEGER NOT NULL,'
-                                'condition text NOT NULL,'
-                                'owner TEXT not null references USER (login));')
-
-        self.connection.execute('CREATE TABLE IF NOT EXISTS userDBs( id INTEGER primary key,db_info TEXT not null,'
-                                'owner TEXT not null references USER (login),dbName  TEXT,vender TEXT);')
-        self.connection.commit()"""
 
     def exec(self, query, *args):
         """Функция отправки запроса"""
