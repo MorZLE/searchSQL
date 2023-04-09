@@ -72,11 +72,14 @@ class UseCase:
         if isActive:
             cs.get_new_active(namedb)
         else:
-            db_info = self.storage.get_user_data_con_db(username, namedb)[0]
-            db_info = ''.join(db_info).split()
-            info = Info(db_info)
-            cs = self.userDBs.getUserDbs(username)
-            cs.record(info)
+            self.updateConn(namedb, username)
+
+    def updateConn(self, namedb, username):
+        db_info = self.storage.get_user_data_con_db(username, namedb)[0]
+        db_info = ''.join(db_info).split()
+        info = Info(db_info)
+        cs = self.userDBs.getUserDbs(username)
+        cs.record(info)
 
     def check_active(self, username):
         cs = self.userDBs.getUserDbs(username)

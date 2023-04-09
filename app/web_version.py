@@ -64,7 +64,7 @@ class FlaskApp(FlaskView):
             userlogin = UserLogin().create(login)
 
             login_user(userlogin, remember=rm)
-            return redirect(request.args.get('next') or url_for('FlaskApp:work_db'))
+            return redirect(request.args.get('next') or url_for('FlaskApp:dbname'))
         return render_template('login.html')
 
     @route('/register', methods=['POST', "GET"])
@@ -139,24 +139,28 @@ class FlaskApp(FlaskView):
     def work_db(self):
         username = session['username']
         if request.method == "POST":
-            request_sql = request.form['message']
-            if request_sql == '':
-                flash("Запрос не может быть пустым!")
-                return render_template('workdb.html')
-            if not self.logic.check_active(username):
-                flash("У вас нету активной бд!!!")
-                return render_template('workdb.html')
-            st, res, desc = self.logic.exec(request_sql, username)
-            active = session['active']
-            if st:
-                self.logic.hs_rs(username, request_sql, 'True', active)
-                if desc is None:
-                    flash('Нету данных для вывода')
+            if request.form.get('req') == 'req':
+                request_sql = request.form['message']
+                if request_sql == '':
+                    flash("Запрос не может быть пустым!")
                     return render_template('workdb.html')
-                return render_template('workdb.html', rows=res, des=desc)
-            else:
-                self.logic.hs_rs(username, request_sql, 'False', active)
-                flash(f"Некорректный запрос!\n{res}")
+                if not self.logic.check_active(username):
+                    flash("У вас нету активной бд!!!")
+                    return render_template('workdb.html')
+                st, res, desc = self.logic.exec(request_sql, username)
+                active = session['active']
+                if st:
+                    self.logic.hs_rs(username, request_sql, 'True', active)
+                    if desc is None:
+                        flash('Нету данных для вывода')
+                        return render_template('workdb.html')
+                    return render_template('workdb.html', rows=res, des=desc)
+                else:
+                    self.logic.hs_rs(username, request_sql, 'False', active)
+                    flash(f"Некорректный запрос!\n{res}")
+            elif request.form.get('update') == 'update':
+                self.logic.updateConn(session['active'], username)
+                flash('Переподключение успешно')
         return render_template('workdb.html')
 
     @route('/table', methods=['POST', "GET"])
