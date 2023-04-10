@@ -59,7 +59,7 @@ class Storage(DB):
 
     def out_rs(self, user):
         """Функция получения истории запроса определенного пользователя"""
-        res, desc = self.exec('SELECT request,namedb,condition,time FROM History WHERE owner  =?', user)
+        res, desc = self.exec('SELECT request,namedb,condition,time FROM History WHERE owner  =? ORDER BY time DESC', user)
         return res, desc
 
     def last_rs(self):

@@ -119,7 +119,7 @@ class DB:
         except TypeError as te:
             logging.error(te)
         except (psycopg2.ProgrammingError, mysql.connector.errors.DataError, mysql.connector.errors.DatabaseError,
-                mysql.connector.errors.ProgrammingError,sqlite3.OperationalError,UnboundLocalError) as err:
+                mysql.connector.errors.ProgrammingError, sqlite3.OperationalError, UnboundLocalError) as err:
             if 'no results to fetch' in str(err):
                 print('Нету данных для вывода!')
             else:
@@ -129,14 +129,19 @@ class DB:
         cursor = connection.cursor()
         try:
             cursor.execute(query)
-            connection.commit()
-            result = cursor.fetchall()
-            return True, result, cursor.description
         except (psycopg2.errors.InFailedSqlTransaction, mysql.connector.errors.ProgrammingError):
             connection.rollback()
-        except TypeError as te:
-            logging.error(te)
-            raise DBerr
         except (psycopg2.ProgrammingError, mysql.connector.errors.DataError, mysql.connector.errors.DatabaseError,
-                mysql.connector.errors.ProgrammingError, sqlite3.OperationalError, UnboundLocalError) as err:
+                mysql.connector.errors.ProgrammingError, sqlite3.OperationalError, UnboundLocalError, sqlite3.Warning,
+                TypeError) as err:
+            logging.error(err)
+            connection.rollback()
             return False, err, False
+        except Exception as err:
+            logging.error(err)
+            connection.rollback()
+            return False, err, False
+
+        connection.commit()
+        result = cursor.fetchall()
+        return True, result, cursor.description

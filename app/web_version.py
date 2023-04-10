@@ -137,6 +137,7 @@ class FlaskApp(FlaskView):
     @route('/work_db', methods=['POST', "GET"])
     @login_required
     def work_db(self):
+
         username = session['username']
         if request.method == "POST":
             if request.form.get('req') == 'req':
