@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/css/menu.css">
+    <link rel="stylesheet" href="static/css/reset.css">
+    <link rel="stylesheet" href="static/css/table.css">
+
+        <!-- JQuery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Bootstrap -->
+<!--    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">-->
+    <script type = "text/javascript"  src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script type = "text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script type = "text/javascript"  src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Datatable -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.dataTables.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+    <script type = "text/javascript"  src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script type = "text/javascript"  src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+    <script type = "text/javascript"  src="https://cdn.datatables.net/plug-ins/1.10.15/dataRender/datetime.js"></script>
+
+
+    <title>SQL</title>
+    <p>
+        {% for msg in get_flashed_messages() %}
+        {{msg}}
+        {% endfor %}
+    </p>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="menu-wrapper">
+                <a class="logo">
+                    SQL
+                </a>  
+                <nav class="nav">
+                    <ul class="menu">
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:work_db')}}" class="menu-link">SQL</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:table')}}" class="menu-link">Таблицы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:dbname')}}" class="menu-link">Базы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:history')}}" class="menu-link">История</a></li>
+                    </ul>
+                </nav>
+            <a class="profile" href="{{url_for('FlaskApp:profile')}}">Профиль</a>
+            <a class="exit" href="{{url_for('FlaskApp:logout')}}">Выход</a>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <section class="table-section">
+            <div class="container">
+            <form class="input__text" action="/table" method="post">
+
+                <div class="table-section-history">
+                    <h1 class="table-section__title">Таблицы</h1>
+
+                    <button class="table-section__btn" value="Посмотреть" >Посмотреть</button>
+                </div>
+
+                  <div class="user-box" >
+                    <select name="table" id="table" top='50%'>
+                    {% for name in namedb %}
+                    <option value={{name[0]}}>{{name[0]}}</option>
+                    {% endfor %}
+                    </select>
+                </div>
+
+            </form>
+        <table id="proxies" class="display table nowrap responsive" style="width: 100%">
+         <thead>
+         <tr>
+         {% for d in des %}
+         <th class="text-left">{{d[0]}}</th>
+         {% endfor %}
+         </tr>
+         </thead>
+        <tbody class="table-hover">
+        {% for row in rows %}
+           <tr>
+               {% for r in row %}
+                   <td>{{r}}</td>
+               {% endfor %}
+           </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        </section>
+    </main>
+</body>
+
+<script type="text/javascript">
+    $('#proxies').DataTable();
+</script>
+
+</html>

@@ -1,0 +1,149 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  background: #8BB6D6;
+  background-image: url(../img/web-img.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.input__text {
+  margin-top: 150px;
+}
+
+.textarea {
+  width: 1318px;
+  height: 574px;
+  background: #030303;
+  color: #fff;
+  resize: none;
+  border-radius: 5px;
+  padding-top: 45px;
+  padding-left: 65px;
+  font-family: 'Source Sans Pro';
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 35px;
+}
+
+.input__text-btn {
+  font-family: 'Source Sans Pro';
+  font-weight: 400;
+  font-size: 28px;
+  line-height: 35px;
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 7px 15px;
+  cursor: pointer;
+  margin-top: 20px;
+  margin-right: 10px;
+  border: none;
+}
+
+.input__text-btn:hover{
+  background: rgb(93, 151, 192);
+  color: #fff;
+}
+
+.table-section {
+    margin-top: 100px;
+}
+
+
+.table-title h3 {
+  color: #fafafa;
+  font-size: 30px;
+  font-weight: 400;
+  font-style:normal;
+  font-family: "Roboto", helvetica, arial, sans-serif;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+  text-transform:uppercase;
+}
+
+
+.table-section {
+  margin-top: 155px;
+}
+
+.table-title h3 {
+  color: #fafafa;
+  font-size: 30px;
+  font-weight: 400;
+  font-style:normal;
+  font-family: "Roboto", helvetica, arial, sans-serif;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+  text-transform:uppercase;
+}
+
+
+.table-section {
+  margin-top: 155px;
+}
+
+.table-section__title {
+  font-size: 34px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.table-fill {
+ background: white;
+ border-radius: 20px;
+ width: 1100px;
+ padding: 0 5px;
+ max-height: 0;
+ box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+ overflow: hidden;
+ margin: 0 auto;
+}
+
+th {
+ color:#ffffff;;
+ background: rgba(69, 106, 134, 0.56);
+ border-bottom:4px solid #000000;
+ border-right: 1px solid #000000;
+ font-size:23px;
+ font-weight: 400;
+ padding:24px;
+ text-align:left;
+ text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+ vertical-align:middle;
+ text-align: center;
+}
+
+
+tr {
+ border-top: 1px solid #000000;
+ border-bottom: 1px solid #000000;
+ color: rgb(0, 0, 0);
+ font-size:16px;
+ font-weight:normal;
+ text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+}
+
+
+
+td {
+ background:#FFFFFF;
+ padding:20px;
+ text-align:left;
+ vertical-align:middle;
+ font-weight:300;
+ font-size:18px;
+ text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+ border-right: 1px solid #000000;
+}
+
+

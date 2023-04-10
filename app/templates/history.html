@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/css/menu.css">
+    <link rel="stylesheet" href="static/css/reset.css">
+    <link rel="stylesheet" href="static/css/history.css">
+    <title>SQL</title>
+    <p>
+        {% for msg in get_flashed_messages() %}
+        {{msg}}
+        {% endfor %}
+    </p>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="menu-wrapper">
+                <a class="logo">
+                    SQL
+                </a>  
+                <nav class="nav">
+                    <ul class="menu">
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:work_db')}}" class="menu-link">SQL</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:table')}}" class="menu-link">Таблицы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:dbname')}}" class="menu-link">Базы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:history')}}" class="menu-link">История</a></li>
+                    </ul>
+                </nav>
+            <a class="profile" href="{{url_for('FlaskApp:profile')}}">Профиль</a>
+            <a class="exit" href="{{url_for('FlaskApp:logout')}}">Выход</a>
+            </div>
+        </div>
+    </header>
+    <main class="main">
+        <section class="table-section">
+            <div class="container">
+            <form class="input__text" action="/history" method="post">
+                <div class="table-section-history">
+                    <h1 class="table-section__title">История</h1>
+                    <button class="table-section__btn" name='clear_hs' >Очистить историю</button>
+                </div>
+            </form>
+               {% for row in rows %}
+                <div class="history__block">
+                    <h2>Таблица {{row[1]}}, Статус {{row[2]}}</h2>
+                    <h2>Время {{row[3]}}</h2>
+                    <p>Запрос:</p>
+                    <p>{{row[0]}}</p>
+                </div>
+               {% endfor %}
+
+
+        </div>
+        </section>
+    </main>
+</body>
+
+</html>

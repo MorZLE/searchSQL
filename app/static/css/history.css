@@ -1,0 +1,116 @@
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  background: #8BB6D6;
+  background-image: url(../img/web-img.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}
+
+.table-section {
+    margin-top: 100px;
+}
+
+
+.table-title h3 {
+  color: #fafafa;
+  font-size: 30px;
+  font-weight: 400;
+  font-style:normal;
+  font-family: "Source Sans Pro", sans-serif;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+  text-transform:uppercase;
+}
+
+
+.table-section {
+  margin-top: 155px;
+}
+
+.table-section-history {
+  background: rgba(69, 106, 134, 0.86);
+  width: 300px;
+  border-radius: 20px;
+  margin: 0 auto;
+  margin-bottom: 70px;
+}
+
+.table-section__title {
+  font-size: 34px;
+  text-align: center;
+  background: #fff;
+  width: 300px;
+  border-radius: 20px 20px 0 0;
+  padding: 15px 15px;
+}
+.table-section__btn {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;  
+  background: rgb(93, 151, 192);
+  color: #fff;
+  border: none;
+  width: 300px;
+  border-radius: 0 0 20px 20px;
+  padding: 21px 20px;
+  cursor: pointer;
+  text-align: center;
+}
+.table-section__btn:hover {
+  background: rgba(82, 127, 164, 0.96);
+}
+
+.table-fill {
+ font-family: "Source Sans Pro", sans-serif;
+ background: white;
+ border-radius: 20px;
+ width: 1100px;
+ padding: 0 5px;
+ max-height: 0;
+ box-shadow: 0 5px 10px rgba(69, 106, 134, 0.86);
+ overflow: hidden;
+ margin: 0 auto;
+}
+
+/*стили истории*/
+.history__block {
+    margin: 30px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    width: 600px;
+    height: auto;
+    position: relative;
+    top: 16%;
+    left: 25%;
+    padding: 35px 25px 35px 25px;
+    box-shadow: 0px 0px 4px 6px rgba(149, 140, 140, 0.25);
+    min-height: 100px;
+    overflow: hidden;
+}
+p{
+ text-align: left;
+ color:#666B85;
+ font-size:25px;
+ font-weight:normal;
+ top: auto;
+}
+
+h2{
+ text-align: center;
+ color: #030303;
+ font-size:25px;
+ top: auto;
+ font-weight:bold;
+}

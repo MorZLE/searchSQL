@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/css/reset.css" />
+    <link rel="stylesheet" href="static/css/reigist.css" />
+    <title>SQL</title>
+    <p>
+        {% for msg in get_flashed_messages() %}
+        {{msg}}
+        {% endfor %}
+    </p>
+  </head>
+  <body>
+<header class="header">
+  <div id="particles-js"></div>
+  <div class="logo__block">
+    <h2 class="logo-title">
+      SQL
+    </h2>
+  </div>
+  <div class="login__block">
+    <h2 class="login-title">
+     Регистрация
+    </h2>
+    <form action="/register" method="post" class="login__form" >
+      <input class="login-input" type="text" placeholder="Логин"  name="username" required>
+      <input class="login-input" type="password" placeholder="Пароль"  name="password" required>
+      <input class="login-input" type="password" placeholder="Повторите пароль" name="confirm_password" required>
+      <button class="login-btn" type="submit">Зарегистрироваться</button>
+
+      <a href="{{url_for('FlaskApp:login')}}" class="login-registrations">Войти если есть аккаунт!</a>
+
+    </form>
+  </div>
+</header>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
+    <script src="static/js/login.js"></script>
+  </body>
+</html>

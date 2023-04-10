@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@200;400;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="static/css/menu.css">
+    <link rel="stylesheet" href="static/css/reset.css">
+    <link rel="stylesheet" href="static/css/profile.css">
+    <title>Профиль</title>
+    <p>
+        {% for msg in get_flashed_messages() %}
+        {{msg}}
+        {% endfor %}
+    </p>
+</head>
+<body>
+
+  <header class="header">
+    <div class="container">
+        <div class="menu-wrapper">
+            <a class="logo">
+                SQL
+            </a>  
+            <nav class="nav">
+                <ul class="menu">
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:work_db')}}" class="menu-link">SQL</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:table')}}" class="menu-link">Таблицы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:dbname')}}" class="menu-link">Базы</a></li>
+                    <li class="menu-item"><a href="{{url_for('FlaskApp:history')}}" class="menu-link">История</a></li>
+                </ul>
+            </nav>
+            <a class="profile" href="{{url_for('FlaskApp:profile')}}">Профиль</a>
+            <a class="exit" href="{{url_for('FlaskApp:logout')}}">Выход</a>
+        </div>
+    </div>
+  </header>
+  <section class="profile-info">
+    <div class="container">
+      <div class="login-block">
+        <div class="login-block__left">
+          <div class="login-block__img-block">
+          <img class="login-block__img" src="{{url_for('FlaskApp:userava')}}" alt="Аватарка">
+           <form action="/upload" method="POST" enctype="multipart/form-data">
+               <label class="input-file">
+                    <input type="file" name="file">
+                    <span>Выберите файл</span>
+
+               </label>
+               <input type="submit" class='load' value="Загрузить">
+           </form>
+          </div>
+        </div>
+        <div class="login-block__right">
+          <p class="nickname">{{name}}</p>
+          <p class="login-block__right__item">Всего запросов {{all}}</p>
+          <p class="login-block__right__item">Успешных запросов {{tr}}</p>
+          <p class="login-block__right__item">Успешные запросы {{statistics}}%</p>
+          <a class="login-block__right__link" href="{{url_for('FlaskApp:set_password')}}">Изменить пароль</a>
+        </div> 
+      </div>
+    </div>
+  </section>
+
+</body>
+<script>
+ $('.input-file input[type=file]').on('change', function(){
+	let file = this.files[0];
+	$(this).next().html(file.name);
+});
+</script>
+</html>
