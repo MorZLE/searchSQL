@@ -4,7 +4,7 @@
 
 ## Framework
 
-- Web : Django
+- Web : Flask
 - Database : Postgres
 
 ## Architecture
